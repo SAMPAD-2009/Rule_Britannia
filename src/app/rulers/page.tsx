@@ -192,28 +192,30 @@ const MonarchCard = React.memo(({ monarch, index }: MonarchCardProps) => {
             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-90" />
             
             <div className="absolute inset-0 p-6 flex flex-col justify-end transition-all duration-500 transform-gpu group-hover:-translate-y-2">
-               <div className="space-y-3 relative z-10">
-                  <div className="flex items-center gap-2 text-primary/80">
-                    <Crown size={14} />
-                    <span className="text-[10px] font-bold uppercase tracking-[0.2em]">{monarch.title}</span>
-                  </div>
-                  
-                  <div className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl p-4 flex justify-between items-center shadow-2xl">
-                    <div className="space-y-0.5">
-                      <h3 className="text-xl font-headline font-black text-white leading-none tracking-tight">
-                        {monarch.name}
-                      </h3>
-                      <p className="text-[9px] font-bold text-white/40 uppercase tracking-widest">
-                        House of {monarch.era}
-                      </p>
+               <div className="relative z-10">
+                  <div className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl p-5 shadow-2xl space-y-3">
+                    <div className="flex items-center gap-2 text-primary/80 border-b border-white/5 pb-2">
+                      <Crown size={12} />
+                      <span className="text-[9px] font-bold uppercase tracking-[0.2em]">{monarch.title}</span>
                     </div>
-                    <div className="text-right">
-                      <p className="text-xs font-black text-primary tracking-widest uppercase">
-                        {monarch.years.split(' - ')[0]}
-                      </p>
-                      <p className="text-[9px] font-bold text-white/40 tracking-widest uppercase">
-                        {monarch.years.split(' - ')[1]}
-                      </p>
+                    
+                    <div className="flex justify-between items-end">
+                      <div className="space-y-0.5">
+                        <h3 className="text-2xl font-headline font-black text-white leading-none tracking-tight">
+                          {monarch.name}
+                        </h3>
+                        <p className="text-[9px] font-bold text-white/40 uppercase tracking-widest">
+                          House of {monarch.era}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm font-black text-primary tracking-widest uppercase">
+                          {monarch.years.split(' - ')[0]}
+                        </p>
+                        <p className="text-[9px] font-bold text-white/40 tracking-widest uppercase">
+                          {monarch.years.split(' - ')[1]}
+                        </p>
+                      </div>
                     </div>
                   </div>
                </div>

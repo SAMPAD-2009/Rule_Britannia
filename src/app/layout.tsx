@@ -3,7 +3,7 @@ import type {Metadata} from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'British Greatness | Historical Interactive Experience',
+  title: 'Rule Brittania',
   description: 'Explore the legacy of the British Empire through interactive 3D exhibits, maps, and AI-powered historical data.',
 };
 
