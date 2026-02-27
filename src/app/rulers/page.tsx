@@ -5,7 +5,7 @@ import React, { useState, useMemo } from 'react';
 import Image from 'next/image';
 import { Navigation } from '@/components/Navigation';
 import { PlaceHolderImages } from '@/app/lib/placeholder-images';
-import { Crown, ArrowLeft, Search, Filter, Calendar, History, X } from 'lucide-react';
+import { Crown, ArrowLeft, Search, Filter, Calendar, History } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { useInView } from '@/hooks/use-in-view';
@@ -239,7 +239,7 @@ const MonarchCard = React.memo(({ monarch, index }: MonarchCardProps) => {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#0d0d14] via-transparent to-transparent md:bg-gradient-to-r md:from-transparent md:to-[#0d0d14]/40" />
           </div>
-          <div className="p-8 md:p-10 flex flex-col justify-center space-y-6">
+          <div className="p-8 md:p-10 flex flex-col justify-center space-y-6 bg-gradient-to-br from-[#0d0d14] to-[#12121c]">
             <DialogHeader className="space-y-2">
               <div className="flex items-center gap-3 text-primary">
                 <Crown size={18} />
@@ -248,15 +248,26 @@ const MonarchCard = React.memo(({ monarch, index }: MonarchCardProps) => {
               <DialogTitle className="text-4xl font-headline font-black text-white leading-tight">
                 {monarch.name}
               </DialogTitle>
-              <div className="flex items-center gap-4 text-white/40">
-                <div className="flex items-center gap-1.5">
-                  <Calendar size={12} />
-                  <span className="text-[10px] font-bold uppercase tracking-widest">{monarch.years}</span>
+              
+              <div className="flex flex-col gap-3 pt-4">
+                <div className="flex items-center gap-4 bg-white/5 border border-white/5 rounded-xl px-4 py-2.5">
+                   <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary shrink-0">
+                     <Calendar size={14} />
+                   </div>
+                   <div className="space-y-0.5">
+                     <p className="text-[8px] font-bold uppercase tracking-widest text-white/30">Period of Reign</p>
+                     <p className="text-xs font-bold text-white tracking-wider">{monarch.years}</p>
+                   </div>
                 </div>
-                <div className="w-1 h-1 rounded-full bg-primary/40" />
-                <div className="flex items-center gap-1.5">
-                  <History size={12} />
-                  <span className="text-[10px] font-bold uppercase tracking-widest">House of {monarch.era}</span>
+
+                <div className="flex items-center gap-4 bg-white/5 border border-white/5 rounded-xl px-4 py-2.5">
+                   <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary shrink-0">
+                     <History size={14} />
+                   </div>
+                   <div className="space-y-0.5">
+                     <p className="text-[8px] font-bold uppercase tracking-widest text-white/30">Royal Dynasty</p>
+                     <p className="text-xs font-bold text-white tracking-wider">House of {monarch.era}</p>
+                   </div>
                 </div>
               </div>
             </DialogHeader>
@@ -267,7 +278,7 @@ const MonarchCard = React.memo(({ monarch, index }: MonarchCardProps) => {
               {monarch.bio}
             </p>
             
-            <div className="pt-4">
+            <div className="pt-4 border-t border-white/5">
               <div className="flex items-center gap-3">
                 <div className="w-2 h-2 rounded-full bg-primary/20 animate-pulse" />
                 <span className="text-[9px] font-bold text-white/40 uppercase tracking-widest">Historical Archive ID: {monarch.imageId}</span>
