@@ -1,15 +1,16 @@
 
 "use client";
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import Image from 'next/image';
 import { Navigation } from '@/components/Navigation';
 import { PlaceHolderImages } from '@/app/lib/placeholder-images';
-import { Crown, ArrowLeft, Search, Filter, Calendar, History } from 'lucide-react';
+import { Crown, ArrowLeft, Search, Filter, Calendar, History, ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { useInView } from '@/hooks/use-in-view';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -17,145 +18,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { monarchs } from './monarchs';
 
-const monarchs = [
-  {
-    name: "William I",
-    title: "The Conqueror",
-    era: "Norman",
-    years: "1066 - 1087",
-    imageId: "monarch-william-i",
-    bio: "The first Norman King of England. He led the Norman Conquest of 1066, fundamentally changing English society, administration, and the English language itself. He commissioned the Domesday Book, the first great census of England."
-  },
-  {
-    name: "Henry II",
-    title: "The Angevin",
-    era: "Plantagenet",
-    years: "1154 - 1189",
-    imageId: "monarch-henry-ii",
-    bio: "Greatly expanded the 'Angevin Empire' across France and England. He is credited with establishing the foundations of the English Common Law system, reformulating the relationship between the Crown and the Church."
-  },
-  {
-    name: "Richard I",
-    title: "The Lionheart",
-    era: "Plantagenet",
-    years: "1189 - 1199",
-    imageId: "monarch-richard-i",
-    bio: "A legendary military leader and a central figure in the Third Crusade. Despite his fame, he spent only about six months of his ten-year reign in England, focusing instead on his continental possessions and the Crusades."
-  },
-  {
-    name: "John",
-    title: "Lackland",
-    era: "Plantagenet",
-    years: "1199 - 1216",
-    imageId: "monarch-john",
-    bio: "His reign was marked by conflict with his barons, leading to the sealing of the Magna Carta in 1215, which limited royal power and established fundamental legal rights for subjects."
-  },
-  {
-    name: "Edward I",
-    title: "Hammer of the Scots",
-    era: "Plantagenet",
-    years: "1272 - 1307",
-    imageId: "monarch-edward-i",
-    bio: "A formidable ruler known for his legal reforms and extensive military campaigns that brought Wales under English control and attempted the same for Scotland. He was the first to formalize the role of Parliament."
-  },
-  {
-    name: "Henry V",
-    title: "The Victor",
-    era: "Lancaster",
-    years: "1413 - 1422",
-    imageId: "monarch-henry-v",
-    bio: "One of the great warrior kings of medieval England. He achieved a brilliant victory over the French at the Battle of Agincourt, nearly uniting the two crowns before his early death."
-  },
-  {
-    name: "Richard III",
-    title: "Last Yorkist",
-    era: "York",
-    years: "1483 - 1485",
-    imageId: "monarch-richard-iii",
-    bio: "The last English king to die in battle. His death at Bosworth Field marked the end of the Middle Ages in England and the conclusion of the Wars of the Roses."
-  },
-  {
-    name: "Henry VII",
-    title: "The Founder",
-    era: "Tudor",
-    years: "1485 - 1509",
-    imageId: "monarch-henry-vii",
-    bio: "The first Tudor monarch. He successfully ended the civil wars, centralized government power, and established a stable and wealthy throne through fiscal prudence and diplomacy."
-  },
-  {
-    name: "Henry VIII",
-    title: "Defender of the Faith",
-    era: "Tudor",
-    years: "1509 - 1547",
-    imageId: "monarch-henry-viii",
-    bio: "Famed for his six marriages and the English Reformation. He broke away from the authority of the Pope, establishing the monarch as the Supreme Head of the Church of England."
-  },
-  {
-    name: "Elizabeth I",
-    title: "The Virgin Queen",
-    era: "Tudor",
-    years: "1558 - 1603",
-    imageId: "monarch-elizabeth-i",
-    bio: "Her reign is known as the Elizabethan Era, a 'Golden Age' of English drama and exploration. She famously defeated the Spanish Armada in 1588, securing England's status as a maritime power."
-  },
-  {
-    name: "Charles I",
-    title: "The Martyr",
-    era: "Stuart",
-    years: "1625 - 1649",
-    imageId: "monarch-charles-i",
-    bio: "His belief in the Divine Right of Kings led to a bitter struggle with Parliament, culminating in the English Civil War and his public execution, which briefly ended the monarchy."
-  },
-  {
-    name: "Charles II",
-    title: "The Merry Monarch",
-    era: "Stuart",
-    years: "1660 - 1685",
-    imageId: "monarch-charles-ii",
-    bio: "Restored to the throne after the Puritan rule of Oliver Cromwell. His reign was characterized by a cultural revival, scientific advancement, and the expansion of trade and empire."
-  },
-  {
-    name: "William III",
-    title: "Prince of Orange",
-    era: "Stuart",
-    years: "1689 - 1702",
-    imageId: "monarch-william-iii",
-    bio: "Invited to take the throne during the Glorious Revolution. His joint reign with Mary II firmly established the principle of a constitutional monarchy and the Bill of Rights."
-  },
-  {
-    name: "Victoria",
-    title: "Empress of India",
-    era: "Hanover",
-    years: "1837 - 1901",
-    imageId: "monarch-victoria",
-    bio: "Her reign of over 63 years saw the height of the Industrial Revolution and the global expansion of the British Empire to its greatest extent, defining an entire era of culture and morality."
-  },
-  {
-    name: "George VI",
-    title: "The Wartime King",
-    era: "Windsor",
-    years: "1936 - 1952",
-    imageId: "monarch-george-vi",
-    bio: "A reluctant king who became a powerful symbol of British resistance and unity during the darkest years of the Second World War. He oversaw the beginning of the transition to the Commonwealth."
-  },
-  {
-    name: "Elizabeth II",
-    title: "The Longest Reign",
-    era: "Windsor",
-    years: "1952 - 2022",
-    imageId: "monarch-elizabeth-ii",
-    bio: "The longest-reigning monarch in British history. She oversaw the transition from the British Empire to the Commonwealth with remarkable grace, remaining a constant figure in a changing world."
-  },
-  {
-    name: "Charles III",
-    title: "The Modern King",
-    era: "Windsor",
-    years: "2022 - Present",
-    imageId: "monarch-charles-iii",
-    bio: "Acceded to the throne in 2022. He is known for his decades of environmental advocacy, his commitment to a modern, inclusive monarchy, and his efforts to champion sustainable development."
-  }
-];
 
 interface MonarchCardProps {
   monarch: typeof monarchs[0];
@@ -164,7 +28,6 @@ interface MonarchCardProps {
 
 const MonarchCard = React.memo(({ monarch, index }: MonarchCardProps) => {
   const [ref, isInView] = useInView({ threshold: 0.1, triggerOnce: true });
-  const imageUrl = useMemo(() => PlaceHolderImages.find(img => img.id === monarch.imageId)?.imageUrl || '', [monarch.imageId]);
 
   return (
     <Dialog>
@@ -180,7 +43,7 @@ const MonarchCard = React.memo(({ monarch, index }: MonarchCardProps) => {
         >
           <div className="relative h-full w-full overflow-hidden rounded-[inherit]">
             <Image 
-              src={imageUrl}
+              src={monarch.imageId}
               alt={monarch.name}
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
@@ -193,23 +56,23 @@ const MonarchCard = React.memo(({ monarch, index }: MonarchCardProps) => {
             
             <div className="absolute inset-0 p-4 flex flex-col justify-end transition-all duration-500 transform-gpu group-hover:-translate-y-2">
                <div className="relative z-10">
-                  <div className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl p-4 shadow-2xl space-y-3">
+                  <div className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl p-5 shadow-2xl space-y-3">
                     <div className="flex items-center gap-2 text-primary/80 border-b border-white/5 pb-2">
                       <Crown size={12} />
-                      <span className="text-[9px] font-bold uppercase tracking-[0.2em]">{monarch.title}</span>
+                      <span className="text-[10px] font-bold uppercase tracking-[0.2em]">{monarch.title}</span>
                     </div>
                     
-                    <div className="flex justify-between items-center gap-2">
-                      <div className="space-y-0.5">
-                        <h3 className="text-xl md:text-2xl font-headline font-black text-white leading-none tracking-tight">
+                    <div className="flex justify-between items-center gap-4">
+                      <div className="space-y-1">
+                        <h3 className="text-2xl md:text-3xl font-headline font-black text-white leading-none tracking-tight">
                           {monarch.name}
                         </h3>
-                        <p className="text-[9px] font-bold text-white/40 uppercase tracking-widest">
+                        <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest">
                           House of {monarch.era}
                         </p>
                       </div>
                       <div className="text-right shrink-0">
-                        <p className="text-[11px] md:text-xs font-black text-primary tracking-widest uppercase whitespace-nowrap">
+                        <p className="text-sm md:text-base font-black text-primary tracking-widest uppercase whitespace-nowrap">
                           {monarch.years}
                         </p>
                       </div>
@@ -229,9 +92,9 @@ const MonarchCard = React.memo(({ monarch, index }: MonarchCardProps) => {
 
       <DialogContent className="max-w-2xl bg-[#0d0d14] border-white/10 p-0 overflow-hidden rounded-[2rem] gap-0">
         <div className="grid md:grid-cols-2 h-full">
-          <div className="relative h-64 md:h-full min-h-[300px]">
+          <div className="relative h-64 md:h-full min-h-[400px]">
              <Image 
-                src={imageUrl}
+                src={monarch.imageId}
                 alt={monarch.name}
                 fill
                 className="object-cover"
@@ -291,6 +154,8 @@ MonarchCard.displayName = "MonarchCard";
 export default function RulersPage() {
   const [selectedEra, setSelectedEra] = useState<string>("All Monarchs");
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 12;
 
   const crownBg = useMemo(() => PlaceHolderImages.find(img => img.id === 'crown-hero-bg')?.imageUrl || '', []);
 
@@ -308,6 +173,17 @@ export default function RulersPage() {
       return matchesEra && matchesSearch;
     });
   }, [selectedEra, searchQuery]);
+
+  // Reset page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedEra, searchQuery]);
+
+  const totalPages = Math.ceil(filteredMonarchs.length / ITEMS_PER_PAGE);
+  const currentMonarchs = filteredMonarchs.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
 
   return (
     <main className="min-h-screen bg-[#050508] selection:bg-primary/30 selection:text-primary">
@@ -391,7 +267,7 @@ export default function RulersPage() {
       <section className="pb-32 px-4 md:px-8">
         <div className="container max-w-7xl mx-auto">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 items-start min-h-[600px]">
-            {filteredMonarchs.map((monarch, index) => (
+            {currentMonarchs.map((monarch, index) => (
               <MonarchCard 
                 key={monarch.name}
                 monarch={monarch}
@@ -400,7 +276,7 @@ export default function RulersPage() {
             ))}
           </div>
           
-          {filteredMonarchs.length === 0 && (
+          {filteredMonarchs.length === 0 ? (
             <div className="py-32 text-center space-y-6 animate-in fade-in zoom-in duration-500">
               <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto border border-primary/20">
                 <Search className="text-primary/40" size={32} />
@@ -416,6 +292,54 @@ export default function RulersPage() {
                 Clear all filters
               </button>
             </div>
+          ) : (
+            /* Pagination Controls */
+            totalPages > 1 && (
+              <div className="mt-20 flex flex-col md:flex-row items-center justify-center gap-6">
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                    disabled={currentPage === 1}
+                    className="w-12 h-12 border-white/10 bg-white/5 hover:bg-white/10 text-primary disabled:opacity-30 rounded-xl"
+                  >
+                    <ChevronLeft size={24} />
+                  </Button>
+                  
+                  <div className="flex gap-2">
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                      <Button
+                        key={page}
+                        onClick={() => setCurrentPage(page)}
+                        className={cn(
+                          "w-12 h-12 rounded-xl font-bold transition-all duration-300",
+                          currentPage === page 
+                            ? "bg-primary text-black shadow-[0_0_20px_rgba(184,138,46,0.3)]" 
+                            : "bg-white/5 border border-white/10 text-white/40 hover:text-white hover:border-white/20"
+                        )}
+                      >
+                        {page}
+                      </Button>
+                    ))}
+                  </div>
+
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                    disabled={currentPage === totalPages}
+                    className="w-12 h-12 border-white/10 bg-white/5 hover:bg-white/10 text-primary disabled:opacity-30 rounded-xl"
+                  >
+                    <ChevronRight size={24} />
+                  </Button>
+                </div>
+                
+                <p className="text-[10px] font-bold text-white/30 uppercase tracking-[0.3em]">
+                  Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1} - {Math.min(currentPage * ITEMS_PER_PAGE, filteredMonarchs.length)} of {filteredMonarchs.length} Sovereign Records
+                </p>
+              </div>
+            )
           )}
         </div>
       </section>
