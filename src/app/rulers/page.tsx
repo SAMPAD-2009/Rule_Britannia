@@ -149,12 +149,119 @@ const monarchs = [
   }
 ];
 
+interface MonarchCardProps {
+  monarch: typeof monarchs[0];
+  isExpanded: boolean;
+  onToggle: () => void;
+  index: number;
+}
+
+const MonarchCard = React.memo(({ monarch, isExpanded, onToggle, index }: MonarchCardProps) => {
+  const [ref, isInView] = useInView({ threshold: 0.1, triggerOnce: true });
+  const imageUrl = useMemo(() => PlaceHolderImages.find(img => img.id === monarch.imageId)?.imageUrl || '', [monarch.imageId]);
+
+  return (
+    <div 
+      ref={ref}
+      onClick={onToggle}
+      className={cn(
+        "group relative bg-[#0d0d14] rounded-3xl border border-white/5 overflow-hidden transition-all duration-500 cursor-pointer transform-gpu opacity-0",
+        "hover:border-primary/40 hover:shadow-[0_20px_40px_rgba(0,0,0,0.6)]",
+        isInView && "animate-in fade-in slide-in-from-bottom-8 fill-mode-both duration-700",
+        isExpanded ? "ring-2 ring-primary/40 z-20" : "z-10"
+      )}
+      style={{ animationDelay: `${(index % 4) * 100}ms` }}
+    >
+      {/* Portrait Container */}
+      <div className={cn(
+        "relative overflow-hidden transition-all duration-500 transform-gpu",
+        isExpanded ? "h-64" : "h-[26rem]"
+      )}>
+        <Image 
+          src={imageUrl}
+          alt={monarch.name}
+          fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+          className={cn(
+            "object-cover transition-all duration-700 transform-gpu",
+            !isExpanded && "grayscale group-hover:grayscale-0 scale-100 group-hover:scale-110",
+            isExpanded && "grayscale-0"
+          )}
+          data-ai-hint="monarch portrait"
+          loading="lazy"
+        />
+        
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80 pointer-events-none" />
+        
+        <div className={cn(
+          "absolute bottom-0 left-0 right-0 p-5 transition-transform duration-500 ease-out transform-gpu",
+          isExpanded ? "translate-y-full opacity-0" : "translate-y-0 opacity-100"
+        )}>
+          <div className="relative overflow-hidden rounded-2xl p-5 border border-white/10 bg-black/50 backdrop-blur-xl shadow-xl">
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-2 text-primary/90">
+                <Crown size={12} />
+                <span className="text-[10px] font-bold uppercase tracking-[0.2em]">{monarch.title}</span>
+              </div>
+              <div className="flex justify-between items-end gap-4">
+                <h3 className="text-2xl font-headline font-black text-white leading-none">
+                  {monarch.name}
+                </h3>
+                <p className="text-sm font-bold text-primary/80 tracking-widest uppercase whitespace-nowrap">
+                  {monarch.years}
+                </p>
+              </div>
+            </div>
+            <div className="absolute top-5 right-5 text-white/20">
+              <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
+            </div>
+          </div>
+        </div>
+
+        <div className="absolute top-4 left-4 z-10">
+          <div className="px-3 py-1 bg-black/60 backdrop-blur-xl rounded-full border border-white/10 text-[8px] font-bold tracking-[0.1em] text-white/80 uppercase">
+            House of {monarch.era}
+          </div>
+        </div>
+      </div>
+
+      {/* Expanded Biography Section */}
+      <div className={cn(
+        "bg-[#0d0d14] overflow-hidden transition-all duration-500 transform-gpu",
+        isExpanded ? "max-h-[500px] p-8 border-t border-white/10" : "max-h-0 p-0"
+      )}>
+        <div className="space-y-4">
+          <div className="flex justify-between items-center">
+            <div className="space-y-1">
+              <h4 className="text-xl font-headline font-bold text-white">{monarch.name}</h4>
+              <p className="text-xs font-bold text-primary tracking-widest uppercase">{monarch.years}</p>
+            </div>
+            <button 
+              onClick={(e) => { e.stopPropagation(); onToggle(); }}
+              className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors"
+            >
+              <X size={14} className="text-muted-foreground" />
+            </button>
+          </div>
+          <p className="text-muted-foreground text-sm font-light leading-relaxed">
+            {monarch.bio}
+          </p>
+          <div className="pt-4 border-t border-white/5 flex justify-between items-center">
+            <span className="text-[9px] font-bold text-white/40 uppercase tracking-widest">House: {monarch.era}</span>
+            <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+});
+
+MonarchCard.displayName = "MonarchCard";
+
 export default function RulersPage() {
-  const [ref, isInView] = useInView({ threshold: 0.05 });
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [selectedEra, setSelectedEra] = useState<string>("All Monarchs");
 
-  // Derive unique eras from the monarchs list for the filters
   const eras = useMemo(() => {
     const uniqueEras = Array.from(new Set(monarchs.map(m => m.era)));
     return ["All Monarchs", ...uniqueEras.map(e => `House of ${e}`)];
@@ -166,8 +273,8 @@ export default function RulersPage() {
     return monarchs.filter(m => m.era === eraName);
   }, [selectedEra]);
 
-  const toggleExpand = (id: string) => {
-    setExpandedId(expandedId === id ? null : id);
+  const toggleExpand = (name: string) => {
+    setExpandedId(prev => prev === name ? null : name);
   };
 
   return (
@@ -218,112 +325,18 @@ export default function RulersPage() {
       </section>
 
       {/* Grid Gallery */}
-      <section ref={ref} className="pb-32 px-4 md:px-8">
+      <section className="pb-32 px-4 md:px-8">
         <div className="container max-w-7xl mx-auto">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 items-start min-h-[600px]">
-            {filteredMonarchs.map((monarch, index) => {
-              const imageUrl = PlaceHolderImages.find(img => img.id === monarch.imageId)?.imageUrl || '';
-              const isExpanded = expandedId === monarch.name;
-              
-              return (
-                <div 
-                  key={monarch.name}
-                  onClick={() => toggleExpand(monarch.name)}
-                  style={{ animationDelay: `${index * 50}ms` }}
-                  className={cn(
-                    "group relative bg-[#0d0d14] rounded-3xl border border-white/5 overflow-hidden transition-all duration-500 cursor-pointer transform-gpu",
-                    "hover:border-primary/40 hover:shadow-[0_20px_40px_rgba(0,0,0,0.6)]",
-                    isInView && "animate-in fade-in slide-in-from-bottom-8 fill-mode-both",
-                    isExpanded ? "ring-2 ring-primary/40 z-20" : "z-10"
-                  )}
-                >
-                  {/* Portrait Container */}
-                  <div className={cn(
-                    "relative overflow-hidden transition-all duration-500 transform-gpu",
-                    isExpanded ? "h-64" : "h-[26rem]"
-                  )}>
-                    <Image 
-                      src={imageUrl}
-                      alt={monarch.name}
-                      fill
-                      className={cn(
-                        "object-cover transition-all duration-700 transform-gpu",
-                        !isExpanded && "grayscale group-hover:grayscale-0 scale-100 group-hover:scale-110",
-                        isExpanded && "grayscale-0"
-                      )}
-                      data-ai-hint="monarch portrait"
-                    />
-                    
-                    {/* Dark Gradients */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80 pointer-events-none" />
-                    
-                    {/* Information Overlay on Image */}
-                    <div className={cn(
-                      "absolute bottom-0 left-0 right-0 p-5 transition-transform duration-500 ease-out transform-gpu",
-                      isExpanded ? "translate-y-full opacity-0" : "translate-y-0 opacity-100"
-                    )}>
-                      <div className="relative overflow-hidden rounded-2xl p-5 border border-white/10 bg-black/50 backdrop-blur-xl shadow-xl">
-                        <div className="flex flex-col gap-2">
-                          <div className="flex items-center gap-2 text-primary/90">
-                            <Crown size={12} />
-                            <span className="text-[10px] font-bold uppercase tracking-[0.2em]">{monarch.title}</span>
-                          </div>
-                          <div className="flex justify-between items-end gap-4">
-                            <h3 className="text-2xl font-headline font-black text-white leading-none">
-                              {monarch.name}
-                            </h3>
-                            <p className="text-xs font-bold text-primary/80 tracking-widest uppercase whitespace-nowrap">
-                              {monarch.years}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="absolute top-5 right-5 text-white/20">
-                          <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Era Badge */}
-                    <div className="absolute top-4 left-4 z-10">
-                      <div className="px-3 py-1 bg-black/60 backdrop-blur-xl rounded-full border border-white/10 text-[8px] font-bold tracking-[0.1em] text-white/80 uppercase">
-                        House of {monarch.era}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Expanded Biography Section */}
-                  <div className={cn(
-                    "bg-[#0d0d14] overflow-hidden transition-all duration-500 transform-gpu",
-                    isExpanded ? "max-h-[500px] p-8 border-t border-white/10" : "max-h-0 p-0"
-                  )}>
-                    <div className="space-y-4">
-                      <div className="flex justify-between items-center">
-                        <div className="space-y-1">
-                          <h4 className="text-xl font-headline font-bold text-white">{monarch.name}</h4>
-                          <p className="text-xs font-bold text-primary tracking-widest uppercase">{monarch.years}</p>
-                        </div>
-                        <button 
-                          onClick={(e) => { e.stopPropagation(); setExpandedId(null); }}
-                          className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors"
-                        >
-                          <X size={14} className="text-muted-foreground" />
-                        </button>
-                      </div>
-                      <p className="text-muted-foreground text-sm font-light leading-relaxed animate-in fade-in slide-in-from-bottom-2 duration-700 delay-100">
-                        {monarch.bio}
-                      </p>
-                      <div className="pt-4 border-t border-white/5 flex justify-between items-center">
-                        <span className="text-[9px] font-bold text-white/40 uppercase tracking-widest">House: {monarch.era}</span>
-                        <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Hover visual accent */}
-                  <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-0" />
-                </div>
-              );
-            })}
+            {filteredMonarchs.map((monarch, index) => (
+              <MonarchCard 
+                key={monarch.name}
+                monarch={monarch}
+                isExpanded={expandedId === monarch.name}
+                onToggle={() => toggleExpand(monarch.name)}
+                index={index}
+              />
+            ))}
           </div>
           
           {filteredMonarchs.length === 0 && (
