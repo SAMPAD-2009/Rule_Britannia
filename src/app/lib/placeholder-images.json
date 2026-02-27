@@ -26,10 +26,46 @@
       "imageHint": "william conqueror"
     },
     {
+      "id": "monarch-henry-ii",
+      "description": "Portrait of Henry II",
+      "imageUrl": "https://picsum.photos/seed/henry2/400/500",
+      "imageHint": "henry ii"
+    },
+    {
       "id": "monarch-richard-i",
       "description": "Portrait of Richard the Lionheart",
       "imageUrl": "https://picsum.photos/seed/richard1/400/500",
       "imageHint": "richard lionheart"
+    },
+    {
+      "id": "monarch-john",
+      "description": "Portrait of King John",
+      "imageUrl": "https://picsum.photos/seed/kingjohn/400/500",
+      "imageHint": "king john"
+    },
+    {
+      "id": "monarch-edward-i",
+      "description": "Portrait of Edward I",
+      "imageUrl": "https://picsum.photos/seed/edward1/400/500",
+      "imageHint": "edward i"
+    },
+    {
+      "id": "monarch-henry-v",
+      "description": "Portrait of Henry V",
+      "imageUrl": "https://picsum.photos/seed/henry5/400/500",
+      "imageHint": "henry v"
+    },
+    {
+      "id": "monarch-richard-iii",
+      "description": "Portrait of Richard III",
+      "imageUrl": "https://picsum.photos/seed/richard3/400/500",
+      "imageHint": "richard iii"
+    },
+    {
+      "id": "monarch-henry-vii",
+      "description": "Portrait of Henry VII",
+      "imageUrl": "https://picsum.photos/seed/henry7/400/500",
+      "imageHint": "henry vii"
     },
     {
       "id": "monarch-henry-viii",
@@ -42,6 +78,24 @@
       "description": "Portrait of Elizabeth I",
       "imageUrl": "https://picsum.photos/seed/elizabeth1/400/500",
       "imageHint": "elizabeth i"
+    },
+    {
+      "id": "monarch-charles-i",
+      "description": "Portrait of Charles I",
+      "imageUrl": "https://picsum.photos/seed/charles1/400/500",
+      "imageHint": "charles i"
+    },
+    {
+      "id": "monarch-charles-ii",
+      "description": "Portrait of Charles II",
+      "imageUrl": "https://picsum.photos/seed/charles2/400/500",
+      "imageHint": "charles ii"
+    },
+    {
+      "id": "monarch-william-iii",
+      "description": "Portrait of William III",
+      "imageUrl": "https://picsum.photos/seed/william3/400/500",
+      "imageHint": "william iii"
     },
     {
       "id": "monarch-victoria",
