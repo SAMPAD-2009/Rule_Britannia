@@ -226,21 +226,23 @@ export default function RulersPage() {
                       "absolute bottom-0 left-0 right-0 p-5 transition-transform duration-500 ease-out transform-gpu",
                       isExpanded ? "translate-y-full opacity-0" : "translate-y-0 opacity-100"
                     )}>
-                      <div className="relative overflow-hidden rounded-2xl p-4 border border-white/10 bg-black/40 backdrop-blur-md">
-                        <div className="flex flex-col gap-1">
-                          <div className="flex items-center gap-2 text-primary/80">
-                            <Crown size={10} />
-                            <span className="text-[8px] font-bold uppercase tracking-[0.2em]">{monarch.title}</span>
+                      <div className="relative overflow-hidden rounded-2xl p-5 border border-white/10 bg-black/50 backdrop-blur-xl shadow-xl">
+                        <div className="flex flex-col gap-2">
+                          <div className="flex items-center gap-2 text-primary/90">
+                            <Crown size={12} />
+                            <span className="text-[10px] font-bold uppercase tracking-[0.2em]">{monarch.title}</span>
                           </div>
-                          <h3 className="text-2xl font-headline font-black text-white leading-none">
-                            {monarch.name}
-                          </h3>
-                          <p className="text-[9px] font-bold text-primary/60 tracking-[0.1em] uppercase">
-                            {monarch.years}
-                          </p>
+                          <div className="flex justify-between items-end">
+                            <h3 className="text-2xl font-headline font-black text-white leading-none">
+                              {monarch.name}
+                            </h3>
+                            <p className="text-xs font-bold text-primary/80 tracking-widest uppercase">
+                              {monarch.years}
+                            </p>
+                          </div>
                         </div>
-                        <div className="absolute top-4 right-4 text-white/20">
-                          <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                        <div className="absolute top-5 right-5 text-white/20">
+                          <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
                         </div>
                       </div>
                     </div>
@@ -262,7 +264,7 @@ export default function RulersPage() {
                       <div className="flex justify-between items-center">
                         <div className="space-y-1">
                           <h4 className="text-xl font-headline font-bold text-white">{monarch.name}</h4>
-                          <p className="text-[9px] font-bold text-primary tracking-widest uppercase">{monarch.years}</p>
+                          <p className="text-xs font-bold text-primary tracking-widest uppercase">{monarch.years}</p>
                         </div>
                         <button 
                           onClick={(e) => { e.stopPropagation(); setExpandedId(null); }}
