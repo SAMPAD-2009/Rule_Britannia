@@ -7,11 +7,14 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card } from '@/components/ui/card';
 import { summarizeHistoricalData } from '@/ai/flows/summarize-historical-data';
+import { useInView } from '@/hooks/use-in-view';
+import { cn } from '@/lib/utils';
 
 export function AISummarizer() {
   const [query, setQuery] = useState('');
   const [result, setResult] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [ref, isInView] = useInView({ threshold: 0.1 });
 
   const handleSummarize = async () => {
     if (!query.trim()) return;
@@ -29,12 +32,15 @@ export function AISummarizer() {
   };
 
   return (
-    <section className="py-24 bg-primary/5 relative overflow-hidden">
+    <section ref={ref} className="py-24 bg-primary/5 relative overflow-hidden">
       <div className="absolute top-0 right-0 w-64 h-64 bg-accent/5 rounded-full blur-[100px]" />
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-primary/5 rounded-full blur-[120px]" />
       
       <div className="container mx-auto px-4 max-w-4xl">
-        <div className="text-center mb-12 space-y-4">
+        <div className={cn(
+          "text-center mb-12 space-y-4 opacity-0",
+          isInView && "animate-in fade-in slide-in-from-top duration-1000 fill-mode-both"
+        )}>
           <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-widest">
             <Sparkles size={14} /> AI Powered
           </div>
@@ -42,7 +48,10 @@ export function AISummarizer() {
           <p className="text-muted-foreground">Ask our generative engine anything about specific historical periods, figures, or events. Instantly extract key insights from the vast library of British history.</p>
         </div>
 
-        <Card className="glass-morphism p-8 border-primary/20 shadow-2xl overflow-hidden relative">
+        <Card className={cn(
+          "glass-morphism p-8 border-primary/20 shadow-2xl overflow-hidden relative opacity-0",
+          isInView && "animate-in fade-in zoom-in-95 duration-1000 delay-200 fill-mode-both"
+        )}>
            <div className="space-y-6">
               <div className="relative">
                 <Textarea 

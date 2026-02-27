@@ -3,6 +3,8 @@
 
 import React from 'react';
 import { Anchor, Crown as CrownIcon, Factory, ArrowRight } from 'lucide-react';
+import { useInView } from '@/hooks/use-in-view';
+import { cn } from '@/lib/utils';
 
 const exhibits = [
   {
@@ -29,9 +31,14 @@ const exhibits = [
 ];
 
 export function Exhibits() {
+  const [ref, isInView] = useInView({ threshold: 0.1 });
+
   return (
-    <section id="exhibits" className="py-32 container mx-auto px-4">
-      <div className="mb-16 space-y-4 animate-in fade-in slide-in-from-left duration-1000">
+    <section id="exhibits" ref={ref} className="py-32 container mx-auto px-4">
+      <div className={cn(
+        "mb-16 space-y-4 opacity-0",
+        isInView && "animate-in fade-in slide-in-from-left duration-1000 fill-mode-both"
+      )}>
         <h2 className="text-5xl font-headline font-bold text-white tracking-tight">
           Historical <span className="text-primary italic">Pillars</span>
         </h2>
@@ -45,7 +52,10 @@ export function Exhibits() {
           <div 
             key={exhibit.id} 
             style={{ animationDelay: `${index * 150}ms` }}
-            className="group relative bg-[#0d0d14] border border-white/5 p-10 rounded-[2rem] hover:border-primary/40 transition-all duration-500 overflow-hidden hover:scale-[1.03] hover:shadow-[0_20px_50px_rgba(0,0,0,0.5)] animate-in fade-in slide-in-from-bottom-8 fill-mode-both"
+            className={cn(
+              "group relative bg-[#0d0d14] border border-white/5 p-10 rounded-[2rem] hover:border-primary/40 transition-all duration-500 overflow-hidden hover:scale-[1.03] hover:shadow-[0_20px_50px_rgba(0,0,0,0.5)] opacity-0",
+              isInView && "animate-in fade-in slide-in-from-bottom-8 duration-1000 fill-mode-both"
+            )}
           >
             {/* Golden Watermark Icon with Tilt and Scale on Hover */}
             <div className="absolute top-12 right-6 text-primary pointer-events-none opacity-[0.05] group-hover:opacity-[0.15] transition-all duration-700 -rotate-12 group-hover:rotate-[-5deg] group-hover:scale-125">

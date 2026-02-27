@@ -6,12 +6,15 @@ import Image from 'next/image';
 import { Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PlaceHolderImages } from '@/app/lib/placeholder-images';
+import { useInView } from '@/hooks/use-in-view';
+import { cn } from '@/lib/utils';
 
 export function WorldMap() {
   const mapImage = PlaceHolderImages.find(img => img.id === 'world-map-bg')?.imageUrl || '';
+  const [ref, isInView] = useInView({ threshold: 0.2 });
 
   return (
-    <section id="map" className="py-24 px-4 md:px-8 group">
+    <section id="map" ref={ref} className="py-24 px-4 md:px-8 group">
       <div className="container max-w-7xl mx-auto relative min-h-[500px] md:min-h-[600px] rounded-[2rem] overflow-hidden border border-white/5 shadow-2xl flex items-center justify-center text-center">
         
         {/* Background Map with Vignette and slow cinematic hover scale */}
@@ -37,12 +40,18 @@ export function WorldMap() {
         <div className="relative z-20 max-w-2xl px-6 space-y-8">
           
           {/* Circular Globe Icon with steady pulse */}
-          <div className="mx-auto w-16 h-16 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center shadow-[0_0_30px_rgba(184,138,46,0.3)] animate-pulse">
+          <div className={cn(
+            "mx-auto w-16 h-16 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center shadow-[0_0_30px_rgba(184,138,46,0.3)] opacity-0",
+            isInView && "animate-pulse opacity-100 transition-opacity duration-1000"
+          )}>
             <Globe className="text-primary" size={32} />
           </div>
 
           {/* Typography with staggered entrance animations */}
-          <div className="space-y-4 animate-in fade-in slide-in-from-bottom-6 duration-1000 fill-mode-both">
+          <div className={cn(
+            "space-y-4 opacity-0",
+            isInView && "animate-in fade-in slide-in-from-bottom-6 duration-1000 fill-mode-both"
+          )}>
             <h2 className="text-5xl md:text-7xl font-headline font-bold text-white drop-shadow-2xl">
               Interactive World Map
             </h2>
@@ -52,7 +61,10 @@ export function WorldMap() {
           </div>
 
           {/* Action Button with delayed entry */}
-          <div className="pt-4 animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-300 fill-mode-both">
+          <div className={cn(
+            "pt-4 opacity-0",
+            isInView && "animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-300 fill-mode-both"
+          )}>
             <Button className="bg-primary hover:bg-primary/90 text-black font-bold h-14 px-10 rounded-xl text-xs tracking-[0.2em] uppercase transition-all hover:scale-105 active:scale-95 shadow-xl shadow-primary/20">
               ENTER MAP VIEW
             </Button>
