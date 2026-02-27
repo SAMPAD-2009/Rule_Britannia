@@ -155,7 +155,7 @@ export default function RulersPage() {
   const [selectedEra, setSelectedEra] = useState<string>("All Monarchs");
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const ITEMS_PER_PAGE = 12;
+  const ITEMS_PER_PAGE = 10;
 
   const crownBg = useMemo(() => PlaceHolderImages.find(img => img.id === 'crown-hero-bg')?.imageUrl || '', []);
 
