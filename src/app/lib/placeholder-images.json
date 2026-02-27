@@ -20,22 +20,52 @@
       "imageHint": "world map"
     },
     {
-      "id": "crown-exhibit",
-      "description": "The Imperial State Crown",
-      "imageUrl": "https://picsum.photos/seed/crown/800/600",
-      "imageHint": "royal crown"
+      "id": "monarch-william-i",
+      "description": "Portrait of William the Conqueror",
+      "imageUrl": "https://picsum.photos/seed/william1/400/500",
+      "imageHint": "william conqueror"
     },
     {
-      "id": "navy-exhibit",
-      "description": "A classic British Man o' War ship",
-      "imageUrl": "https://picsum.photos/seed/navy/800/600",
-      "imageHint": "war ship"
+      "id": "monarch-richard-i",
+      "description": "Portrait of Richard the Lionheart",
+      "imageUrl": "https://picsum.photos/seed/richard1/400/500",
+      "imageHint": "richard lionheart"
     },
     {
-      "id": "industry-exhibit",
-      "description": "Industrial revolution steam engine",
-      "imageUrl": "https://picsum.photos/seed/industry/800/600",
-      "imageHint": "steam engine"
+      "id": "monarch-henry-viii",
+      "description": "Portrait of Henry VIII",
+      "imageUrl": "https://picsum.photos/seed/henry8/400/500",
+      "imageHint": "henry viii"
+    },
+    {
+      "id": "monarch-elizabeth-i",
+      "description": "Portrait of Elizabeth I",
+      "imageUrl": "https://picsum.photos/seed/elizabeth1/400/500",
+      "imageHint": "elizabeth i"
+    },
+    {
+      "id": "monarch-victoria",
+      "description": "Portrait of Queen Victoria",
+      "imageUrl": "https://picsum.photos/seed/victoria/400/500",
+      "imageHint": "queen victoria"
+    },
+    {
+      "id": "monarch-george-vi",
+      "description": "Portrait of George VI",
+      "imageUrl": "https://picsum.photos/seed/george6/400/500",
+      "imageHint": "george vi"
+    },
+    {
+      "id": "monarch-elizabeth-ii",
+      "description": "Portrait of Elizabeth II",
+      "imageUrl": "https://picsum.photos/seed/elizabeth2/400/500",
+      "imageHint": "elizabeth ii"
+    },
+    {
+      "id": "monarch-charles-iii",
+      "description": "Portrait of Charles III",
+      "imageUrl": "https://picsum.photos/seed/charles3/400/500",
+      "imageHint": "charles iii"
     }
   ]
 }

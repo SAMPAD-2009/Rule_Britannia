@@ -8,9 +8,9 @@ import { Button } from '@/components/ui/button';
 
 const navItems = [
   { name: 'Home', href: '/', icon: Landmark },
-  { name: 'Colonies', href: '#map', icon: Compass },
-  { name: 'Rulers', href: '#exhibits', icon: Users },
-  { name: 'Timeline', href: '#timeline', icon: Clock },
+  { name: 'Colonies', href: '/#map', icon: Compass },
+  { name: 'Rulers', href: '/rulers', icon: Users },
+  { name: 'Timeline', href: '/#timeline', icon: Clock },
 ];
 
 export function Navigation() {
@@ -21,12 +21,14 @@ export function Navigation() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           <div className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-primary flex items-center justify-center rounded-lg rotate-45 border-2 border-primary-foreground/20">
-              <Landmark className="text-white -rotate-45" size={20} />
-            </div>
-            <span className="font-headline text-2xl font-bold tracking-tight text-primary gold-glow">
-              BRITISH <span className="text-foreground">GREATNESS</span>
-            </span>
+            <Link href="/" className="flex items-center gap-2">
+              <div className="w-10 h-10 bg-primary flex items-center justify-center rounded-lg rotate-45 border-2 border-primary-foreground/20">
+                <Landmark className="text-white -rotate-45" size={20} />
+              </div>
+              <span className="font-headline text-2xl font-bold tracking-tight text-primary gold-glow">
+                BRITISH <span className="text-foreground">GREATNESS</span>
+              </span>
+            </Link>
           </div>
 
           {/* Desktop Nav */}
