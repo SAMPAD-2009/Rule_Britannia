@@ -1,29 +1,32 @@
 
-import { useState, useEffect, useRef, RefObject } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 interface UseInViewOptions extends IntersectionObserverInit {
   triggerOnce?: boolean;
 }
 
-export function useInView(options: UseInViewOptions = {}): [RefObject<HTMLDivElement | null>, boolean] {
-  const { triggerOnce = true, ...observerOptions } = options;
+export function useInView(options: UseInViewOptions = {}) {
+  const { triggerOnce = true, threshold = 0.1, root = null, rootMargin = '0px' } = options;
   const [isInView, setIsInView] = useState(false);
-  const ref = useRef<HTMLDivElement | null>(null);
+  const ref = useRef<any>(null);
 
   useEffect(() => {
     const element = ref.current;
     if (!element) return;
 
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) {
-        setIsInView(true);
-        if (triggerOnce) {
-          observer.unobserve(element);
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsInView(true);
+          if (triggerOnce) {
+            observer.unobserve(element);
+          }
+        } else if (!triggerOnce) {
+          setIsInView(false);
         }
-      } else if (!triggerOnce) {
-        setIsInView(false);
-      }
-    }, observerOptions);
+      },
+      { threshold, root, rootMargin }
+    );
 
     observer.observe(element);
 
@@ -32,7 +35,7 @@ export function useInView(options: UseInViewOptions = {}): [RefObject<HTMLDivEle
         observer.unobserve(element);
       }
     };
-  }, [triggerOnce, observerOptions.threshold, observerOptions.root, observerOptions.rootMargin]);
+  }, [threshold, root, rootMargin, triggerOnce]);
 
-  return [ref, isInView];
+  return [ref, isInView] as const;
 }

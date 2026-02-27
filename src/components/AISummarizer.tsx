@@ -39,7 +39,7 @@ export function AISummarizer() {
       <div className="container mx-auto px-4 max-w-4xl">
         <div className={cn(
           "text-center mb-12 space-y-4 opacity-0",
-          isInView && "animate-in fade-in slide-in-from-top duration-1000 fill-mode-both"
+          isInView && "animate-in fade-in slide-in-from-top duration-1000 fill-mode-both opacity-100"
         )}>
           <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-widest">
             <Sparkles size={14} /> AI Powered
@@ -50,7 +50,7 @@ export function AISummarizer() {
 
         <Card className={cn(
           "glass-morphism p-8 border-primary/20 shadow-2xl overflow-hidden relative opacity-0",
-          isInView && "animate-in fade-in zoom-in-95 duration-1000 delay-200 fill-mode-both"
+          isInView && "animate-in fade-in zoom-in-95 duration-1000 delay-200 fill-mode-both opacity-100"
         )}>
            <div className="space-y-6">
               <div className="relative">
@@ -67,22 +67,18 @@ export function AISummarizer() {
 
               <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
                 <div className="flex gap-2">
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    className="text-primary hover:bg-primary/10"
+                  <button 
+                    className="text-primary hover:bg-primary/10 px-2 py-1 rounded text-sm transition-colors flex items-center gap-2"
                     onClick={() => setQuery('Tell me about the Victorian Industrial Revolution')}
                   >
-                    <History size={14} className="mr-2" /> Suggested: Industry
-                  </Button>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    className="text-primary hover:bg-primary/10"
+                    <History size={14} /> Suggested: Industry
+                  </button>
+                  <button 
+                    className="text-primary hover:bg-primary/10 px-2 py-1 rounded text-sm transition-colors flex items-center gap-2"
                     onClick={() => setQuery('Who were the major naval commanders at Trafalgar?')}
                   >
-                    <History size={14} className="mr-2" /> Suggested: Navy
-                  </Button>
+                    <History size={14} /> Suggested: Navy
+                  </button>
                 </div>
                 
                 <div className="flex gap-4 w-full sm:w-auto">

@@ -37,7 +37,7 @@ export function Exhibits() {
     <section id="exhibits" ref={ref} className="py-32 container mx-auto px-4">
       <div className={cn(
         "mb-16 space-y-4 opacity-0",
-        isInView && "animate-in fade-in slide-in-from-left duration-1000 fill-mode-both"
+        isInView && "animate-in fade-in slide-in-from-left duration-1000 fill-mode-both opacity-100"
       )}>
         <h2 className="text-5xl font-headline font-bold text-white tracking-tight">
           Historical <span className="text-primary italic">Pillars</span>
@@ -54,15 +54,13 @@ export function Exhibits() {
             style={{ animationDelay: `${index * 150}ms` }}
             className={cn(
               "group relative bg-[#0d0d14] border border-white/5 p-10 rounded-[2rem] hover:border-primary/40 transition-all duration-500 overflow-hidden hover:scale-[1.03] hover:shadow-[0_20px_50px_rgba(0,0,0,0.5)] opacity-0",
-              isInView && "animate-in fade-in slide-in-from-bottom-8 duration-1000 fill-mode-both"
+              isInView && "animate-in fade-in slide-in-from-bottom-8 duration-1000 fill-mode-both opacity-100"
             )}
           >
-            {/* Golden Watermark Icon with Tilt and Scale on Hover */}
             <div className="absolute top-12 right-6 text-primary pointer-events-none opacity-[0.05] group-hover:opacity-[0.15] transition-all duration-700 -rotate-12 group-hover:rotate-[-5deg] group-hover:scale-125">
               <exhibit.icon size={220} strokeWidth={0.5} />
             </div>
 
-            {/* Icon Box */}
             <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mb-10 border border-primary/20 shadow-[0_0_15px_rgba(184,138,46,0.1)] group-hover:bg-primary/20 transition-colors">
               <exhibit.icon className="text-primary" size={24} />
             </div>
