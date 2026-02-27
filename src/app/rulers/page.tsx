@@ -1,10 +1,11 @@
+
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import Image from 'next/image';
 import { Navigation } from '@/components/Navigation';
 import { PlaceHolderImages } from '@/app/lib/placeholder-images';
-import { Crown, ArrowLeft, ChevronRight, X } from 'lucide-react';
+import { Crown, ArrowLeft, ChevronRight, X, Search } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { useInView } from '@/hooks/use-in-view';
@@ -151,6 +152,19 @@ const monarchs = [
 export default function RulersPage() {
   const [ref, isInView] = useInView({ threshold: 0.05 });
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [selectedEra, setSelectedEra] = useState<string>("All Monarchs");
+
+  // Derive unique eras from the monarchs list for the filters
+  const eras = useMemo(() => {
+    const uniqueEras = Array.from(new Set(monarchs.map(m => m.era)));
+    return ["All Monarchs", ...uniqueEras.map(e => `House of ${e}`)];
+  }, []);
+
+  const filteredMonarchs = useMemo(() => {
+    if (selectedEra === "All Monarchs") return monarchs;
+    const eraName = selectedEra.replace("House of ", "");
+    return monarchs.filter(m => m.era === eraName);
+  }, [selectedEra]);
 
   const toggleExpand = (id: string) => {
     setExpandedId(expandedId === id ? null : id);
@@ -161,7 +175,7 @@ export default function RulersPage() {
       <Navigation />
 
       {/* Hero Section */}
-      <section className="pt-40 pb-20 px-4 md:px-8 relative overflow-hidden">
+      <section className="pt-40 pb-12 px-4 md:px-8 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2" />
         <div className="container max-w-7xl mx-auto relative z-10">
           <Link href="/" className="group inline-flex items-center gap-2 text-primary/60 hover:text-primary transition-colors text-[10px] font-bold uppercase tracking-[0.3em] mb-12">
@@ -181,11 +195,33 @@ export default function RulersPage() {
         </div>
       </section>
 
+      {/* Filters Section */}
+      <section className="pb-12 px-4 md:px-8">
+        <div className="container max-w-7xl mx-auto">
+          <div className="flex flex-wrap items-center gap-3">
+            {eras.map((era) => (
+              <button
+                key={era}
+                onClick={() => setSelectedEra(era)}
+                className={cn(
+                  "px-6 py-2.5 rounded-full text-xs font-bold tracking-widest uppercase transition-all duration-300 border",
+                  selectedEra === era 
+                    ? "bg-primary border-primary text-black shadow-[0_4px_20px_rgba(184,138,46,0.4)] scale-105" 
+                    : "bg-white/5 border-white/10 text-muted-foreground hover:bg-white/10 hover:border-white/20"
+                )}
+              >
+                {era}
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Grid Gallery */}
       <section ref={ref} className="pb-32 px-4 md:px-8">
         <div className="container max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 items-start">
-            {monarchs.map((monarch, index) => {
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 items-start min-h-[600px]">
+            {filteredMonarchs.map((monarch, index) => {
               const imageUrl = PlaceHolderImages.find(img => img.id === monarch.imageId)?.imageUrl || '';
               const isExpanded = expandedId === monarch.name;
               
@@ -195,9 +231,9 @@ export default function RulersPage() {
                   onClick={() => toggleExpand(monarch.name)}
                   style={{ animationDelay: `${index * 50}ms` }}
                   className={cn(
-                    "group relative bg-[#0d0d14] rounded-3xl border border-white/5 overflow-hidden transition-all duration-500 cursor-pointer opacity-0 transform-gpu",
+                    "group relative bg-[#0d0d14] rounded-3xl border border-white/5 overflow-hidden transition-all duration-500 cursor-pointer transform-gpu",
                     "hover:border-primary/40 hover:shadow-[0_20px_40px_rgba(0,0,0,0.6)]",
-                    isInView && "animate-in fade-in slide-in-from-bottom-8 fill-mode-both opacity-100",
+                    isInView && "animate-in fade-in slide-in-from-bottom-8 fill-mode-both",
                     isExpanded ? "ring-2 ring-primary/40 z-20" : "z-10"
                   )}
                 >
@@ -232,11 +268,11 @@ export default function RulersPage() {
                             <Crown size={12} />
                             <span className="text-[10px] font-bold uppercase tracking-[0.2em]">{monarch.title}</span>
                           </div>
-                          <div className="flex justify-between items-end">
+                          <div className="flex justify-between items-end gap-4">
                             <h3 className="text-2xl font-headline font-black text-white leading-none">
                               {monarch.name}
                             </h3>
-                            <p className="text-xs font-bold text-primary/80 tracking-widest uppercase">
+                            <p className="text-xs font-bold text-primary/80 tracking-widest uppercase whitespace-nowrap">
                               {monarch.years}
                             </p>
                           </div>
@@ -250,7 +286,7 @@ export default function RulersPage() {
                     {/* Era Badge */}
                     <div className="absolute top-4 left-4 z-10">
                       <div className="px-3 py-1 bg-black/60 backdrop-blur-xl rounded-full border border-white/10 text-[8px] font-bold tracking-[0.1em] text-white/80 uppercase">
-                        {monarch.era}
+                        House of {monarch.era}
                       </div>
                     </div>
                   </div>
@@ -277,7 +313,7 @@ export default function RulersPage() {
                         {monarch.bio}
                       </p>
                       <div className="pt-4 border-t border-white/5 flex justify-between items-center">
-                        <span className="text-[9px] font-bold text-white/40 uppercase tracking-widest">Historical Archive ID: {index + 1001}</span>
+                        <span className="text-[9px] font-bold text-white/40 uppercase tracking-widest">House: {monarch.era}</span>
                         <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
                       </div>
                     </div>
@@ -289,6 +325,14 @@ export default function RulersPage() {
               );
             })}
           </div>
+          
+          {filteredMonarchs.length === 0 && (
+            <div className="py-32 text-center space-y-4">
+              <Search className="mx-auto text-primary/20" size={64} />
+              <h3 className="text-2xl font-headline text-white">No archives found</h3>
+              <p className="text-muted-foreground">Select another House or era to explore the lineage.</p>
+            </div>
+          )}
         </div>
       </section>
 
