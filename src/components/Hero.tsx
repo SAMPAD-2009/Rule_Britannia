@@ -1,4 +1,3 @@
-
 "use client";
 
 import React from 'react';
@@ -12,23 +11,23 @@ export function Hero() {
 
   return (
     <section className="relative min-h-screen flex items-center justify-center pt-20 pb-12 overflow-hidden px-4 md:px-8 bg-background">
-      {/* Background Globe - Centered and Visible */}
-      <div className="absolute inset-0 z-0 pointer-events-none flex items-center justify-center">
-        <div className="relative w-full h-full max-w-5xl aspect-square">
-          {globeImage && (
-            <Image 
-              src={globeImage} 
-              alt="Faded Globe Background" 
-              fill
-              className="object-contain opacity-70 contrast-125 brightness-100 scale-125"
-              priority
-            />
-          )}
-        </div>
+      {/* Background Globe - Enlarge to cover whole background */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        {globeImage && (
+          <Image 
+            src={globeImage} 
+            alt="Faded Globe Background" 
+            fill
+            className="object-cover opacity-40 contrast-125 brightness-75 scale-110"
+            priority
+          />
+        )}
+        {/* Dark overlay to ensure text readability */}
+        <div className="absolute inset-0 bg-background/40" />
       </div>
 
-      {/* Main Container Card - Reduced haze for background visibility */}
-      <div className="container max-w-7xl mx-auto relative z-20 rounded-[2.5rem] border border-primary/20 p-8 md:p-16 min-h-[75vh] flex items-center shadow-2xl bg-black/20 backdrop-blur-sm">
+      {/* Main Container Card */}
+      <div className="container max-w-7xl mx-auto relative z-20 rounded-[2.5rem] border border-primary/20 p-8 md:p-16 min-h-[75vh] flex items-center shadow-2xl bg-black/10 backdrop-blur-[2px]">
         
         {/* Decorative corner glows */}
         <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2" />
@@ -65,9 +64,6 @@ export function Hero() {
             <div className="flex flex-wrap gap-4 pt-4">
               <Button size="lg" className="bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white px-10 h-14 text-lg rounded-xl font-bold shadow-lg shadow-blue-500/20 transition-all active:scale-95 border-none">
                 Begin Journey <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-              <Button size="lg" variant="outline" className="border-white/10 bg-white/5 hover:bg-white/10 text-white px-10 h-14 text-lg rounded-xl font-bold transition-all active:scale-95">
-                Watch Trailer <PlayCircle className="ml-2 h-5 w-5 fill-white text-background" />
               </Button>
             </div>
           </div>
