@@ -11,15 +11,16 @@ export function Hero() {
 
   return (
     <section className="relative min-h-screen flex items-center justify-center pt-20 pb-12 overflow-hidden px-4 md:px-8 bg-background">
-      {/* Faded Background Globe Image */}
+      {/* Enhanced Visibility Background Globe Image */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-        <div className="absolute inset-0 bg-background/60 z-10" />
+        {/* Lighter overlay to let the globe shine through */}
+        <div className="absolute inset-0 bg-background/40 z-10" />
         {globeImage && (
           <Image 
             src={globeImage} 
             alt="Historical Background" 
             fill
-            className="object-cover scale-125 opacity-30 grayscale saturate-0 contrast-125"
+            className="object-cover scale-150 opacity-60 contrast-110 brightness-75"
             priority
           />
         )}
@@ -66,7 +67,7 @@ export function Hero() {
             </div>
           </div>
 
-          {/* Image Container */}
+          {/* Foreground Image Container */}
           <div className="relative animate-in fade-in zoom-in duration-1000 delay-300 flex justify-center lg:justify-end">
             <div className="relative w-full max-w-[500px] aspect-square rounded-3xl overflow-hidden shadow-2xl group border border-primary/20">
                {/* Label Overlays */}
