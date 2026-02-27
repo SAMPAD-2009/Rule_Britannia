@@ -1,0 +1,29 @@
+
+{
+  "placeholderImages": [
+    {
+      "id": "hero-bg",
+      "description": "Antique map of the British Empire",
+      "imageUrl": "https://picsum.photos/seed/empire1/1920/1080",
+      "imageHint": "antique map"
+    },
+    {
+      "id": "crown-exhibit",
+      "description": "The Imperial State Crown",
+      "imageUrl": "https://picsum.photos/seed/crown/800/600",
+      "imageHint": "royal crown"
+    },
+    {
+      "id": "navy-exhibit",
+      "description": "A classic British Man o' War ship",
+      "imageUrl": "https://picsum.photos/seed/navy/800/600",
+      "imageHint": "war ship"
+    },
+    {
+      "id": "industry-exhibit",
+      "description": "Industrial revolution steam engine",
+      "imageUrl": "https://picsum.photos/seed/industry/800/600",
+      "imageHint": "steam engine"
+    }
+  ]
+}
