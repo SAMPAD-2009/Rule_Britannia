@@ -5,11 +5,18 @@ import React, { useState, useMemo } from 'react';
 import Image from 'next/image';
 import { Navigation } from '@/components/Navigation';
 import { PlaceHolderImages } from '@/app/lib/placeholder-images';
-import { Crown, ArrowLeft, ChevronRight, X, Search, Filter } from 'lucide-react';
+import { Crown, ArrowLeft, Search, Filter, Calendar, History, X } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { useInView } from '@/hooks/use-in-view';
 import { Input } from '@/components/ui/input';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 const monarchs = [
   {
@@ -152,128 +159,131 @@ const monarchs = [
 
 interface MonarchCardProps {
   monarch: typeof monarchs[0];
-  isExpanded: boolean;
-  onToggle: () => void;
   index: number;
 }
 
-const MonarchCard = React.memo(({ monarch, isExpanded, onToggle, index }: MonarchCardProps) => {
+const MonarchCard = React.memo(({ monarch, index }: MonarchCardProps) => {
   const [ref, isInView] = useInView({ threshold: 0.1, triggerOnce: true });
   const imageUrl = useMemo(() => PlaceHolderImages.find(img => img.id === monarch.imageId)?.imageUrl || '', [monarch.imageId]);
 
   return (
-    <div 
-      ref={ref}
-      onClick={onToggle}
-      className={cn(
-        "group relative bg-[#0d0d14] rounded-3xl border border-white/5 overflow-hidden transition-all duration-500 cursor-pointer transform-gpu opacity-0 min-h-[400px]",
-        "hover:border-primary/40 hover:shadow-[0_20px_40px_rgba(0,0,0,0.6)]",
-        isInView && "animate-in fade-in slide-in-from-bottom-8 fill-mode-both duration-700 opacity-100",
-        isExpanded ? "ring-2 ring-primary/40 z-20" : "z-10"
-      )}
-      style={{ animationDelay: `${(index % 4) * 100}ms` }}
-    >
-      <div className={cn(
-        "relative overflow-hidden transition-all duration-700 ease-in-out transform-gpu",
-        isExpanded ? "h-64" : "h-[28rem]"
-      )}>
-        <Image 
-          src={imageUrl}
-          alt={monarch.name}
-          fill
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+    <Dialog>
+      <DialogTrigger asChild>
+        <div 
+          ref={ref}
           className={cn(
-            "object-cover transition-all duration-1000 transform-gpu",
-            !isExpanded && "grayscale group-hover:grayscale-0 scale-105 group-hover:scale-110",
-            isExpanded && "grayscale-0"
+            "group relative bg-[#0d0d14] rounded-3xl border border-white/5 overflow-hidden transition-all duration-500 cursor-pointer transform-gpu opacity-0 h-[400px]",
+            "hover:border-primary/40 hover:shadow-[0_20px_40px_rgba(0,0,0,0.6)]",
+            isInView && "animate-in fade-in slide-in-from-bottom-8 fill-mode-both duration-700 opacity-100"
           )}
-          data-ai-hint="monarch portrait"
-          loading="lazy"
-        />
-        
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-80" />
-        
-        <div className={cn(
-          "absolute inset-0 p-6 flex flex-col justify-end transition-all duration-500 transform-gpu",
-          isExpanded ? "opacity-0 translate-y-4" : "opacity-100 translate-y-0"
-        )}>
-           <div className="space-y-3 relative z-10">
-              <div className="flex items-center gap-2 text-primary/80">
-                <Crown size={14} />
-                <span className="text-[10px] font-bold uppercase tracking-[0.2em]">{monarch.title}</span>
-              </div>
-              
-              <div className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl p-4 flex justify-between items-center shadow-2xl">
-                <div className="space-y-0.5">
-                  <h3 className="text-2xl font-headline font-black text-white leading-none tracking-tight">
-                    {monarch.name}
-                  </h3>
-                  <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest">
-                    House of {monarch.era}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p className="text-xs font-black text-primary tracking-widest uppercase">
-                    {monarch.years.split(' - ')[0]}
-                  </p>
-                  <p className="text-[10px] font-bold text-white/40 tracking-widest uppercase">
-                    {monarch.years.split(' - ')[1]}
-                  </p>
-                </div>
-              </div>
-           </div>
-        </div>
-
-        <div className="absolute top-4 left-4 z-10 pointer-events-none">
-          <div className="px-3 py-1 bg-black/60 backdrop-blur-xl rounded-full border border-white/10 text-[8px] font-bold tracking-[0.1em] text-white/80 uppercase">
-            {monarch.era}
-          </div>
-        </div>
-      </div>
-
-      <div className={cn(
-        "bg-[#0d0d14] overflow-hidden transition-all duration-700 ease-in-out transform-gpu",
-        isExpanded ? "max-h-[600px] p-8 border-t border-white/10" : "max-h-0 p-0"
-      )}>
-        <div className="space-y-6">
-          <div className="flex justify-between items-start">
-            <div className="space-y-1">
-              <h4 className="text-2xl font-headline font-bold text-white">{monarch.name}</h4>
-              <p className="text-xs font-bold text-primary tracking-widest uppercase">{monarch.years}</p>
+          style={{ animationDelay: `${(index % 4) * 100}ms` }}
+        >
+          <div className="relative h-full w-full">
+            <Image 
+              src={imageUrl}
+              alt={monarch.name}
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+              className="object-cover transition-all duration-1000 transform-gpu grayscale group-hover:grayscale-0 scale-105 group-hover:scale-110"
+              data-ai-hint="monarch portrait"
+              loading="lazy"
+            />
+            
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-90" />
+            
+            <div className="absolute inset-0 p-6 flex flex-col justify-end transition-all duration-500 transform-gpu group-hover:-translate-y-2">
+               <div className="space-y-3 relative z-10">
+                  <div className="flex items-center gap-2 text-primary/80">
+                    <Crown size={14} />
+                    <span className="text-[10px] font-bold uppercase tracking-[0.2em]">{monarch.title}</span>
+                  </div>
+                  
+                  <div className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl p-4 flex justify-between items-center shadow-2xl">
+                    <div className="space-y-0.5">
+                      <h3 className="text-xl font-headline font-black text-white leading-none tracking-tight">
+                        {monarch.name}
+                      </h3>
+                      <p className="text-[9px] font-bold text-white/40 uppercase tracking-widest">
+                        House of {monarch.era}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs font-black text-primary tracking-widest uppercase">
+                        {monarch.years.split(' - ')[0]}
+                      </p>
+                      <p className="text-[9px] font-bold text-white/40 tracking-widest uppercase">
+                        {monarch.years.split(' - ')[1]}
+                      </p>
+                    </div>
+                  </div>
+               </div>
             </div>
-            <button 
-              onClick={(e) => { e.stopPropagation(); onToggle(); }}
-              className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors border border-white/10"
-            >
-              <X size={16} className="text-muted-foreground" />
-            </button>
-          </div>
-          
-          <div className="h-px w-full bg-gradient-to-r from-primary/40 to-transparent" />
-          
-          <p className="text-muted-foreground text-sm font-light leading-relaxed first-letter:text-4xl first-letter:font-headline first-letter:text-primary first-letter:float-left first-letter:mr-3 first-letter:mt-1">
-            {monarch.bio}
-          </p>
-          
-          <div className="pt-4 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-1 h-1 rounded-full bg-primary" />
-              <span className="text-[9px] font-bold text-white/40 uppercase tracking-widest">Historical Archive ID: {monarch.imageId}</span>
+
+            <div className="absolute top-4 left-4 z-10">
+              <div className="px-3 py-1 bg-black/60 backdrop-blur-xl rounded-full border border-white/10 text-[8px] font-bold tracking-[0.1em] text-white/80 uppercase">
+                {monarch.era}
+              </div>
             </div>
-            <Link href="/" className="text-[10px] font-bold text-primary hover:underline uppercase tracking-widest">
-              Explore Timeline
-            </Link>
           </div>
         </div>
-      </div>
-    </div>
+      </DialogTrigger>
+
+      <DialogContent className="max-w-2xl bg-[#0d0d14] border-white/10 p-0 overflow-hidden rounded-[2rem] gap-0">
+        <div className="grid md:grid-cols-2 h-full">
+          <div className="relative h-64 md:h-full min-h-[300px]">
+             <Image 
+                src={imageUrl}
+                alt={monarch.name}
+                fill
+                className="object-cover"
+                data-ai-hint="monarch portrait"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0d0d14] via-transparent to-transparent md:bg-gradient-to-r md:from-transparent md:to-[#0d0d14]/40" />
+          </div>
+          <div className="p-8 md:p-10 flex flex-col justify-center space-y-6">
+            <DialogHeader className="space-y-2">
+              <div className="flex items-center gap-3 text-primary">
+                <Crown size={18} />
+                <span className="text-xs font-bold uppercase tracking-[0.3em]">{monarch.title}</span>
+              </div>
+              <DialogTitle className="text-4xl font-headline font-black text-white leading-tight">
+                {monarch.name}
+              </DialogTitle>
+              <div className="flex items-center gap-4 text-white/40">
+                <div className="flex items-center gap-1.5">
+                  <Calendar size={12} />
+                  <span className="text-[10px] font-bold uppercase tracking-widest">{monarch.years}</span>
+                </div>
+                <div className="w-1 h-1 rounded-full bg-primary/40" />
+                <div className="flex items-center gap-1.5">
+                  <History size={12} />
+                  <span className="text-[10px] font-bold uppercase tracking-widest">House of {monarch.era}</span>
+                </div>
+              </div>
+            </DialogHeader>
+            
+            <div className="h-px w-full bg-gradient-to-r from-primary/40 to-transparent" />
+            
+            <p className="text-muted-foreground text-sm font-light leading-relaxed first-letter:text-4xl first-letter:font-headline first-letter:text-primary first-letter:float-left first-letter:mr-3 first-letter:mt-1">
+              {monarch.bio}
+            </p>
+            
+            <div className="pt-4">
+              <div className="flex items-center gap-3">
+                <div className="w-2 h-2 rounded-full bg-primary/20 animate-pulse" />
+                <span className="text-[9px] font-bold text-white/40 uppercase tracking-widest">Historical Archive ID: {monarch.imageId}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 });
 
 MonarchCard.displayName = "MonarchCard";
 
 export default function RulersPage() {
-  const [expandedId, setExpandedId] = useState<string | null>(null);
   const [selectedEra, setSelectedEra] = useState<string>("All Monarchs");
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -294,17 +304,12 @@ export default function RulersPage() {
     });
   }, [selectedEra, searchQuery]);
 
-  const toggleExpand = (name: string) => {
-    setExpandedId(prev => prev === name ? null : name);
-  };
-
   return (
     <main className="min-h-screen bg-[#050508] selection:bg-primary/30 selection:text-primary">
       <Navigation />
 
       {/* Hero Section */}
       <section className="pt-40 pb-20 px-4 md:px-8 relative overflow-hidden min-h-[60vh] flex items-center">
-        {/* Background Crown Image - Immersive effect */}
         <div className="absolute inset-0 z-0 pointer-events-none">
           {crownBg && (
             <Image 
@@ -315,7 +320,6 @@ export default function RulersPage() {
               priority
             />
           )}
-          {/* Gradients for blending */}
           <div className="absolute inset-0 bg-gradient-to-b from-[#050508] via-transparent to-[#050508]" />
           <div className="absolute inset-0 bg-gradient-to-r from-[#050508] via-transparent to-[#050508] opacity-60" />
         </div>
@@ -386,8 +390,6 @@ export default function RulersPage() {
               <MonarchCard 
                 key={monarch.name}
                 monarch={monarch}
-                isExpanded={expandedId === monarch.name}
-                onToggle={() => toggleExpand(monarch.name)}
                 index={index}
               />
             ))}
