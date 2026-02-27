@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState } from 'react';
@@ -196,7 +195,7 @@ export default function RulersPage() {
                   onClick={() => toggleExpand(monarch.name)}
                   style={{ animationDelay: `${index * 50}ms` }}
                   className={cn(
-                    "group relative bg-[#0d0d14] rounded-3xl border border-white/5 overflow-hidden transition-all duration-500 cursor-pointer opacity-0",
+                    "group relative bg-[#0d0d14] rounded-3xl border border-white/5 overflow-hidden transition-all duration-500 cursor-pointer opacity-0 transform-gpu",
                     "hover:border-primary/40 hover:shadow-[0_20px_40px_rgba(0,0,0,0.6)]",
                     isInView && "animate-in fade-in slide-in-from-bottom-8 fill-mode-both opacity-100",
                     isExpanded ? "ring-2 ring-primary/40 z-20" : "z-10"
@@ -204,27 +203,27 @@ export default function RulersPage() {
                 >
                   {/* Portrait Container */}
                   <div className={cn(
-                    "relative overflow-hidden transition-all duration-500",
-                    isExpanded ? "h-64" : "h-[28rem]"
+                    "relative overflow-hidden transition-all duration-500 transform-gpu",
+                    isExpanded ? "h-64" : "h-[26rem]"
                   )}>
                     <Image 
                       src={imageUrl}
                       alt={monarch.name}
                       fill
                       className={cn(
-                        "object-cover transition-all duration-700",
-                        !isExpanded && "grayscale group-hover:grayscale-0 scale-105 group-hover:scale-110",
+                        "object-cover transition-all duration-700 transform-gpu",
+                        !isExpanded && "grayscale group-hover:grayscale-0 scale-100 group-hover:scale-110",
                         isExpanded && "grayscale-0"
                       )}
                       data-ai-hint="monarch portrait"
                     />
                     
                     {/* Dark Gradients */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80 pointer-events-none" />
                     
                     {/* Information Overlay on Image */}
                     <div className={cn(
-                      "absolute bottom-0 left-0 right-0 p-6 transition-transform duration-500",
+                      "absolute bottom-0 left-0 right-0 p-5 transition-transform duration-500 ease-out transform-gpu",
                       isExpanded ? "translate-y-full opacity-0" : "translate-y-0 opacity-100"
                     )}>
                       <div className="relative overflow-hidden rounded-2xl p-4 border border-white/10 bg-black/40 backdrop-blur-md">
@@ -247,7 +246,7 @@ export default function RulersPage() {
                     </div>
 
                     {/* Era Badge */}
-                    <div className="absolute top-4 left-4">
+                    <div className="absolute top-4 left-4 z-10">
                       <div className="px-3 py-1 bg-black/60 backdrop-blur-xl rounded-full border border-white/10 text-[8px] font-bold tracking-[0.1em] text-white/80 uppercase">
                         {monarch.era}
                       </div>
@@ -256,7 +255,7 @@ export default function RulersPage() {
 
                   {/* Expanded Biography Section */}
                   <div className={cn(
-                    "bg-[#0d0d14] overflow-hidden transition-all duration-500",
+                    "bg-[#0d0d14] overflow-hidden transition-all duration-500 transform-gpu",
                     isExpanded ? "max-h-[500px] p-8 border-t border-white/10" : "max-h-0 p-0"
                   )}>
                     <div className="space-y-4">
@@ -283,7 +282,7 @@ export default function RulersPage() {
                   </div>
 
                   {/* Hover visual accent */}
-                  <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+                  <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-0" />
                 </div>
               );
             })}
