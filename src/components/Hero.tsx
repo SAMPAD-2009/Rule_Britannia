@@ -1,27 +1,32 @@
 "use client";
 
 import React from 'react';
+import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PlaceHolderImages } from '@/app/lib/placeholder-images';
 
 export function Hero() {
-  const globeImage = PlaceHolderImages.find(img => img.id === 'globe-hero')?.imageUrl;
+  const globeImage = PlaceHolderImages.find(img => img.id === 'globe-hero')?.imageUrl || '';
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center pt-20 pb-12 overflow-hidden px-4 md:px-8">
+    <section className="relative min-h-screen flex items-center justify-center pt-20 pb-12 overflow-hidden px-4 md:px-8 bg-background">
       {/* Faded Background Globe Image */}
-      <div className="absolute inset-0 z-0 opacity-10 pointer-events-none">
-        <img 
-          src={globeImage} 
-          alt="" 
-          className="w-full h-full object-cover scale-110 blur-xl"
-          aria-hidden="true"
-        />
+      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+        <div className="absolute inset-0 bg-background/60 z-10" />
+        {globeImage && (
+          <Image 
+            src={globeImage} 
+            alt="Historical Background" 
+            fill
+            className="object-cover scale-125 opacity-30 grayscale saturate-0 contrast-125"
+            priority
+          />
+        )}
       </div>
 
       {/* Main Container */}
-      <div className="container max-w-7xl mx-auto relative z-10 glass-morphism rounded-[2rem] border-primary/20 p-8 md:p-16 min-h-[70vh] flex items-center shadow-2xl overflow-hidden bg-background/40 backdrop-blur-md">
+      <div className="container max-w-7xl mx-auto relative z-20 glass-morphism rounded-[2rem] border-primary/20 p-8 md:p-16 min-h-[70vh] flex items-center shadow-2xl overflow-hidden bg-background/20 backdrop-blur-md">
         
         {/* Background glow effects */}
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] -z-1 translate-x-1/2 -translate-y-1/2" />
@@ -55,7 +60,7 @@ export function Hero() {
             
             {/* Button */}
             <div className="flex flex-wrap gap-4 pt-4">
-              <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white px-10 h-14 text-lg rounded-xl font-bold shadow-lg shadow-blue-900/40 transition-all active:scale-95">
+              <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground px-10 h-14 text-lg rounded-xl font-bold shadow-lg shadow-primary/20 transition-all active:scale-95">
                 Begin Journey <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </div>
@@ -63,7 +68,7 @@ export function Hero() {
 
           {/* Image Container */}
           <div className="relative animate-in fade-in zoom-in duration-1000 delay-300 flex justify-center lg:justify-end">
-            <div className="relative w-full max-w-[500px] aspect-square rounded-3xl overflow-hidden shadow-2xl group">
+            <div className="relative w-full max-w-[500px] aspect-square rounded-3xl overflow-hidden shadow-2xl group border border-primary/20">
                {/* Label Overlays */}
                <div className="absolute top-6 right-6 z-20 px-3 py-1 bg-background/80 backdrop-blur-md rounded border border-primary/20 text-[10px] font-bold tracking-widest text-primary uppercase">
                  19th Century
@@ -75,17 +80,20 @@ export function Hero() {
                {/* Shadow Overlay */}
                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10 opacity-60" />
 
-               <img 
-                src={globeImage} 
-                alt="Golden Globe" 
-                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
-                data-ai-hint="golden globe"
-               />
+               {globeImage && (
+                 <Image 
+                  src={globeImage} 
+                  alt="Golden Globe" 
+                  fill
+                  className="object-cover transition-transform duration-1000 group-hover:scale-110"
+                  priority
+                 />
+               )}
             </div>
             
             {/* Blurred background globe for depth */}
             <div className="absolute -z-10 w-full h-full scale-125 opacity-20 blur-3xl saturate-150">
-               <img src={globeImage} alt="" className="w-full h-full object-contain" />
+               {globeImage && <Image src={globeImage} alt="" fill className="object-contain" />}
             </div>
           </div>
         </div>
