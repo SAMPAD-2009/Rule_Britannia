@@ -1,4 +1,3 @@
-
 "use client";
 
 import React from 'react';
@@ -11,8 +10,18 @@ export function Hero() {
 
   return (
     <section className="relative min-h-screen flex items-center justify-center pt-20 pb-12 overflow-hidden px-4 md:px-8">
-      {/* Dark background container matching the card-like feel in screenshot */}
-      <div className="container max-w-7xl mx-auto relative z-10 glass-morphism rounded-[2rem] border-primary/20 p-8 md:p-16 min-h-[70vh] flex items-center shadow-2xl overflow-hidden">
+      {/* Faded Background Globe Image */}
+      <div className="absolute inset-0 z-0 opacity-10 pointer-events-none">
+        <img 
+          src={globeImage} 
+          alt="" 
+          className="w-full h-full object-cover scale-110 blur-xl"
+          aria-hidden="true"
+        />
+      </div>
+
+      {/* Main Container */}
+      <div className="container max-w-7xl mx-auto relative z-10 glass-morphism rounded-[2rem] border-primary/20 p-8 md:p-16 min-h-[70vh] flex items-center shadow-2xl overflow-hidden bg-background/40 backdrop-blur-md">
         
         {/* Background glow effects */}
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] -z-1 translate-x-1/2 -translate-y-1/2" />
@@ -55,7 +64,7 @@ export function Hero() {
           {/* Image Container */}
           <div className="relative animate-in fade-in zoom-in duration-1000 delay-300 flex justify-center lg:justify-end">
             <div className="relative w-full max-w-[500px] aspect-square rounded-3xl overflow-hidden shadow-2xl group">
-               {/* Label Overlays from Screenshot */}
+               {/* Label Overlays */}
                <div className="absolute top-6 right-6 z-20 px-3 py-1 bg-background/80 backdrop-blur-md rounded border border-primary/20 text-[10px] font-bold tracking-widest text-primary uppercase">
                  19th Century
                </div>
