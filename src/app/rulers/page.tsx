@@ -184,7 +184,7 @@ const MonarchCard = React.memo(({ monarch, index }: MonarchCardProps) => {
               alt={monarch.name}
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-              className="object-cover transition-all duration-1000 transform-gpu grayscale group-hover:grayscale-0 scale-105 group-hover:scale-110"
+              className="object-cover transition-all duration-1000 transform-gpu scale-105 group-hover:scale-110"
               data-ai-hint="monarch portrait"
               loading="lazy"
             />
