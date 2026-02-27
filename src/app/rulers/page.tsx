@@ -5,7 +5,7 @@ import React from 'react';
 import Image from 'next/image';
 import { Navigation } from '@/components/Navigation';
 import { PlaceHolderImages } from '@/app/lib/placeholder-images';
-import { Crown, ArrowLeft, History } from 'lucide-react';
+import { Crown, ArrowLeft, History, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -154,86 +154,94 @@ export default function RulersPage() {
   const [ref, isInView] = useInView({ threshold: 0.05 });
 
   return (
-    <main className="min-h-screen bg-background">
+    <main className="min-h-screen bg-[#050508] selection:bg-primary/30 selection:text-primary">
       <Navigation />
 
-      {/* Hero Section for Rulers */}
-      <section className="pt-32 pb-16 px-4 md:px-8 border-b border-white/5">
-        <div className="container max-w-7xl mx-auto space-y-6">
-          <Link href="/" className="inline-flex items-center gap-2 text-primary hover:gap-3 transition-all text-xs font-bold uppercase tracking-widest">
-            <ArrowLeft size={14} /> Back to Archives
+      {/* Hero Section */}
+      <section className="pt-40 pb-20 px-4 md:px-8 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2" />
+        <div className="container max-w-7xl mx-auto relative z-10">
+          <Link href="/" className="group inline-flex items-center gap-2 text-primary/60 hover:text-primary transition-colors text-[10px] font-bold uppercase tracking-[0.3em] mb-12">
+            <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" /> Back to Chronicles
           </Link>
           
-          <div className="space-y-4">
-            <h1 className="text-6xl md:text-8xl font-headline font-black text-white tracking-tight">
-              Lineage <br />
-              <span className="text-primary gold-glow italic">of the Crown</span>
+          <div className="max-w-4xl space-y-8">
+            <h1 className="text-7xl md:text-9xl font-headline font-black text-white leading-tight tracking-tighter">
+              Sovereigns <br />
+              <span className="text-primary gold-glow italic">of the Realm</span>
             </h1>
-            <p className="text-muted-foreground text-xl max-w-2xl font-light">
-              A comprehensive chronicle of the sovereigns who shaped the destiny of the British Isles, from the Norman Conquest to the House of Windsor.
+            <div className="h-px w-24 bg-primary/40" />
+            <p className="text-muted-foreground text-xl md:text-2xl font-light leading-relaxed max-w-2xl">
+              From the Norman Conquest to the modern era, explore the lives of the monarchs who defined the British legacy.
             </p>
           </div>
         </div>
       </section>
 
-      {/* Tiled Gallery Section */}
-      <section ref={ref} className="py-20 px-4 md:px-8 bg-black/20">
+      {/* Grid Gallery */}
+      <section ref={ref} className="pb-32 px-4 md:px-8">
         <div className="container max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
             {monarchs.map((monarch, index) => {
               const imageUrl = PlaceHolderImages.find(img => img.id === monarch.imageId)?.imageUrl || '';
               
               return (
                 <div 
                   key={monarch.name}
-                  style={{ animationDelay: `${index * 50}ms` }}
+                  style={{ animationDelay: `${index * 80}ms` }}
                   className={cn(
-                    "group relative bg-[#0d0d14] rounded-[2rem] border border-white/5 overflow-hidden transition-all duration-700 hover:border-primary/40 hover:scale-[1.02] hover:shadow-[0_20px_50px_rgba(0,0,0,0.5)] opacity-0",
-                    isInView && "animate-in fade-in slide-in-from-bottom-10 fill-mode-both opacity-100"
+                    "group relative bg-[#0d0d14] rounded-[2.5rem] border border-white/5 overflow-hidden transition-all duration-700 hover:border-primary/40 hover:scale-[1.02] hover:shadow-[0_40px_80px_rgba(0,0,0,0.8)] opacity-0",
+                    isInView && "animate-in fade-in slide-in-from-bottom-12 fill-mode-both opacity-100"
                   )}
                 >
-                  {/* Image Container */}
-                  <div className="relative h-[30rem] w-full">
+                  {/* Portrait Container */}
+                  <div className="relative h-[32rem] w-full overflow-hidden">
                     <Image 
                       src={imageUrl}
                       alt={monarch.name}
                       fill
-                      className="object-cover grayscale group-hover:grayscale-0 transition-all duration-700 scale-105 group-hover:scale-110"
+                      className="object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 scale-105 group-hover:scale-110"
                       data-ai-hint="monarch portrait"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
                     
-                    {/* Badge */}
-                    <div className="absolute top-6 right-6 px-3 py-1 bg-primary/20 backdrop-blur-md rounded border border-primary/30 text-[10px] font-bold tracking-widest text-primary uppercase">
-                      {monarch.era}
+                    {/* Gradients */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0d0d14] via-transparent to-black/20" />
+                    <div className="absolute inset-0 bg-black/40 group-hover:bg-black/0 transition-colors duration-1000" />
+                    
+                    {/* Floating Era Badge */}
+                    <div className="absolute top-8 left-8">
+                      <div className="px-4 py-1.5 bg-black/60 backdrop-blur-xl rounded-full border border-white/10 text-[9px] font-bold tracking-[0.2em] text-white/80 uppercase">
+                        {monarch.era}
+                      </div>
                     </div>
                   </div>
 
-                  {/* Content */}
-                  <div className="p-8 space-y-4 relative z-10 -mt-24">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2 text-primary">
-                        <Crown size={14} />
-                        <span className="text-[10px] font-bold uppercase tracking-widest">{monarch.title}</span>
+                  {/* Information Overlay */}
+                  <div className="p-10 space-y-6 relative z-10 -mt-32">
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2 text-primary/80 group-hover:text-primary transition-colors">
+                        <Crown size={12} />
+                        <span className="text-[9px] font-bold uppercase tracking-[0.3em]">{monarch.title}</span>
                       </div>
-                      <h3 className="text-3xl font-headline font-bold text-white group-hover:text-primary transition-colors">
+                      <h3 className="text-4xl font-headline font-black text-white leading-none group-hover:text-primary transition-colors duration-500">
                         {monarch.name}
                       </h3>
-                      <p className="text-xs font-bold text-muted-foreground tracking-widest uppercase">{monarch.years}</p>
+                      <p className="text-[10px] font-bold text-primary/60 tracking-[0.2em] uppercase">
+                        {monarch.years}
+                      </p>
                     </div>
 
-                    <p className="text-muted-foreground text-sm font-light leading-relaxed line-clamp-2 group-hover:line-clamp-none transition-all duration-500">
+                    <p className="text-muted-foreground text-[13px] font-light leading-relaxed line-clamp-2 group-hover:line-clamp-none transition-all duration-700">
                       {monarch.bio}
                     </p>
 
-                    <div className="pt-4 border-t border-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                      <Button variant="ghost" className="p-0 text-primary text-xs font-bold uppercase tracking-widest hover:bg-transparent hover:text-white">
-                        <History className="mr-2" size={14} /> View History
-                      </Button>
+                    <div className="pt-6 border-t border-white/5 flex justify-between items-center opacity-0 group-hover:opacity-100 transition-all duration-500 translate-y-4 group-hover:translate-y-0">
+                      <span className="text-[10px] font-bold text-white uppercase tracking-widest">View Archive</span>
+                      <ChevronRight size={16} className="text-primary" />
                     </div>
                   </div>
 
-                  {/* Golden Overlay on hover */}
+                  {/* Golden subtle glow on hover */}
                   <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
                 </div>
               );
@@ -242,22 +250,20 @@ export default function RulersPage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-background py-16 border-t border-white/5">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-8">
-            <div className="space-y-2 text-center md:text-left">
-              <div className="flex items-center justify-center md:justify-start gap-3">
-                <Crown className="text-primary" size={20} />
-                <span className="font-headline text-xl font-bold tracking-tight text-white uppercase">
-                  British Greatness
-                </span>
-              </div>
-              <p className="text-muted-foreground text-[13px] font-light">
-                © 2024 British Greatness Project. All rights reserved.
-              </p>
-            </div>
+      {/* Simplified Footer */}
+      <footer className="py-20 border-t border-white/5 bg-black">
+        <div className="container mx-auto px-4 flex flex-col items-center gap-8">
+          <div className="flex items-center gap-4">
+            <div className="w-10 h-px bg-primary/40" />
+            <Crown className="text-primary" size={24} />
+            <div className="w-10 h-px bg-primary/40" />
           </div>
+          <span className="font-headline text-2xl font-bold tracking-tight text-white uppercase">
+            British Greatness
+          </span>
+          <p className="text-muted-foreground text-xs font-light tracking-widest uppercase opacity-60">
+            © 2024 Historical Archives Project
+          </p>
         </div>
       </footer>
     </main>
