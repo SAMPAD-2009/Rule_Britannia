@@ -2,88 +2,76 @@
 "use client";
 
 import React from 'react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { PlaceHolderImages } from '@/app/lib/placeholder-images';
-import { Anchor, Cpu, Crown as CrownIcon, ArrowRight } from 'lucide-react';
+import { Anchor, Crown as CrownIcon, Factory, ArrowRight } from 'lucide-react';
 
 const exhibits = [
   {
     id: 'crown',
     title: 'The Crown',
-    tag: 'Legacy',
     icon: CrownIcon,
-    image: PlaceHolderImages.find(i => i.id === 'crown-exhibit')?.imageUrl,
-    description: 'The symbol of ultimate authority and the unifying force across diverse territories.',
-    stats: ['100+ Rulers', 'Global Symbol']
+    description: 'Trace the lineage of monarchs who defined eras, from the Tudors to the Windsors. View interactive 3D regal artifacts.',
+    action: 'Explore Lineage',
   },
   {
     id: 'navy',
     title: 'Royal Navy',
-    tag: 'Power',
     icon: Anchor,
-    image: PlaceHolderImages.find(i => i.id === 'navy-exhibit')?.imageUrl,
-    description: 'The "Wooden Walls" of England that secured trade routes and projected power globally.',
-    stats: ['700+ Ships', 'Ocean Dominance']
+    description: 'Command the seas with the Royal Navy\'s historic fleet. Rotate detailed 3D models of ships that secured the trade routes.',
+    action: 'View Fleet',
   },
   {
     id: 'industry',
     title: 'Industry',
-    tag: 'Progress',
-    icon: Cpu,
-    image: PlaceHolderImages.find(i => i.id === 'industry-exhibit')?.imageUrl,
-    description: 'The engine of the modern world, fueled by innovation, coal, and Victorian ambition.',
-    stats: ['First Rail', 'Factory Power']
+    icon: Factory,
+    description: 'Witness the innovations that powered the world. From steam engines to railways, experience the boom in 3D.',
+    action: 'See Innovations',
   },
 ];
 
 export function Exhibits() {
   return (
-    <section id="exhibits" className="py-24 container mx-auto px-4">
-      <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
-        <div className="space-y-4">
-          <h2 className="text-5xl font-headline font-bold gold-glow">PILLARS OF EMPIRE</h2>
-          <p className="text-muted-foreground max-w-xl">Delve into the three core foundations of British historical significance through interactive narratives and detailed artifacts.</p>
-        </div>
-        <Badge variant="outline" className="border-primary text-primary px-6 py-2 text-sm">3 INTERACTIVE EXHIBITS</Badge>
+    <section id="exhibits" className="py-32 container mx-auto px-4">
+      <div className="mb-16 space-y-4">
+        <h2 className="text-5xl font-headline font-bold text-white tracking-tight">
+          Historical <span className="text-primary italic">Pillars</span>
+        </h2>
+        <p className="text-muted-foreground text-lg max-w-2xl font-light">
+          Discover the foundations that shaped the empire across centuries through our curated 3D exhibits.
+        </p>
       </div>
 
       <div className="grid md:grid-cols-3 gap-8">
         {exhibits.map((exhibit) => (
-          <Card key={exhibit.id} className="group overflow-hidden border-primary/10 hover:border-primary/40 transition-all duration-500 bg-card/50 hover:shadow-2xl hover:shadow-primary/5">
-            <div className="relative h-64 overflow-hidden">
-               <img 
-                src={exhibit.image} 
-                alt={exhibit.title} 
-                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                data-ai-hint={exhibit.id === 'crown' ? 'royal crown' : exhibit.id === 'navy' ? 'war ship' : 'steam engine'}
-               />
-               <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent opacity-80" />
-               <div className="absolute top-4 left-4">
-                 <Badge className="bg-primary text-white border-0">{exhibit.tag}</Badge>
-               </div>
-               <div className="absolute -bottom-6 right-6 w-16 h-16 bg-primary rounded-full flex items-center justify-center border-4 border-background group-hover:scale-110 transition-transform">
-                 <exhibit.icon className="text-white" size={28} />
-               </div>
+          <div 
+            key={exhibit.id} 
+            className="group relative bg-[#0d0d14] border border-white/5 p-10 rounded-[2rem] hover:border-primary/30 transition-all duration-500 overflow-hidden"
+          >
+            {/* Watermark Icon */}
+            <div className="absolute top-12 right-6 opacity-[0.03] text-white pointer-events-none group-hover:opacity-[0.05] transition-opacity">
+              <exhibit.icon size={180} strokeWidth={1} className="-rotate-12" />
+            </div>
+
+            {/* Icon Box */}
+            <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mb-10 border border-primary/20 shadow-[0_0_15px_rgba(184,138,46,0.1)]">
+              <exhibit.icon className="text-primary" size={24} />
             </div>
             
-            <CardContent className="p-8 pt-10 space-y-6">
-              <h3 className="text-3xl font-headline font-bold text-foreground group-hover:text-primary transition-colors">{exhibit.title}</h3>
-              <p className="text-muted-foreground leading-relaxed italic">"{exhibit.description}"</p>
+            <div className="relative z-10 space-y-6">
+              <h3 className="text-3xl font-headline font-bold text-white group-hover:text-primary transition-colors">
+                {exhibit.title}
+              </h3>
               
-              <div className="flex flex-wrap gap-3">
-                {exhibit.stats.map(s => (
-                  <span key={s} className="text-xs font-bold text-primary/70 tracking-wider uppercase bg-primary/5 px-3 py-1 rounded-md">
-                    {s}
-                  </span>
-                ))}
-              </div>
+              <p className="text-muted-foreground leading-relaxed text-base font-light">
+                {exhibit.description}
+              </p>
 
-              <button className="flex items-center gap-2 text-sm font-bold text-primary border-b border-primary/20 pb-1 group/btn hover:border-primary transition-all">
-                ENTER EXHIBIT <ArrowRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
-              </button>
-            </CardContent>
-          </Card>
+              <div className="pt-6 border-t border-white/5">
+                <button className="flex items-center gap-2 text-sm font-bold text-white group/btn hover:text-primary transition-all uppercase tracking-widest">
+                  {exhibit.action} <ArrowRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
+                </button>
+              </div>
+            </div>
+          </div>
         ))}
       </div>
     </section>
