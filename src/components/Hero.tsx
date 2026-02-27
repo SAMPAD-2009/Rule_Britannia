@@ -2,98 +2,82 @@
 "use client";
 
 import React from 'react';
-import { Play, ShieldCheck, Globe, History } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PlaceHolderImages } from '@/app/lib/placeholder-images';
 
-const stats = [
-  { label: 'Empire Began', value: '1583', icon: History },
-  { label: 'World Covered', value: '24%', icon: Globe },
-  { label: 'Years Spanned', value: '412', icon: ShieldCheck },
-];
-
 export function Hero() {
-  const heroBg = PlaceHolderImages.find(img => img.id === 'hero-bg')?.imageUrl;
+  const globeImage = PlaceHolderImages.find(img => img.id === 'globe-hero')?.imageUrl;
 
   return (
-    <section className="relative min-h-screen flex items-center pt-20 overflow-hidden">
-      {/* Background with Overlay */}
-      <div 
-        className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-30 scale-105"
-        style={{ backgroundImage: `url(${heroBg})` }}
-      />
-      <div className="absolute inset-0 bg-gradient-to-b from-background via-background/90 to-background z-0" />
-      
-      {/* Animated Elements */}
-      <div className="absolute top-1/4 right-0 w-96 h-96 bg-primary/10 rounded-full blur-[120px] -z-1" />
-      <div className="absolute bottom-1/4 left-0 w-64 h-64 bg-accent/5 rounded-full blur-[100px] -z-1" />
+    <section className="relative min-h-screen flex items-center justify-center pt-20 pb-12 overflow-hidden px-4 md:px-8">
+      {/* Dark background container matching the card-like feel in screenshot */}
+      <div className="container max-w-7xl mx-auto relative z-10 glass-morphism rounded-[2rem] border-primary/20 p-8 md:p-16 min-h-[70vh] flex items-center shadow-2xl overflow-hidden">
+        
+        {/* Background glow effects */}
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] -z-1 translate-x-1/2 -translate-y-1/2" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-accent/5 rounded-full blur-[100px] -z-1 -translate-x-1/2 translate-y-1/2" />
 
-      <div className="container mx-auto px-4 z-10 grid lg:grid-cols-2 gap-12 items-center">
-        <div className="space-y-8 animate-in fade-in slide-in-from-left duration-1000">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-semibold tracking-wider uppercase">
-            <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-            Discover the Legacy
-          </div>
-          
-          <h1 className="text-6xl md:text-8xl font-headline font-black leading-[1.1] text-foreground gold-glow">
-            THE EMPIRE <br />
-            <span className="text-primary italic">WHERE THE SUN</span> <br />
-            NEVER SETS
-          </h1>
-          
-          <p className="text-xl text-muted-foreground max-w-xl leading-relaxed font-light">
-            An immersive interactive odyssey through the historical pillars of British greatness. 
-            Experience the crown, the navy, and the industrial might that shaped the modern world.
-          </p>
-          
-          <div className="flex flex-wrap gap-4 pt-4">
-            <Button size="lg" className="bg-primary hover:bg-primary/90 text-white px-8 h-14 text-lg rounded-full">
-              Begin Journey
-            </Button>
-            <Button size="lg" variant="outline" className="border-primary text-primary hover:bg-primary/10 h-14 px-8 text-lg rounded-full group">
-              <Play className="mr-2 h-5 w-5 fill-primary group-hover:fill-primary" />
-              Watch Trailer
-            </Button>
+        <div className="grid lg:grid-cols-2 gap-12 items-center w-full">
+          <div className="space-y-10 animate-in fade-in slide-in-from-left duration-1000">
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-primary/30 text-primary text-xs font-bold tracking-[0.2em] uppercase bg-primary/5">
+              <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+              Interactive 3D Experience
+            </div>
+            
+            {/* Heading */}
+            <div className="space-y-2">
+              <h1 className="text-5xl md:text-8xl font-headline font-black leading-tight text-white">
+                Journey <br />
+                Through
+              </h1>
+              <h1 className="text-5xl md:text-8xl font-headline font-black leading-tight text-primary gold-glow">
+                The Empire
+              </h1>
+            </div>
+            
+            {/* Description with left border */}
+            <div className="pl-6 border-l-2 border-primary/40 max-w-lg">
+              <p className="text-lg md:text-xl text-muted-foreground leading-relaxed font-light">
+                Explore the vast history, legendary rulers, and complex legacy of the British Isles in a fully immersive <span className="font-bold text-foreground">3D timeline</span>.
+              </p>
+            </div>
+            
+            {/* Button */}
+            <div className="flex flex-wrap gap-4 pt-4">
+              <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white px-10 h-14 text-lg rounded-xl font-bold shadow-lg shadow-blue-900/40 transition-all active:scale-95">
+                Begin Journey <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+            </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-8 pt-12 border-t border-primary/10">
-            {stats.map((stat) => (
-              <div key={stat.label} className="space-y-1">
-                <div className="flex items-center gap-2 text-primary/60">
-                  <stat.icon size={16} />
-                  <span className="text-xs font-bold uppercase tracking-widest">{stat.label}</span>
-                </div>
-                <div className="text-3xl font-headline font-bold text-foreground">{stat.value}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="relative animate-in fade-in zoom-in duration-1000 delay-300">
-          <div className="aspect-video rounded-3xl overflow-hidden border-2 border-primary/20 shadow-2xl shadow-primary/10 group">
-             {/* Simple Video Placeholder */}
-             <div className="absolute inset-0 bg-secondary flex items-center justify-center">
-                <div className="w-24 h-24 bg-primary/20 rounded-full flex items-center justify-center border-2 border-primary/50 group-hover:scale-110 transition-transform">
-                  <Play className="text-primary fill-primary ml-1" size={40} />
-                </div>
-             </div>
-             <img 
-              src="https://picsum.photos/seed/trailer/1280/720" 
-              alt="Trailer Preview" 
-              className="w-full h-full object-cover mix-blend-overlay"
-              data-ai-hint="historical trailer"
-             />
-          </div>
-          
-          {/* Floating Card UI */}
-          <div className="absolute -bottom-6 -left-6 glass-morphism p-6 rounded-2xl shadow-xl max-w-[240px] border-primary/30 animate-float">
-             <div className="flex items-center gap-3 mb-3">
-               <div className="p-2 bg-accent/20 rounded-lg">
-                 <Globe className="text-accent" size={20} />
+          {/* Image Container */}
+          <div className="relative animate-in fade-in zoom-in duration-1000 delay-300 flex justify-center lg:justify-end">
+            <div className="relative w-full max-w-[500px] aspect-square rounded-3xl overflow-hidden shadow-2xl group">
+               {/* Label Overlays from Screenshot */}
+               <div className="absolute top-6 right-6 z-20 px-3 py-1 bg-background/80 backdrop-blur-md rounded border border-primary/20 text-[10px] font-bold tracking-widest text-primary uppercase">
+                 19th Century
                </div>
-               <span className="font-bold text-sm">Global Dominion</span>
-             </div>
-             <p className="text-xs text-muted-foreground">The Royal Navy secured trade routes across all seven seas, establishing the first global network.</p>
+               <div className="absolute bottom-6 left-6 z-20 px-3 py-1 bg-background/80 backdrop-blur-md rounded border border-primary/20 text-[10px] font-bold tracking-widest text-primary uppercase">
+                 Pax Britannica
+               </div>
+
+               {/* Shadow Overlay */}
+               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10 opacity-60" />
+
+               <img 
+                src={globeImage} 
+                alt="Golden Globe" 
+                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                data-ai-hint="golden globe"
+               />
+            </div>
+            
+            {/* Blurred background globe for depth */}
+            <div className="absolute -z-10 w-full h-full scale-125 opacity-20 blur-3xl saturate-150">
+               <img src={globeImage} alt="" className="w-full h-full object-contain" />
+            </div>
           </div>
         </div>
       </div>

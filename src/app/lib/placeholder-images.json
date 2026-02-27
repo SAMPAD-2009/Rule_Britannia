@@ -1,3 +1,4 @@
+
 {
   "placeholderImages": [
     {
@@ -5,6 +6,12 @@
       "description": "Antique map of the British Empire",
       "imageUrl": "https://picsum.photos/seed/empire1/1920/1080",
       "imageHint": "antique map"
+    },
+    {
+      "id": "globe-hero",
+      "description": "Golden globe on a stand",
+      "imageUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuB4klBM33xW43L8CRbfCczVub54bdxd5fHxyxhk8Rnb6idY69mwlDl4Es6ukqOVSKrlrCazrLS8vMX4fumGgS0fBoCi74Xlqi0YP7R5T-VMELhLeB9k48Ybr8O1Zg8gJyyGTY8R9cGm7HdeWduZlTiIt8WVhV6mJ60ygR3lRjSMMoYG4sE1aUksj_ApBzJqLmvuSqet4zUHtwrhHjVjpC07mnENqH-UFDUTuaNyXjiDknu8T0PWch72UmLjSmv_WHPdUdASSv9dkOs",
+      "imageHint": "golden globe"
     },
     {
       "id": "crown-exhibit",
