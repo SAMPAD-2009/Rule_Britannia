@@ -14,6 +14,12 @@
       "imageHint": "golden globe"
     },
     {
+      "id": "world-map-bg",
+      "description": "Antique world map for interactive section",
+      "imageUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuAnvYT1G7dUXPLM80Akss8Y8cL8h1Tr0-Gsv3inwHbv2QpW8VqlLfQn7b7HN7eXyc3dYP73zCaW3Ck0Nqc2EcYVvz9mgGLaZ-_hU4r7cmBJQET2PFBJBFbLmfTxkkUDdvYpzK71ATIwNjRVJCoAvtH-u6hk8EdYhAiPopdqJy7TgUyFTWbVSSwYd_oM8pCpvW23wAVldowuNzD39lSOoy0cRNYHMDQGpHeUH4a45rgyd1f1U6gYc_3fZCjyORCSyzZELesWyqNtTwo",
+      "imageHint": "world map"
+    },
+    {
       "id": "crown-exhibit",
       "description": "The Imperial State Crown",
       "imageUrl": "https://picsum.photos/seed/crown/800/600",
