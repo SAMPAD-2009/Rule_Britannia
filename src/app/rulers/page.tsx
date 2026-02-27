@@ -172,19 +172,19 @@ const MonarchCard = React.memo(({ monarch, index }: MonarchCardProps) => {
         <div 
           ref={ref}
           className={cn(
-            "group relative bg-[#0d0d14] rounded-3xl border border-white/5 overflow-hidden transition-all duration-500 cursor-pointer transform-gpu opacity-0 h-[400px]",
+            "group relative bg-[#0d0d14] rounded-3xl border border-white/5 overflow-hidden transition-all duration-500 cursor-pointer transform-gpu opacity-0 h-[400px] isolate",
             "hover:border-primary/40 hover:shadow-[0_20px_40px_rgba(0,0,0,0.6)]",
             isInView && "animate-in fade-in slide-in-from-bottom-8 fill-mode-both duration-700 opacity-100"
           )}
           style={{ animationDelay: `${(index % 4) * 100}ms` }}
         >
-          <div className="relative h-full w-full">
+          <div className="relative h-full w-full overflow-hidden rounded-[inherit]">
             <Image 
               src={imageUrl}
               alt={monarch.name}
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-              className="object-cover transition-all duration-1000 transform-gpu scale-105 group-hover:scale-110"
+              className="object-cover transition-all duration-1000 transform-gpu scale-100 group-hover:scale-110"
               data-ai-hint="monarch portrait"
               loading="lazy"
             />
