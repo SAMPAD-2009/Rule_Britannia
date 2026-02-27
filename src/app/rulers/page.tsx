@@ -278,12 +278,7 @@ const MonarchCard = React.memo(({ monarch, index }: MonarchCardProps) => {
               {monarch.bio}
             </p>
             
-            <div className="pt-4 border-t border-white/5">
-              <div className="flex items-center gap-3">
-                <div className="w-2 h-2 rounded-full bg-primary/20 animate-pulse" />
-                <span className="text-[9px] font-bold text-white/40 uppercase tracking-widest">Historical Archive ID: {monarch.imageId}</span>
-              </div>
-            </div>
+            <div className="pt-4 border-t border-white/5" />
           </div>
         </div>
       </DialogContent>
