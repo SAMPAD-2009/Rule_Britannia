@@ -10,9 +10,6 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
   transpilePackages: ['three', '@react-three/fiber', '@react-three/drei'],
-  experimental: {
-    esmExternals: 'loose'
-  },
   images: {
     remotePatterns: [
       {
