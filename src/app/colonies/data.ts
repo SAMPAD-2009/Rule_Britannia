@@ -1,3 +1,4 @@
+
 export interface Milestone {
   year: string;
   title: string;
@@ -16,7 +17,8 @@ export interface Colony {
   exports: string[];
   milestones: Milestone[];
   mapSnippet: string;
-  coordinates: { x: number; y: number }; // Percentage based for positioning on the map
+  lat: number;
+  lng: number;
 }
 
 export const coloniesData: Colony[] = [
@@ -31,7 +33,8 @@ export const coloniesData: Colony[] = [
     overview: 'India was often referred to as "The Jewel in the Crown" of the British Empire due to its immense wealth in resources and strategic location. The region was a major source of raw materials like cotton, tea, and spices, while also providing a vast market for British manufactured goods.',
     exports: ['Tea', 'Cotton', 'Spices', 'Gems'],
     mapSnippet: 'https://picsum.photos/seed/india-map/400/300',
-    coordinates: { x: 72, y: 55 },
+    lat: 20.5937,
+    lng: 78.9629,
     milestones: [
       {
         year: '1600',
@@ -61,7 +64,8 @@ export const coloniesData: Colony[] = [
     overview: 'Canada was the first to be granted "Dominion" status. It evolved from several British colonies into a unified, self-governing federation, serving as a model for colonial transition to sovereignty.',
     exports: ['Timber', 'Fur', 'Wheat', 'Minerals'],
     mapSnippet: 'https://picsum.photos/seed/canada-map/400/300',
-    coordinates: { x: 20, y: 30 },
+    lat: 56.1304,
+    lng: -106.3468,
     milestones: [
       {
         year: '1763',
@@ -91,7 +95,8 @@ export const coloniesData: Colony[] = [
     overview: 'Originally established as a series of penal colonies, Australia grew into a wealthy collection of states that federated into a Dominion at the start of the 20th century.',
     exports: ['Wool', 'Gold', 'Wheat', 'Meat'],
     mapSnippet: 'https://picsum.photos/seed/australia-map/400/300',
-    coordinates: { x: 85, y: 75 },
+    lat: -25.2744,
+    lng: 133.7751,
     milestones: [
       {
         year: '1770',
@@ -121,7 +126,8 @@ export const coloniesData: Colony[] = [
     overview: 'South Africa was strategically vital for its location on the sea route to India and its immense mineral wealth, leading to complex conflicts between British, Boer, and indigenous peoples.',
     exports: ['Gold', 'Diamonds', 'Wine', 'Fruit'],
     mapSnippet: 'https://picsum.photos/seed/sa-map/400/300',
-    coordinates: { x: 55, y: 75 },
+    lat: -30.5595,
+    lng: 22.9375,
     milestones: [
       {
         year: '1806',
