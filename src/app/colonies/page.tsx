@@ -18,7 +18,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
-// Dynamically import GlobeView with SSR disabled to prevent hydration and internal React conflicts
+// Force dynamic import with no SSR for the 3D globe to prevent hydration errors
 const GlobeView = dynamic(() => import('@/components/GlobeView').then(mod => mod.GlobeView), { 
   ssr: false,
   loading: () => (
@@ -44,7 +44,7 @@ export default function ColoniesPage() {
 
       <div className="flex-1 relative mt-20 overflow-hidden flex">
         {/* Globe Container */}
-        <div className="flex-1 relative bg-[#1a1a24] overflow-hidden group">
+        <div className="flex-1 relative bg-[#050508] overflow-hidden">
           <GlobeView 
             selectedColonyId={selectedColonyId} 
             onSelectColony={(id) => setSelectedColonyId(id)} 
@@ -62,7 +62,7 @@ export default function ColoniesPage() {
 
         {/* Sidebar */}
         <div className={cn(
-          "fixed top-20 right-0 h-[calc(100vh-80px)] w-full md:w-[450px] bg-[#0d0d14] border-l border-white/10 z-30 transition-transform duration-500 transform",
+          "fixed top-20 right-0 h-[calc(100vh-80px)] w-full md:w-[450px] bg-[#0d0d14] border-l border-white/10 z-30 transition-transform duration-500 ease-in-out transform",
           selectedColonyId ? "translate-x-0 shadow-[-20px_0_50px_rgba(0,0,0,0.5)]" : "translate-x-full"
         )}>
           {selectedColony && (
