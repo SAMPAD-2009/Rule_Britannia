@@ -18,7 +18,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
-// Dynamically import GlobeView with SSR disabled to prevent ReactCurrentOwner errors
+// Dynamically import GlobeView with SSR disabled to prevent hydration and internal React conflicts
 const GlobeView = dynamic(() => import('@/components/GlobeView').then(mod => mod.GlobeView), { 
   ssr: false,
   loading: () => (
