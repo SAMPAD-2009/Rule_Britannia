@@ -2,9 +2,9 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
+import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { Navigation } from '@/components/Navigation';
-import { GlobeView } from '@/components/GlobeView';
 import { 
   X, 
   Shield, 
@@ -13,10 +13,22 @@ import {
   Calendar
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { coloniesData, Colony } from './data';
+import { coloniesData } from './data';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
+
+// Dynamically import GlobeView with SSR disabled to prevent ReactCurrentOwner errors
+const GlobeView = dynamic(() => import('@/components/GlobeView').then(mod => mod.GlobeView), { 
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full bg-[#050508] flex items-center justify-center">
+      <div className="text-white/20 animate-pulse text-[10px] tracking-[0.4em] font-bold uppercase">
+        Initialising Archive Globe...
+      </div>
+    </div>
+  )
+});
 
 export default function ColoniesPage() {
   const [selectedColonyId, setSelectedColonyId] = useState<string | null>(null);
