@@ -30,7 +30,7 @@ export function GlobeView({ selectedColonyId, onSelectColony }: GlobeViewProps) 
     sceneRef.current = scene;
     scene.background = new THREE.Color('#050508');
 
-    // Camera adjusted to see a 100-radius sphere
+    // Camera: ThreeGlobe uses a radius of 100. Camera at 280-300 is ideal.
     const camera = new THREE.PerspectiveCamera(45, width / height, 1, 2000);
     camera.position.set(0, 0, 280);
     cameraRef.current = camera;
@@ -46,13 +46,16 @@ export function GlobeView({ selectedColonyId, onSelectColony }: GlobeViewProps) 
     rendererRef.current = renderer;
 
     // --- Lighting ---
+    // Ambient light for general visibility
     const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
     scene.add(ambientLight);
 
+    // Warm key light to highlight the archival texture
     const dLight = new THREE.DirectionalLight(0xffffff, 2);
     dLight.position.set(-200, 200, 200);
     scene.add(dLight);
 
+    // Golden accent light for "Empire" feel
     const goldPointLight = new THREE.PointLight(0xB88A2E, 2, 500);
     goldPointLight.position.set(150, 150, 150);
     scene.add(goldPointLight);
@@ -69,10 +72,10 @@ export function GlobeView({ selectedColonyId, onSelectColony }: GlobeViewProps) 
     controlsRef.current = controls;
 
     // --- Globe Setup ---
-    // Using the suggested high-contrast dark texture
     const globe = new ThreeGlobe()
       .globeImageUrl('https://cdn.jsdelivr.net/npm/three-globe/example/img/earth-dark.jpg')
       .bumpImageUrl('https://unpkg.com/three-globe/example/img/earth-topology.png')
+      // Points/Markers configuration
       .pointsData(coloniesData)
       .pointLat('lat')
       .pointLng('lng')
@@ -80,6 +83,7 @@ export function GlobeView({ selectedColonyId, onSelectColony }: GlobeViewProps) 
       .pointAltitude(0.02)
       .pointRadius(0.8)
       .pointsMerge(true)
+      // Labels configuration
       .labelsData(coloniesData)
       .labelLat('lat')
       .labelLng('lng')
@@ -93,7 +97,7 @@ export function GlobeView({ selectedColonyId, onSelectColony }: GlobeViewProps) 
     globeRef.current = globe;
     scene.add(globe);
 
-    // --- Interaction ---
+    // --- Interaction (Click Detection) ---
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
 
@@ -106,6 +110,7 @@ export function GlobeView({ selectedColonyId, onSelectColony }: GlobeViewProps) 
       raycaster.setFromCamera(mouse, camera);
       const intersects = raycaster.intersectObjects(scene.children, true);
       
+      // Look for objects that have historical data attached
       const clicked = intersects.find(i => (i.object as any).__data);
       if (clicked) {
         onSelectColony((clicked.object as any).__data.id);
@@ -145,6 +150,7 @@ export function GlobeView({ selectedColonyId, onSelectColony }: GlobeViewProps) 
     };
   }, [onSelectColony]);
 
+  // Sync auto-rotation with selection state
   useEffect(() => {
     if (controlsRef.current) {
       controlsRef.current.autoRotate = !selectedColonyId;
@@ -155,6 +161,7 @@ export function GlobeView({ selectedColonyId, onSelectColony }: GlobeViewProps) 
     <div className="w-full h-full relative group bg-[#050508]">
       <div ref={containerRef} className="w-full h-full cursor-grab active:cursor-grabbing" />
       
+      {/* Visual Hint Overlay */}
       <div className="absolute bottom-8 left-8 z-20 pointer-events-none group-hover:opacity-100 opacity-60 transition-opacity">
         <div className="flex flex-col gap-2 p-4 bg-black/80 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl">
           <div className="flex items-center gap-3">
