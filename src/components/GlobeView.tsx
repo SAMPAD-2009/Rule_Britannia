@@ -137,7 +137,10 @@ export function GlobeView({ selectedColonyId, onSelectColony }: GlobeViewProps) 
       <div ref={containerRef} className="w-full h-full" />
       
       {/* Archive Control Panel */}
-      <div className="absolute top-8 right-8 flex flex-col gap-3 z-50">
+      <div className={cn(
+        "absolute top-8 right-8 flex flex-col gap-3 z-50 transition-all duration-500",
+        selectedColonyId ? "opacity-0 pointer-events-none translate-x-10" : "opacity-100 translate-x-0"
+      )}>
         <div className="bg-black/60 backdrop-blur-xl border border-white/10 p-2 rounded-2xl shadow-2xl space-y-2 flex flex-col">
           <Button 
             variant="ghost" 
