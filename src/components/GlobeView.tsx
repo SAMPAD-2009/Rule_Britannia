@@ -33,8 +33,8 @@ function ColonyMarker({
     <group position={position}>
       <mesh 
         onClick={(e) => { e.stopPropagation(); onSelect(colony.id); }} 
-        onPointerOver={() => { document.body.style.cursor = 'pointer'; }} 
-        onPointerOut={() => { document.body.style.cursor = 'auto'; }}
+        onPointerOver={() => { if (typeof document !== 'undefined') document.body.style.cursor = 'pointer'; }} 
+        onPointerOut={() => { if (typeof document !== 'undefined') document.body.style.cursor = 'auto'; }}
       >
         <sphereGeometry args={[0.08, 16, 16]} />
         <meshStandardMaterial 
@@ -61,7 +61,7 @@ function ColonyMarker({
 function Earth() {
   const meshRef = useRef<THREE.Mesh>(null!);
   
-  // Use a reliable texture URL
+  // Use a reliable texture URL for the globe
   const texture = useLoader(THREE.TextureLoader, 'https://unpkg.com/three-globe/example/img/earth-dark.jpg');
   
   useFrame((state, delta) => {
