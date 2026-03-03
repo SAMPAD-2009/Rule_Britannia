@@ -1,8 +1,11 @@
 
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { coloniesData } from '@/app/colonies/data';
+import { ZoomIn, ZoomOut, Lock, Unlock, Compass } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 interface GlobeViewProps {
   selectedColonyId: string | null;
@@ -12,12 +15,11 @@ interface GlobeViewProps {
 export function GlobeView({ selectedColonyId, onSelectColony }: GlobeViewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const globeInstance = useRef<any>(null);
+  const [isLocked, setIsLocked] = useState(false);
 
   useEffect(() => {
     if (!containerRef.current) return;
 
-    // We use a dynamic import for globe.gl inside the useEffect 
-    // to ensure it only runs on the client and avoids SSR issues.
     let globe: any;
     
     const initGlobe = async () => {
@@ -25,8 +27,10 @@ export function GlobeView({ selectedColonyId, onSelectColony }: GlobeViewProps) 
       
       globe = GlobeConstructor()(containerRef.current!)
         .globeImageUrl('https://cdn.jsdelivr.net/npm/three-globe/example/img/earth-dark.jpg')
+        .bumpImageUrl('https://cdn.jsdelivr.net/npm/three-globe/example/img/earth-topology.png')
+        .backgroundImageUrl('https://cdn.jsdelivr.net/npm/three-globe/example/img/night-sky.png')
         .backgroundColor('#050508')
-        .showAtmosphere(false) // Remove the blue atmosphere glow as requested
+        .showAtmosphere(false)
         .pointsData(coloniesData)
         .pointLat('lat')
         .pointLng('lng')
@@ -45,12 +49,26 @@ export function GlobeView({ selectedColonyId, onSelectColony }: GlobeViewProps) 
         .onLabelClick((label: any) => onSelectColony(label.id));
 
       // Standard archival distance settings
-      globe.controls().autoRotate = true;
-      globe.controls().autoRotateSpeed = 0.5;
-      globe.controls().enableDamping = true;
-      globe.controls().dampingFactor = 0.05;
-      globe.controls().minDistance = 200;
-      globe.controls().maxDistance = 600;
+      const controls = globe.controls();
+      controls.autoRotate = true;
+      controls.autoRotateSpeed = 0.5;
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.05;
+      controls.minDistance = 150;
+      controls.maxDistance = 600;
+
+      // Add vintage yellow ochre lighting tint
+      const scene = globe.scene();
+      const THREE = await import('three');
+      
+      // Warm ambient light for the "ochre" vintage look
+      const ambientLight = new THREE.AmbientLight(0xB88A2E, 0.8); // Yellow Ochre tint
+      scene.add(ambientLight);
+
+      // Add a warm point light for highlights
+      const pointLight = new THREE.PointLight(0xffdf8c, 1.5);
+      pointLight.position.set(200, 100, 150);
+      scene.add(pointLight);
 
       // Set initial view
       globe.pointOfView({ lat: 20, lng: 0, altitude: 2.5 });
@@ -60,7 +78,6 @@ export function GlobeView({ selectedColonyId, onSelectColony }: GlobeViewProps) 
 
     initGlobe();
 
-    // Resize handler to keep the globe responsive
     const handleResize = () => {
       if (globeInstance.current && containerRef.current) {
         globeInstance.current.width(containerRef.current.clientWidth);
@@ -72,15 +89,16 @@ export function GlobeView({ selectedColonyId, onSelectColony }: GlobeViewProps) 
     return () => {
       window.removeEventListener('resize', handleResize);
       if (containerRef.current) {
-        containerRef.current.innerHTML = ''; // Clean up Three.js canvas
+        containerRef.current.innerHTML = '';
       }
     };
   }, [onSelectColony]);
 
-  // Handle auto-rotate and point-of-view updates when a colony is selected
+  // Handle auto-rotate and point-of-view updates
   useEffect(() => {
     if (globeInstance.current) {
-      globeInstance.current.controls().autoRotate = !selectedColonyId;
+      // Rotation is controlled by both the lock state and selection state
+      globeInstance.current.controls().autoRotate = !selectedColonyId && !isLocked;
       
       if (selectedColonyId) {
         const colony = coloniesData.find(c => c.id === selectedColonyId);
@@ -89,16 +107,81 @@ export function GlobeView({ selectedColonyId, onSelectColony }: GlobeViewProps) 
             lat: colony.lat, 
             lng: colony.lng, 
             altitude: 1.8 
-          }, 1000); // Smooth transition in 1s
+          }, 1000);
         }
       }
     }
-  }, [selectedColonyId]);
+  }, [selectedColonyId, isLocked]);
+
+  const handleZoom = (delta: number) => {
+    if (!globeInstance.current) return;
+    const currentPov = globeInstance.current.pointOfView();
+    globeInstance.current.pointOfView({
+      ...currentPov,
+      altitude: Math.max(1.2, Math.min(4, currentPov.altitude + delta))
+    }, 400);
+  };
+
+  const toggleLock = () => {
+    setIsLocked(prev => !prev);
+  };
+
+  const resetView = () => {
+    if (!globeInstance.current) return;
+    globeInstance.current.pointOfView({ lat: 20, lng: 0, altitude: 2.5 }, 1000);
+    onSelectColony('');
+  };
 
   return (
     <div className="w-full h-full bg-[#050508] relative overflow-hidden">
       <div ref={containerRef} className="w-full h-full" />
       
+      {/* Archive Control Panel */}
+      <div className="absolute top-8 right-8 flex flex-col gap-3 z-50">
+        <div className="bg-black/60 backdrop-blur-xl border border-white/10 p-2 rounded-2xl shadow-2xl space-y-2 flex flex-col">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={() => handleZoom(-0.5)}
+            className="w-10 h-10 text-white/60 hover:text-primary hover:bg-white/10"
+            title="Zoom In"
+          >
+            <ZoomIn size={18} />
+          </Button>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={() => handleZoom(0.5)}
+            className="w-10 h-10 text-white/60 hover:text-primary hover:bg-white/10"
+            title="Zoom Out"
+          >
+            <ZoomOut size={18} />
+          </Button>
+          <div className="h-px bg-white/10 mx-2" />
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={toggleLock}
+            className={cn(
+              "w-10 h-10 transition-colors",
+              isLocked ? "text-primary bg-primary/10" : "text-white/60 hover:text-primary hover:bg-white/10"
+            )}
+            title={isLocked ? "Unlock Rotation" : "Lock Rotation"}
+          >
+            {isLocked ? <Lock size={18} /> : <Unlock size={18} />}
+          </Button>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={resetView}
+            className="w-10 h-10 text-white/60 hover:text-primary hover:bg-white/10"
+            title="Reset View"
+          >
+            <Compass size={18} />
+          </Button>
+        </div>
+      </div>
+
       <div className="absolute bottom-10 left-1/2 -translate-x-1/2 pointer-events-none">
         <div className="px-6 py-2 bg-black/60 backdrop-blur-xl border border-white/10 rounded-full shadow-2xl">
            <p className="text-[10px] font-bold text-white/60 uppercase tracking-[0.3em]">
