@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { Navigation } from '@/components/Navigation';
@@ -33,6 +33,10 @@ const GlobeView = dynamic(() => import('@/components/GlobeView').then(mod => mod
 export default function ColoniesPage() {
   const [selectedColonyId, setSelectedColonyId] = useState<string | null>(null);
 
+  const handleSelectColony = useCallback((id: string) => {
+    setSelectedColonyId(id);
+  }, []);
+
   const selectedColony = useMemo(() => 
     coloniesData.find(c => c.id === selectedColonyId), 
     [selectedColonyId]
@@ -47,7 +51,7 @@ export default function ColoniesPage() {
         <div className="flex-1 relative bg-[#050508] overflow-hidden">
           <GlobeView 
             selectedColonyId={selectedColonyId} 
-            onSelectColony={(id) => setSelectedColonyId(id)} 
+            onSelectColony={handleSelectColony} 
           />
           
           {/* Overlay Title */}
