@@ -10,7 +10,8 @@ import {
   Shield, 
   Box, 
   ChevronRight,
-  Calendar
+  Calendar,
+  Ship
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { coloniesData } from './data';
@@ -22,9 +23,32 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 const GlobeView = dynamic(() => import('@/components/GlobeView').then(mod => mod.GlobeView), { 
   ssr: false,
   loading: () => (
-    <div className="w-full h-full bg-[#050508] flex items-center justify-center">
-      <div className="text-white/20 animate-pulse text-[10px] tracking-[0.4em] font-bold uppercase">
-        Initialising Archive Globe...
+    <div className="w-full h-full bg-[#050508] flex flex-col items-center justify-center gap-10">
+      <div className="relative">
+        {/* Sailing Ship Animation */}
+        <div className="animate-float flex flex-col items-center">
+          <div className="relative">
+            <Ship size={80} strokeWidth={1} className="text-primary opacity-80" />
+            {/* Simple Sail Shape using SVG */}
+            <div className="absolute top-2 left-1/2 -translate-x-1/2 w-12 h-10 border-r-2 border-primary/40 rounded-tr-full" />
+          </div>
+          {/* Waves */}
+          <div className="mt-2 flex gap-1">
+            {[1, 2, 3].map((i) => (
+              <div 
+                key={i} 
+                className="w-8 h-1 bg-primary/20 rounded-full animate-pulse" 
+                style={{ animationDelay: `${i * 0.2}s` }}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+      <div className="flex flex-col items-center gap-2">
+        <div className="text-primary/60 text-[11px] tracking-[0.6em] font-bold uppercase animate-pulse">
+          Searching New Land
+        </div>
+        <div className="w-32 h-[1px] bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
       </div>
     </div>
   )
@@ -53,15 +77,6 @@ export default function ColoniesPage() {
             selectedColonyId={selectedColonyId} 
             onSelectColony={handleSelectColony} 
           />
-          
-          {/* Overlay Title */}
-          {!selectedColonyId && (
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 pointer-events-none">
-               <h1 className="text-[10vw] font-black text-white/[0.03] select-none uppercase tracking-tighter text-center">
-                 Empire Archives
-               </h1>
-            </div>
-          )}
         </div>
 
         {/* Sidebar */}
