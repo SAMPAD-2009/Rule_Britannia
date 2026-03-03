@@ -14,28 +14,24 @@ interface GlobeViewProps {
 
 export function GlobeView({ selectedColonyId, onSelectColony }: GlobeViewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const controlsRef = useRef<OrbitControls | null>(null);
 
   useEffect(() => {
     if (!containerRef.current) return;
 
-    // Dimensions check - handle cases where container hasn't fully rendered its size
-    let width = containerRef.current.clientWidth;
-    let height = containerRef.current.clientHeight;
-    
-    if (width === 0 || height === 0) {
-      width = window.innerWidth;
-      height = window.innerHeight;
-    }
+    // Dimensions check
+    const width = containerRef.current.clientWidth || window.innerWidth;
+    const height = containerRef.current.clientHeight || window.innerHeight;
 
     // --- Scene Setup ---
     const scene = new THREE.Scene();
     scene.background = new THREE.Color('#050508');
 
-    // Camera: Standard viewing distance for 100-radius globe
+    // --- Camera ---
     const camera = new THREE.PerspectiveCamera(45, width / height, 1, 2000);
-    camera.position.set(0, 0, 350);
+    camera.position.set(0, 0, 400);
 
-    // Renderer
+    // --- Renderer ---
     const renderer = new THREE.WebGLRenderer({ 
       antialias: true, 
       alpha: true,
@@ -64,20 +60,22 @@ export function GlobeView({ selectedColonyId, onSelectColony }: GlobeViewProps) 
       .pointLat('lat')
       .pointLng('lng')
       .pointColor(() => '#B88A2E')
-      .pointAltitude(0.015) // Slightly lift to prevent clipping
-      .pointRadius(1.2)
+      .pointAltitude(0.05) // Lifted to prevent clipping
+      .pointRadius(1.5)
       .labelsData(coloniesData)
       .labelLat('lat')
       .labelLng('lng')
       .labelText('name')
-      .labelSize(1.8)
-      .labelDotRadius(0.6)
+      .labelSize(2.5)
+      .labelDotRadius(0.8)
       .labelColor(() => '#ffffff')
-      .labelAltitude(0.025); // Lift labels further to stay on top
+      .labelAltitude(0.06); // Lifted further to stay on top
 
-    // Critical: Add a backup physical sphere in case the remote texture fails to load
+    scene.add(globe);
+
+    // Backup physical sphere to guarantee visibility while textures load
     const globeBase = new THREE.Mesh(
-      new THREE.SphereGeometry(100, 64, 64),
+      new THREE.SphereGeometry(99, 64, 64),
       new THREE.MeshStandardMaterial({ 
         color: 0x050508,
         roughness: 0.9,
@@ -85,7 +83,6 @@ export function GlobeView({ selectedColonyId, onSelectColony }: GlobeViewProps) 
       })
     );
     scene.add(globeBase);
-    scene.add(globe);
 
     // --- Orbit Controls ---
     const controls = new OrbitControls(camera, renderer.domElement);
@@ -94,27 +91,36 @@ export function GlobeView({ selectedColonyId, onSelectColony }: GlobeViewProps) 
     controls.rotateSpeed = 0.6;
     controls.minDistance = 200;
     controls.maxDistance = 800;
-    controls.autoRotate = !selectedColonyId;
+    controls.autoRotate = true;
     controls.autoRotateSpeed = 0.4;
+    controlsRef.current = controls;
 
     // --- Interaction (Raycasting) ---
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
 
-    const onPointerDown = (event: MouseEvent) => {
-      if (!renderer.domElement) return;
+    const onPointerDown = (event: PointerEvent) => {
+      if (!containerRef.current || !renderer.domElement) return;
+      
       const rect = renderer.domElement.getBoundingClientRect();
       mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
       mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
 
       raycaster.setFromCamera(mouse, camera);
       
-      // Traverse globe children for markers/labels
+      // Check globe children for markers/labels
       const intersects = raycaster.intersectObjects(globe.children, true);
       
-      const clicked = intersects.find(i => (i.object as any).__data);
-      if (clicked) {
-        onSelectColony((clicked.object as any).__data.id);
+      for (const intersect of intersects) {
+        let obj = intersect.object;
+        // Traverse up to find the object with historical metadata
+        while (obj) {
+          if ((obj as any).__data) {
+            onSelectColony((obj as any).__data.id);
+            return;
+          }
+          obj = obj.parent as THREE.Object3D;
+        }
       }
     };
 
@@ -149,7 +155,14 @@ export function GlobeView({ selectedColonyId, onSelectColony }: GlobeViewProps) 
       }
       renderer.dispose();
     };
-  }, [onSelectColony, selectedColonyId]);
+  }, [onSelectColony]);
+
+  // Update autoRotate state without re-initializing the entire scene
+  useEffect(() => {
+    if (controlsRef.current) {
+      controlsRef.current.autoRotate = !selectedColonyId;
+    }
+  }, [selectedColonyId]);
 
   return (
     <div className="w-full h-full bg-[#050508]">
