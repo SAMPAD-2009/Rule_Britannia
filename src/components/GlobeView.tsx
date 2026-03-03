@@ -52,12 +52,12 @@ export function GlobeView({ selectedColonyId, onSelectColony }: GlobeViewProps) 
       color: 0xffffff,
       size: 0.7,
       transparent: true,
-      opacity: 0.5,
+      opacity: 0.3,
       sizeAttenuation: true
     });
 
     const starVertices = [];
-    for (let i = 0; i < 5000; i++) {
+    for (let i = 0; i < 3000; i++) {
       const x = (Math.random() - 0.5) * 2000;
       const y = (Math.random() - 0.5) * 2000;
       const z = (Math.random() - 0.5) * 2000;
@@ -68,15 +68,15 @@ export function GlobeView({ selectedColonyId, onSelectColony }: GlobeViewProps) 
     scene.add(stars);
 
     // --- Lighting ---
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
     scene.add(ambientLight);
 
-    const dLight = new THREE.DirectionalLight(0xffffff, 1.2);
+    const dLight = new THREE.DirectionalLight(0xffffff, 1.0);
     dLight.position.set(-100, 100, 150);
     scene.add(dLight);
 
-    const goldPointLight = new THREE.PointLight(0xB88A2E, 2, 50);
-    goldPointLight.position.set(20, 20, 20);
+    const goldPointLight = new THREE.PointLight(0xB88A2E, 1.5, 60);
+    goldPointLight.position.set(30, 30, 30);
     scene.add(goldPointLight);
 
     // --- Orbit Controls ---
@@ -94,16 +94,14 @@ export function GlobeView({ selectedColonyId, onSelectColony }: GlobeViewProps) 
     const globe = new ThreeGlobe()
       .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-dark.jpg')
       .bumpImageUrl('https://unpkg.com/three-globe/example/img/earth-topology.png')
-      // Custom material for more depth
       .pointsData(coloniesData)
       .pointLat('lat')
       .pointLng('lng')
       .pointColor((d: any) => d.status === 'Crown Jewel' ? '#B88A2E' : '#EAB308')
-      .pointAltitude(0.01)
+      .pointAltitude(0.015)
       .pointRadius(0.18)
       .pointsMerge(true)
       .pointsTransitionDuration(1000)
-      // High-quality labels
       .labelsData(coloniesData)
       .labelLat('lat')
       .labelLng('lng')
@@ -113,41 +111,10 @@ export function GlobeView({ selectedColonyId, onSelectColony }: GlobeViewProps) 
       .labelColor(() => '#ffffff')
       .labelResolution(4)
       .labelIncludeDot(true)
-      .labelAltitude(0.02);
+      .labelAltitude(0.03);
 
     globeRef.current = globe;
     scene.add(globe);
-
-    // Atmosphere Glow Effect
-    const atmosphereGeometry = new THREE.SphereGeometry(5 * 1.1, 64, 64);
-    const atmosphereMaterial = new THREE.ShaderMaterial({
-      uniforms: {
-        glowColor: { value: new THREE.Color('#4f46e5') },
-        viewVector: { value: camera.position }
-      },
-      vertexShader: `
-        varying float intensity;
-        void main() {
-          vec3 vNormal = normalize(normalMatrix * normal);
-          vec3 vNormel = normalize(normalMatrix * viewMatrix[2].xyz);
-          intensity = pow(0.7 - dot(vNormal, vec3(0, 0, 1.0)), 3.0);
-          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-        }
-      `,
-      fragmentShader: `
-        varying float intensity;
-        uniform vec3 glowColor;
-        void main() {
-          vec3 glow = glowColor * intensity;
-          gl_FragColor = vec4(glow, intensity * 0.4);
-        }
-      `,
-      side: THREE.BackSide,
-      blending: THREE.AdditiveBlending,
-      transparent: true
-    });
-    const atmosphere = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
-    scene.add(atmosphere);
 
     // --- Handle Clicks ---
     const raycaster = new THREE.Raycaster();
@@ -189,10 +156,6 @@ export function GlobeView({ selectedColonyId, onSelectColony }: GlobeViewProps) 
     const animate = () => {
       requestAnimationFrame(animate);
       controls.update();
-      
-      // Update atmosphere shader uniforms
-      atmosphereMaterial.uniforms.viewVector.value = camera.position;
-      
       renderer.render(scene, camera);
     };
     animate();
