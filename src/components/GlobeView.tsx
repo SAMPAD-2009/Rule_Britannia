@@ -1,7 +1,6 @@
-
 'use client';
 
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { coloniesData } from '@/app/colonies/data';
 import { ZoomIn, ZoomOut, Lock, Unlock, Compass } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -35,14 +34,14 @@ export function GlobeView({ selectedColonyId, onSelectColony }: GlobeViewProps) 
         .pointLat('lat')
         .pointLng('lng')
         .pointColor(() => '#B88A2E') // Antique Gold
-        .pointAltitude(0.01)
-        .pointRadius(1.2)
+        .pointAltitude(0.02)
+        .pointRadius(1.4)
         .labelsData(coloniesData)
         .labelLat('lat')
         .labelLng('lng')
         .labelText('name')
-        .labelSize(1.5)
-        .labelDotRadius(0.4)
+        .labelSize(1.8)
+        .labelDotRadius(0.5)
         .labelColor(() => '#ffffff')
         .labelResolution(3)
         .onPointClick((point: any) => onSelectColony(point.id))
@@ -56,16 +55,19 @@ export function GlobeView({ selectedColonyId, onSelectColony }: GlobeViewProps) 
       controls.dampingFactor = 0.05;
       controls.minDistance = 150;
       controls.maxDistance = 600;
+      
+      // Explicitly enable touch interactions for mobile
+      controls.enableRotate = true;
+      controls.enableZoom = true;
+      controls.enablePan = false; // Usually cleaner for a globe
 
       // Add vintage yellow ochre lighting tint
       const scene = globe.scene();
       const THREE = await import('three');
       
-      // Warm ambient light for the "ochre" vintage look
-      const ambientLight = new THREE.AmbientLight(0xB88A2E, 0.8); // Yellow Ochre tint
+      const ambientLight = new THREE.AmbientLight(0xB88A2E, 0.8);
       scene.add(ambientLight);
 
-      // Add a warm point light for highlights
       const pointLight = new THREE.PointLight(0xffdf8c, 1.5);
       pointLight.position.set(200, 100, 150);
       scene.add(pointLight);
@@ -74,6 +76,12 @@ export function GlobeView({ selectedColonyId, onSelectColony }: GlobeViewProps) 
       globe.pointOfView({ lat: 20, lng: 0, altitude: 2.5 });
 
       globeInstance.current = globe;
+      
+      // Force initial resize for mobile layout shifts
+      if (containerRef.current) {
+        globe.width(containerRef.current.clientWidth);
+        globe.height(containerRef.current.clientHeight);
+      }
     };
 
     initGlobe();
@@ -97,7 +105,6 @@ export function GlobeView({ selectedColonyId, onSelectColony }: GlobeViewProps) 
   // Handle auto-rotate and point-of-view updates
   useEffect(() => {
     if (globeInstance.current) {
-      // Rotation is controlled by both the lock state and selection state
       globeInstance.current.controls().autoRotate = !selectedColonyId && !isLocked;
       
       if (selectedColonyId) {
@@ -134,7 +141,11 @@ export function GlobeView({ selectedColonyId, onSelectColony }: GlobeViewProps) 
 
   return (
     <div className="w-full h-full bg-[#050508] relative overflow-hidden">
-      <div ref={containerRef} className="w-full h-full" />
+      <div 
+        ref={containerRef} 
+        className="w-full h-full touch-none" 
+        style={{ cursor: isLocked ? 'default' : 'grab' }}
+      />
       
       {/* Archive Control Panel */}
       <div className={cn(
@@ -187,7 +198,7 @@ export function GlobeView({ selectedColonyId, onSelectColony }: GlobeViewProps) 
 
       <div className="absolute bottom-10 left-1/2 -translate-x-1/2 pointer-events-none">
         <div className="px-6 py-2 bg-black/60 backdrop-blur-xl border border-white/10 rounded-full shadow-2xl">
-           <p className="text-[10px] font-bold text-white/60 uppercase tracking-[0.3em]">
+           <p className="text-[10px] font-bold text-white/60 uppercase tracking-[0.3em] text-center">
              Select a Marker to View Historical Archive
            </p>
         </div>
