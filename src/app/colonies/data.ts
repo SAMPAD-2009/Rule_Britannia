@@ -19,6 +19,7 @@ export interface Colony {
   mapSnippet: string;
   lat: number;
   lng: number;
+  color: string;
 }
 
 export const coloniesData: Colony[] = [
@@ -35,6 +36,7 @@ export const coloniesData: Colony[] = [
     mapSnippet: 'https://picsum.photos/seed/india-map/400/300',
     lat: 20.5937,
     lng: 78.9629,
+    color: '#B88A2E', // Antique Gold
     milestones: [
       {
         year: '1600',
@@ -66,6 +68,7 @@ export const coloniesData: Colony[] = [
     mapSnippet: 'https://picsum.photos/seed/canada-map/400/300',
     lat: 56.1304,
     lng: -106.3468,
+    color: '#EB6247', // Red-Orange
     milestones: [
       {
         year: '1763',
@@ -97,6 +100,7 @@ export const coloniesData: Colony[] = [
     mapSnippet: 'https://picsum.photos/seed/australia-map/400/300',
     lat: -25.2744,
     lng: 133.7751,
+    color: '#3b82f6', // Blue
     milestones: [
       {
         year: '1770',
@@ -128,6 +132,7 @@ export const coloniesData: Colony[] = [
     mapSnippet: 'https://picsum.photos/seed/sa-map/400/300',
     lat: -30.5595,
     lng: 22.9375,
+    color: '#10b981', // Green
     milestones: [
       {
         year: '1806',

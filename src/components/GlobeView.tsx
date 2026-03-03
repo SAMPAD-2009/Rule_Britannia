@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -33,7 +34,7 @@ export function GlobeView({ selectedColonyId, onSelectColony }: GlobeViewProps) 
         .pointsData(coloniesData)
         .pointLat('lat')
         .pointLng('lng')
-        .pointColor(() => '#B88A2E') // Antique Gold
+        .pointColor((d: any) => d.color || '#B88A2E') // Custom color from data
         .pointAltitude(0.02)
         .pointRadius(1.4)
         .labelsData(coloniesData)
@@ -42,7 +43,7 @@ export function GlobeView({ selectedColonyId, onSelectColony }: GlobeViewProps) 
         .labelText('name')
         .labelSize(1.8)
         .labelDotRadius(0.5)
-        .labelColor(() => '#ffffff')
+        .labelColor((d: any) => d.color || '#ffffff') // Label matches point color
         .labelResolution(3)
         .onPointClick((point: any) => onSelectColony(point.id))
         .onLabelClick((label: any) => onSelectColony(label.id));
@@ -59,7 +60,7 @@ export function GlobeView({ selectedColonyId, onSelectColony }: GlobeViewProps) 
       // Explicitly enable touch interactions for mobile
       controls.enableRotate = true;
       controls.enableZoom = true;
-      controls.enablePan = false; // Usually cleaner for a globe
+      controls.enablePan = false;
 
       // Add vintage yellow ochre lighting tint
       const scene = globe.scene();
