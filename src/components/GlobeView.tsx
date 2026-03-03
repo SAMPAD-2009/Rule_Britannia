@@ -1,7 +1,6 @@
-
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import ThreeGlobe from 'three-globe';
@@ -30,61 +29,97 @@ export function GlobeView({ selectedColonyId, onSelectColony }: GlobeViewProps) 
 
     const scene = new THREE.Scene();
     sceneRef.current = scene;
-    scene.background = new THREE.Color('#050508');
+    scene.background = new THREE.Color('#030305');
 
-    const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
-    camera.position.z = 15;
+    const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 2000);
+    camera.position.set(0, 0, 18);
     cameraRef.current = camera;
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    const renderer = new THREE.WebGLRenderer({ 
+      antialias: true, 
+      alpha: true,
+      powerPreference: 'high-performance'
+    });
     renderer.setSize(width, height);
-    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.shadowMap.enabled = true;
     containerRef.current.appendChild(renderer.domElement);
     rendererRef.current = renderer;
 
+    // --- Starfield ---
+    const starGeometry = new THREE.BufferGeometry();
+    const starMaterial = new THREE.PointsMaterial({
+      color: 0xffffff,
+      size: 0.7,
+      transparent: true,
+      opacity: 0.5,
+      sizeAttenuation: true
+    });
+
+    const starVertices = [];
+    for (let i = 0; i < 5000; i++) {
+      const x = (Math.random() - 0.5) * 2000;
+      const y = (Math.random() - 0.5) * 2000;
+      const z = (Math.random() - 0.5) * 2000;
+      starVertices.push(x, y, z);
+    }
+    starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
+    const stars = new THREE.Points(starGeometry, starMaterial);
+    scene.add(stars);
+
     // --- Lighting ---
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
     scene.add(ambientLight);
 
-    const pointLight = new THREE.PointLight(0xffffff, 1.5);
-    pointLight.position.set(10, 10, 10);
-    scene.add(pointLight);
+    const dLight = new THREE.DirectionalLight(0xffffff, 1.2);
+    dLight.position.set(-100, 100, 150);
+    scene.add(dLight);
+
+    const goldPointLight = new THREE.PointLight(0xB88A2E, 2, 50);
+    goldPointLight.position.set(20, 20, 20);
+    scene.add(goldPointLight);
 
     // --- Orbit Controls ---
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
     controls.rotateSpeed = 0.5;
-    controls.minDistance = 7;
-    controls.maxDistance = 25;
+    controls.minDistance = 8;
+    controls.maxDistance = 40;
     controls.autoRotate = !selectedColonyId;
-    controls.autoRotateSpeed = 0.5;
+    controls.autoRotateSpeed = 0.3;
     controlsRef.current = controls;
 
     // --- Globe Setup ---
     const globe = new ThreeGlobe()
       .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-dark.jpg')
       .bumpImageUrl('https://unpkg.com/three-globe/example/img/earth-topology.png')
+      // Custom material for more depth
       .pointsData(coloniesData)
       .pointLat('lat')
       .pointLng('lng')
-      .pointColor((d: any) => d.status === 'Crown Jewel' ? '#B88A2E' : '#4f46e5')
-      .pointAltitude(0.02)
-      .pointRadius(0.12)
+      .pointColor((d: any) => d.status === 'Crown Jewel' ? '#B88A2E' : '#EAB308')
+      .pointAltitude(0.01)
+      .pointRadius(0.18)
+      .pointsMerge(true)
+      .pointsTransitionDuration(1000)
+      // High-quality labels
       .labelsData(coloniesData)
       .labelLat('lat')
       .labelLng('lng')
       .labelText('name')
       .labelSize(0.6)
-      .labelDotRadius(0.2)
-      .labelColor(() => 'rgba(255, 255, 255, 0.8)')
-      .labelResolution(3);
+      .labelDotRadius(0.25)
+      .labelColor(() => '#ffffff')
+      .labelResolution(4)
+      .labelIncludeDot(true)
+      .labelAltitude(0.02);
 
     globeRef.current = globe;
     scene.add(globe);
 
-    // Atmosphere
-    const atmosphereGeometry = new THREE.SphereGeometry(5 * 1.05, 64, 64);
+    // Atmosphere Glow Effect
+    const atmosphereGeometry = new THREE.SphereGeometry(5 * 1.1, 64, 64);
     const atmosphereMaterial = new THREE.ShaderMaterial({
       uniforms: {
         glowColor: { value: new THREE.Color('#4f46e5') },
@@ -94,7 +129,8 @@ export function GlobeView({ selectedColonyId, onSelectColony }: GlobeViewProps) 
         varying float intensity;
         void main() {
           vec3 vNormal = normalize(normalMatrix * normal);
-          intensity = pow(0.6 - dot(vNormal, vec3(0, 0, 1.0)), 2.0);
+          vec3 vNormel = normalize(normalMatrix * viewMatrix[2].xyz);
+          intensity = pow(0.7 - dot(vNormal, vec3(0, 0, 1.0)), 3.0);
           gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
         }
       `,
@@ -102,7 +138,8 @@ export function GlobeView({ selectedColonyId, onSelectColony }: GlobeViewProps) 
         varying float intensity;
         uniform vec3 glowColor;
         void main() {
-          gl_FragColor = vec4(glowColor, intensity);
+          vec3 glow = glowColor * intensity;
+          gl_FragColor = vec4(glow, intensity * 0.4);
         }
       `,
       side: THREE.BackSide,
@@ -123,11 +160,10 @@ export function GlobeView({ selectedColonyId, onSelectColony }: GlobeViewProps) 
 
       raycaster.setFromCamera(mouse, camera);
       
-      // Since three-globe objects are complex, we check intersections with the points group
+      // Check labels and points
       const intersects = raycaster.intersectObjects(globe.children, true);
       
       if (intersects.length > 0) {
-        // three-globe stores data in __data
         const clickedObj = intersects.find(intersect => (intersect.object as any).__data);
         if (clickedObj) {
           const colonyData = (clickedObj.object as any).__data;
@@ -140,8 +176,9 @@ export function GlobeView({ selectedColonyId, onSelectColony }: GlobeViewProps) 
 
     // --- Resize Handler ---
     const handleResize = () => {
-      const newWidth = containerRef.current?.clientWidth || 0;
-      const newHeight = containerRef.current?.clientHeight || 0;
+      if (!containerRef.current) return;
+      const newWidth = containerRef.current.clientWidth;
+      const newHeight = containerRef.current.clientHeight;
       camera.aspect = newWidth / newHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(newWidth, newHeight);
@@ -152,6 +189,10 @@ export function GlobeView({ selectedColonyId, onSelectColony }: GlobeViewProps) 
     const animate = () => {
       requestAnimationFrame(animate);
       controls.update();
+      
+      // Update atmosphere shader uniforms
+      atmosphereMaterial.uniforms.viewVector.value = camera.position;
+      
       renderer.render(scene, camera);
     };
     animate();
@@ -161,37 +202,30 @@ export function GlobeView({ selectedColonyId, onSelectColony }: GlobeViewProps) 
       window.removeEventListener('resize', handleResize);
       renderer.domElement.removeEventListener('pointerdown', onPointerDown);
       renderer.dispose();
-      if (containerRef.current) {
+      if (containerRef.current && renderer.domElement) {
         containerRef.current.removeChild(renderer.domElement);
       }
     };
-  }, []);
+  }, [onSelectColony]);
 
   // Sync state changes back to globe
   useEffect(() => {
     if (controlsRef.current) {
       controlsRef.current.autoRotate = !selectedColonyId;
     }
-    
-    if (globeRef.current && selectedColonyId) {
-      const colony = coloniesData.find(c => c.id === selectedColonyId);
-      if (colony && cameraRef.current) {
-        // Basic camera centering logic could go here
-      }
-    }
   }, [selectedColonyId]);
 
   return (
-    <div className="w-full h-full relative">
-      <div ref={containerRef} className="w-full h-full" />
+    <div className="w-full h-full relative group">
+      <div ref={containerRef} className="w-full h-full cursor-grab active:cursor-grabbing" />
       
-      <div className="absolute bottom-8 left-8 z-20 pointer-events-none">
-        <div className="flex flex-col gap-2 p-4 bg-black/60 backdrop-blur-md border border-white/10 rounded-2xl">
+      <div className="absolute bottom-8 left-8 z-20 pointer-events-none group-hover:opacity-100 opacity-60 transition-opacity">
+        <div className="flex flex-col gap-2 p-4 bg-black/80 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl">
           <div className="flex items-center gap-3">
             <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-            <span className="text-[10px] font-bold text-white/60 uppercase tracking-widest">Interactive Archive Globe</span>
+            <span className="text-[10px] font-bold text-white uppercase tracking-widest">Digital Archive Sphere</span>
           </div>
-          <p className="text-[10px] text-white/30 uppercase tracking-[0.1em]">Rotate to explore • Click markers for details</p>
+          <p className="text-[10px] text-white/40 uppercase tracking-[0.1em]">Hold to rotate • Click labels to explore history</p>
         </div>
       </div>
     </div>
