@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-  transpilePackages: ['three', 'three-globe'],
+  transpilePackages: ['three', 'three-globe', 'globe.gl'],
   images: {
     remotePatterns: [
       {
