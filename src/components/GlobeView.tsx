@@ -3,7 +3,7 @@
 
 import React, { useRef, useMemo, Suspense } from 'react';
 import { Canvas, useFrame, useLoader } from '@react-three/fiber';
-import { OrbitControls, Stars, Html, PerspectiveCamera } from '@react-three/drei';
+import { OrbitControls, Stars, Html } from '@react-three/drei';
 import * as THREE from 'three';
 import { coloniesData, Colony } from '@/app/colonies/data';
 import { cn } from '@/lib/utils';
@@ -31,7 +31,11 @@ function ColonyMarker({
   
   return (
     <group position={position}>
-      <mesh onClick={(e) => { e.stopPropagation(); onSelect(colony.id); }} onPointerOver={() => { document.body.style.cursor = 'pointer'; }} onPointerOut={() => { document.body.style.cursor = 'auto'; }}>
+      <mesh 
+        onClick={(e) => { e.stopPropagation(); onSelect(colony.id); }} 
+        onPointerOver={() => { document.body.style.cursor = 'pointer'; }} 
+        onPointerOut={() => { document.body.style.cursor = 'auto'; }}
+      >
         <sphereGeometry args={[0.08, 16, 16]} />
         <meshStandardMaterial 
           color={colony.status === 'Crown Jewel' ? '#B88A2E' : isSelected ? '#ffffff' : '#4f46e5'} 
@@ -57,7 +61,7 @@ function ColonyMarker({
 function Earth() {
   const meshRef = useRef<THREE.Mesh>(null!);
   
-  // Use a fallback or static texture if loader fails
+  // Use a reliable texture URL
   const texture = useLoader(THREE.TextureLoader, 'https://unpkg.com/three-globe/example/img/earth-dark.jpg');
   
   useFrame((state, delta) => {
