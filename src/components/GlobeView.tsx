@@ -1,11 +1,10 @@
 'use client';
 
-import React, { useEffect, useRef, useState, useMemo } from 'react';
+import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import ThreeGlobe from 'three-globe';
 import { coloniesData } from '@/app/colonies/data';
-import { cn } from '@/lib/utils';
 
 interface GlobeViewProps {
   selectedColonyId: string | null;
@@ -14,25 +13,26 @@ interface GlobeViewProps {
 
 export function GlobeView({ selectedColonyId, onSelectColony }: GlobeViewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const globeRef = useRef<ThreeGlobe | null>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
   const sceneRef = useRef<THREE.Scene | null>(null);
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
   const controlsRef = useRef<OrbitControls | null>(null);
+  const globeRef = useRef<ThreeGlobe | null>(null);
 
   useEffect(() => {
     if (!containerRef.current) return;
 
     // --- Scene Setup ---
-    const width = containerRef.current.clientWidth;
-    const height = containerRef.current.clientHeight;
+    const width = containerRef.current.clientWidth || window.innerWidth;
+    const height = containerRef.current.clientHeight || window.innerHeight;
 
     const scene = new THREE.Scene();
     sceneRef.current = scene;
-    scene.background = new THREE.Color('#030305');
+    scene.background = new THREE.Color('#050508');
 
-    const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 2000);
-    camera.position.set(0, 0, 18);
+    // Camera adjusted to see a 100-radius sphere
+    const camera = new THREE.PerspectiveCamera(45, width / height, 1, 2000);
+    camera.position.set(0, 0, 280);
     cameraRef.current = camera;
 
     const renderer = new THREE.WebGLRenderer({ 
@@ -42,125 +42,99 @@ export function GlobeView({ selectedColonyId, onSelectColony }: GlobeViewProps) 
     });
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.shadowMap.enabled = true;
     containerRef.current.appendChild(renderer.domElement);
     rendererRef.current = renderer;
 
-    // --- Starfield ---
-    const starGeometry = new THREE.BufferGeometry();
-    const starMaterial = new THREE.PointsMaterial({
-      color: 0xffffff,
-      size: 0.7,
-      transparent: true,
-      opacity: 0.3,
-      sizeAttenuation: true
-    });
-
-    const starVertices = [];
-    for (let i = 0; i < 3000; i++) {
-      const x = (Math.random() - 0.5) * 2000;
-      const y = (Math.random() - 0.5) * 2000;
-      const z = (Math.random() - 0.5) * 2000;
-      starVertices.push(x, y, z);
-    }
-    starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
-    const stars = new THREE.Points(starGeometry, starMaterial);
-    scene.add(stars);
-
     // --- Lighting ---
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
     scene.add(ambientLight);
 
-    const dLight = new THREE.DirectionalLight(0xffffff, 1.0);
-    dLight.position.set(-100, 100, 150);
+    const dLight = new THREE.DirectionalLight(0xffffff, 2);
+    dLight.position.set(-200, 200, 200);
     scene.add(dLight);
 
-    const goldPointLight = new THREE.PointLight(0xB88A2E, 1.5, 60);
-    goldPointLight.position.set(30, 30, 30);
+    const goldPointLight = new THREE.PointLight(0xB88A2E, 2, 500);
+    goldPointLight.position.set(150, 150, 150);
     scene.add(goldPointLight);
 
     // --- Orbit Controls ---
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
-    controls.rotateSpeed = 0.5;
-    controls.minDistance = 8;
-    controls.maxDistance = 40;
+    controls.rotateSpeed = 0.8;
+    controls.minDistance = 150;
+    controls.maxDistance = 600;
     controls.autoRotate = !selectedColonyId;
-    controls.autoRotateSpeed = 0.3;
+    controls.autoRotateSpeed = 0.5;
     controlsRef.current = controls;
 
     // --- Globe Setup ---
+    // Using the suggested high-contrast dark texture
     const globe = new ThreeGlobe()
-      .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-dark.jpg')
+      .globeImageUrl('https://cdn.jsdelivr.net/npm/three-globe/example/img/earth-dark.jpg')
       .bumpImageUrl('https://unpkg.com/three-globe/example/img/earth-topology.png')
       .pointsData(coloniesData)
       .pointLat('lat')
       .pointLng('lng')
       .pointColor((d: any) => d.status === 'Crown Jewel' ? '#B88A2E' : '#EAB308')
-      .pointAltitude(0.015)
-      .pointRadius(0.18)
+      .pointAltitude(0.02)
+      .pointRadius(0.8)
       .pointsMerge(true)
-      .pointsTransitionDuration(1000)
       .labelsData(coloniesData)
       .labelLat('lat')
       .labelLng('lng')
       .labelText('name')
-      .labelSize(0.6)
-      .labelDotRadius(0.25)
+      .labelSize(1.2)
+      .labelDotRadius(0.5)
       .labelColor(() => '#ffffff')
       .labelResolution(4)
-      .labelIncludeDot(true)
-      .labelAltitude(0.03);
+      .labelAltitude(0.05);
 
     globeRef.current = globe;
     scene.add(globe);
 
-    // --- Handle Clicks ---
+    // --- Interaction ---
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
 
     const onPointerDown = (event: MouseEvent) => {
+      if (!renderer.domElement) return;
       const rect = renderer.domElement.getBoundingClientRect();
       mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
       mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
 
       raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObjects(scene.children, true);
       
-      // Check labels and points
-      const intersects = raycaster.intersectObjects(globe.children, true);
-      
-      if (intersects.length > 0) {
-        const clickedObj = intersects.find(intersect => (intersect.object as any).__data);
-        if (clickedObj) {
-          const colonyData = (clickedObj.object as any).__data;
-          onSelectColony(colonyData.id);
-        }
+      const clicked = intersects.find(i => (i.object as any).__data);
+      if (clicked) {
+        onSelectColony((clicked.object as any).__data.id);
       }
     };
 
     renderer.domElement.addEventListener('pointerdown', onPointerDown);
 
-    // --- Resize Handler ---
-    const handleResize = () => {
-      if (!containerRef.current) return;
-      const newWidth = containerRef.current.clientWidth;
-      const newHeight = containerRef.current.clientHeight;
-      camera.aspect = newWidth / newHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(newWidth, newHeight);
-    };
-    window.addEventListener('resize', handleResize);
-
     // --- Animation Loop ---
     const animate = () => {
-      requestAnimationFrame(animate);
-      controls.update();
-      renderer.render(scene, camera);
+      const frameId = requestAnimationFrame(animate);
+      if (controlsRef.current) controlsRef.current.update();
+      if (rendererRef.current && sceneRef.current && cameraRef.current) {
+        rendererRef.current.render(sceneRef.current, cameraRef.current);
+      }
     };
     animate();
 
-    // --- Cleanup ---
+    // --- Resize Handler ---
+    const handleResize = () => {
+      if (!containerRef.current || !cameraRef.current || !rendererRef.current) return;
+      const w = containerRef.current.clientWidth;
+      const h = containerRef.current.clientHeight;
+      cameraRef.current.aspect = w / h;
+      cameraRef.current.updateProjectionMatrix();
+      rendererRef.current.setSize(w, h);
+    };
+    window.addEventListener('resize', handleResize);
+
     return () => {
       window.removeEventListener('resize', handleResize);
       renderer.domElement.removeEventListener('pointerdown', onPointerDown);
@@ -171,7 +145,6 @@ export function GlobeView({ selectedColonyId, onSelectColony }: GlobeViewProps) 
     };
   }, [onSelectColony]);
 
-  // Sync state changes back to globe
   useEffect(() => {
     if (controlsRef.current) {
       controlsRef.current.autoRotate = !selectedColonyId;
@@ -179,7 +152,7 @@ export function GlobeView({ selectedColonyId, onSelectColony }: GlobeViewProps) 
   }, [selectedColonyId]);
 
   return (
-    <div className="w-full h-full relative group">
+    <div className="w-full h-full relative group bg-[#050508]">
       <div ref={containerRef} className="w-full h-full cursor-grab active:cursor-grabbing" />
       
       <div className="absolute bottom-8 left-8 z-20 pointer-events-none group-hover:opacity-100 opacity-60 transition-opacity">
@@ -188,7 +161,7 @@ export function GlobeView({ selectedColonyId, onSelectColony }: GlobeViewProps) 
             <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
             <span className="text-[10px] font-bold text-white uppercase tracking-widest">Digital Archive Sphere</span>
           </div>
-          <p className="text-[10px] text-white/40 uppercase tracking-[0.1em]">Hold to rotate • Click labels to explore history</p>
+          <p className="text-[10px] text-white/40 uppercase tracking-[0.1em]">Drag to rotate • Click labels to explore history</p>
         </div>
       </div>
     </div>
