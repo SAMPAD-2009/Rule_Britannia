@@ -1,86 +1,12 @@
 
 'use client';
 
-import React, { useRef, useMemo, Suspense } from 'react';
-import { Canvas, useFrame, useLoader } from '@react-three/fiber';
-import { OrbitControls, Stars, Html } from '@react-three/drei';
+import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
-import { coloniesData, Colony } from '@/app/colonies/data';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import ThreeGlobe from 'three-globe';
+import { coloniesData } from '@/app/colonies/data';
 import { cn } from '@/lib/utils';
-
-// Helper to convert lat/lng to 3D Cartesian coordinates
-function latLngToVector3(lat: number, lng: number, radius: number): THREE.Vector3 {
-  const phi = (90 - lat) * (Math.PI / 180);
-  const theta = (lng + 180) * (Math.PI / 180);
-  const x = -radius * Math.sin(phi) * Math.cos(theta);
-  const z = radius * Math.sin(phi) * Math.sin(theta);
-  const y = radius * Math.cos(phi);
-  return new THREE.Vector3(x, y, z);
-}
-
-function ColonyMarker({ 
-  colony, 
-  isSelected, 
-  onSelect 
-}: { 
-  colony: Colony; 
-  isSelected: boolean; 
-  onSelect: (id: string) => void;
-}) {
-  const position = useMemo(() => latLngToVector3(colony.lat, colony.lng, 5.05), [colony.lat, colony.lng]);
-  
-  return (
-    <group position={position}>
-      <mesh 
-        onClick={(e) => { e.stopPropagation(); onSelect(colony.id); }} 
-        onPointerOver={() => { if (typeof document !== 'undefined') document.body.style.cursor = 'pointer'; }} 
-        onPointerOut={() => { if (typeof document !== 'undefined') document.body.style.cursor = 'auto'; }}
-      >
-        <sphereGeometry args={[0.08, 16, 16]} />
-        <meshStandardMaterial 
-          color={colony.status === 'Crown Jewel' ? '#B88A2E' : isSelected ? '#ffffff' : '#4f46e5'} 
-          emissive={colony.status === 'Crown Jewel' ? '#B88A2E' : isSelected ? '#ffffff' : '#4f46e5'}
-          emissiveIntensity={isSelected ? 3 : 1}
-        />
-      </mesh>
-      
-      <Html distanceFactor={10} position={[0, 0.2, 0]}>
-        <div className={cn(
-          "pointer-events-none select-none transition-all duration-300",
-          isSelected ? "scale-110 opacity-100" : "scale-100 opacity-40"
-        )}>
-          <div className="bg-black/90 backdrop-blur-md px-2 py-1 rounded border border-white/20 whitespace-nowrap shadow-2xl">
-            <span className="text-[10px] font-bold text-white uppercase tracking-widest">{colony.name}</span>
-          </div>
-        </div>
-      </Html>
-    </group>
-  );
-}
-
-function Earth() {
-  const meshRef = useRef<THREE.Mesh>(null!);
-  
-  // Use a reliable texture URL for the globe
-  const texture = useLoader(THREE.TextureLoader, 'https://unpkg.com/three-globe/example/img/earth-dark.jpg');
-  
-  useFrame((state, delta) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.y += delta * 0.1;
-    }
-  });
-
-  return (
-    <mesh ref={meshRef}>
-      <sphereGeometry args={[5, 64, 64]} />
-      <meshStandardMaterial 
-        map={texture} 
-        roughness={0.7}
-        metalness={0.2}
-      />
-    </mesh>
-  );
-}
 
 interface GlobeViewProps {
   selectedColonyId: string | null;
@@ -88,45 +14,184 @@ interface GlobeViewProps {
 }
 
 export function GlobeView({ selectedColonyId, onSelectColony }: GlobeViewProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const globeRef = useRef<ThreeGlobe | null>(null);
+  const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
+  const sceneRef = useRef<THREE.Scene | null>(null);
+  const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
+  const controlsRef = useRef<OrbitControls | null>(null);
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    // --- Scene Setup ---
+    const width = containerRef.current.clientWidth;
+    const height = containerRef.current.clientHeight;
+
+    const scene = new THREE.Scene();
+    sceneRef.current = scene;
+    scene.background = new THREE.Color('#050508');
+
+    const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+    camera.position.z = 15;
+    cameraRef.current = camera;
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    containerRef.current.appendChild(renderer.domElement);
+    rendererRef.current = renderer;
+
+    // --- Lighting ---
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+    scene.add(ambientLight);
+
+    const pointLight = new THREE.PointLight(0xffffff, 1.5);
+    pointLight.position.set(10, 10, 10);
+    scene.add(pointLight);
+
+    // --- Orbit Controls ---
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.rotateSpeed = 0.5;
+    controls.minDistance = 7;
+    controls.maxDistance = 25;
+    controls.autoRotate = !selectedColonyId;
+    controls.autoRotateSpeed = 0.5;
+    controlsRef.current = controls;
+
+    // --- Globe Setup ---
+    const globe = new ThreeGlobe()
+      .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-dark.jpg')
+      .bumpImageUrl('https://unpkg.com/three-globe/example/img/earth-topology.png')
+      .pointsData(coloniesData)
+      .pointLat('lat')
+      .pointLng('lng')
+      .pointColor((d: any) => d.status === 'Crown Jewel' ? '#B88A2E' : '#4f46e5')
+      .pointAltitude(0.02)
+      .pointRadius(0.12)
+      .labelsData(coloniesData)
+      .labelLat('lat')
+      .labelLng('lng')
+      .labelText('name')
+      .labelSize(0.6)
+      .labelDotRadius(0.2)
+      .labelColor(() => 'rgba(255, 255, 255, 0.8)')
+      .labelResolution(3);
+
+    globeRef.current = globe;
+    scene.add(globe);
+
+    // Atmosphere
+    const atmosphereGeometry = new THREE.SphereGeometry(5 * 1.05, 64, 64);
+    const atmosphereMaterial = new THREE.ShaderMaterial({
+      uniforms: {
+        glowColor: { value: new THREE.Color('#4f46e5') },
+        viewVector: { value: camera.position }
+      },
+      vertexShader: `
+        varying float intensity;
+        void main() {
+          vec3 vNormal = normalize(normalMatrix * normal);
+          intensity = pow(0.6 - dot(vNormal, vec3(0, 0, 1.0)), 2.0);
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `,
+      fragmentShader: `
+        varying float intensity;
+        uniform vec3 glowColor;
+        void main() {
+          gl_FragColor = vec4(glowColor, intensity);
+        }
+      `,
+      side: THREE.BackSide,
+      blending: THREE.AdditiveBlending,
+      transparent: true
+    });
+    const atmosphere = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
+    scene.add(atmosphere);
+
+    // --- Handle Clicks ---
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+
+    const onPointerDown = (event: MouseEvent) => {
+      const rect = renderer.domElement.getBoundingClientRect();
+      mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+      raycaster.setFromCamera(mouse, camera);
+      
+      // Since three-globe objects are complex, we check intersections with the points group
+      const intersects = raycaster.intersectObjects(globe.children, true);
+      
+      if (intersects.length > 0) {
+        // three-globe stores data in __data
+        const clickedObj = intersects.find(intersect => (intersect.object as any).__data);
+        if (clickedObj) {
+          const colonyData = (clickedObj.object as any).__data;
+          onSelectColony(colonyData.id);
+        }
+      }
+    };
+
+    renderer.domElement.addEventListener('pointerdown', onPointerDown);
+
+    // --- Resize Handler ---
+    const handleResize = () => {
+      const newWidth = containerRef.current?.clientWidth || 0;
+      const newHeight = containerRef.current?.clientHeight || 0;
+      camera.aspect = newWidth / newHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(newWidth, newHeight);
+    };
+    window.addEventListener('resize', handleResize);
+
+    // --- Animation Loop ---
+    const animate = () => {
+      requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    };
+    animate();
+
+    // --- Cleanup ---
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      renderer.domElement.removeEventListener('pointerdown', onPointerDown);
+      renderer.dispose();
+      if (containerRef.current) {
+        containerRef.current.removeChild(renderer.domElement);
+      }
+    };
+  }, []);
+
+  // Sync state changes back to globe
+  useEffect(() => {
+    if (controlsRef.current) {
+      controlsRef.current.autoRotate = !selectedColonyId;
+    }
+    
+    if (globeRef.current && selectedColonyId) {
+      const colony = coloniesData.find(c => c.id === selectedColonyId);
+      if (colony && cameraRef.current) {
+        // Basic camera centering logic could go here
+      }
+    }
+  }, [selectedColonyId]);
+
   return (
-    <div className="w-full h-full bg-[#050508]">
-      <Canvas shadows camera={{ position: [0, 0, 15], fov: 45 }}>
-        <Suspense fallback={null}>
-          <ambientLight intensity={0.8} />
-          <pointLight position={[10, 10, 10]} intensity={2} />
-          <pointLight position={[-10, -10, -10]} intensity={1} />
-          
-          <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
-          
-          <Earth />
-          
-          {coloniesData.map((colony) => (
-            <ColonyMarker 
-              key={colony.id}
-              colony={colony}
-              isSelected={selectedColonyId === colony.id}
-              onSelect={onSelectColony}
-            />
-          ))}
-          
-          <OrbitControls 
-            enablePan={false}
-            enableZoom={true}
-            minDistance={7}
-            maxDistance={25}
-            autoRotate={!selectedColonyId}
-            autoRotateSpeed={0.5}
-          />
-        </Suspense>
-      </Canvas>
+    <div className="w-full h-full relative">
+      <div ref={containerRef} className="w-full h-full" />
       
       <div className="absolute bottom-8 left-8 z-20 pointer-events-none">
         <div className="flex flex-col gap-2 p-4 bg-black/60 backdrop-blur-md border border-white/10 rounded-2xl">
           <div className="flex items-center gap-3">
             <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-            <span className="text-[10px] font-bold text-white/60 uppercase tracking-widest">Interactive Globe</span>
+            <span className="text-[10px] font-bold text-white/60 uppercase tracking-widest">Interactive Archive Globe</span>
           </div>
-          <p className="text-[10px] text-white/30 uppercase tracking-[0.1em]">Rotate to explore • Scroll to zoom</p>
+          <p className="text-[10px] text-white/30 uppercase tracking-[0.1em]">Rotate to explore • Click markers for details</p>
         </div>
       </div>
     </div>

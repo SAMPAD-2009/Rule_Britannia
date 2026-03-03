@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-  transpilePackages: ['three', '@react-three/fiber', '@react-three/drei', 'react-reconciler'],
+  transpilePackages: ['three', 'three-globe'],
   images: {
     remotePatterns: [
       {
