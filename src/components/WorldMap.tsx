@@ -8,6 +8,8 @@ import { Button } from '@/components/ui/button';
 import { PlaceHolderImages } from '@/app/lib/placeholder-images';
 import { useInView } from '@/hooks/use-in-view';
 import { cn } from '@/lib/utils';
+import { useRouter } from 'next/navigation';
+import { routerServerGlobal } from 'next/dist/server/lib/router-utils/router-server-context';
 
 export function WorldMap() {
   const mapImage = PlaceHolderImages.find(img => img.id === 'world-map-bg')?.imageUrl || '';
@@ -56,7 +58,7 @@ export function WorldMap() {
             "pt-4 opacity-0",
             isInView && "animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-300 fill-mode-both opacity-100"
           )}>
-            <Button className="bg-primary hover:bg-primary/90 text-black font-bold h-14 px-10 rounded-xl text-xs tracking-[0.2em] uppercase transition-all hover:scale-105 active:scale-95 shadow-xl shadow-primary/20">
+            <Button className="bg-primary hover:bg-primary/90 text-black font-bold h-14 px-10 rounded-xl text-xs tracking-[0.2em] uppercase transition-all hover:scale-105 active:scale-95 shadow-xl shadow-primary/20" onClick={() => useRouter().push('/colonies')}>
               ENTER MAP VIEW
             </Button>
           </div>
