@@ -126,90 +126,100 @@ export default function TimelinePage() {
         </div>
       </section>
 
-      <div className="container max-w-7xl mx-auto px-4 grid lg:grid-cols-[1fr_300px] gap-12">
-        <div className="relative">
-          <div className="absolute left-6 md:left-8 top-0 bottom-0 w-px bg-gradient-to-b from-primary/10 via-primary/40 to-primary/10" />
-
-          <div className="space-y-32 relative">
-            {filteredEvents.length > 0 ? (
-              filteredEvents.map((event) => (
-                <div 
-                  key={event.id} 
-                  ref={el => { eventRefs.current[event.year] = el; }}
-                  data-year={event.year}
-                >
-                  <TimelineItem event={event} isActive={event.year === activeYear} />
-                </div>
-              ))
-            ) : (
-              <div className="py-20 text-center space-y-4">
-                <Box size={48} className="mx-auto text-primary/20" />
-                <h3 className="text-2xl font-headline text-white/60">No archives found for "{searchQuery}"</h3>
-                <Button variant="ghost" className="text-primary" onClick={() => setSearchQuery('')}>Clear search</Button>
-              </div>
-            )}
+      <div className="container max-w-7xl mx-auto px-4">
+        {/* Mobile Century Selector */}
+        <div className="lg:hidden mb-12 space-y-4">
+          <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/40 text-center">Jump to Century</h4>
+          <div className="flex flex-wrap justify-center gap-2">
+            {[17, 18, 19, 20].map((c) => (
+              <button 
+                key={c}
+                onClick={() => {
+                  const firstEvent = timelineEvents.find(e => Math.floor(e.year / 100) + 1 === c);
+                  if (firstEvent) scrollToYear(firstEvent.year);
+                }}
+                className={cn(
+                  "px-4 py-2 rounded-lg text-[10px] font-bold tracking-widest uppercase transition-all border",
+                  currentCentury === c ? "bg-primary text-black border-primary" : "bg-white/5 text-white/40 border-white/10 hover:text-white"
+                )}
+              >
+                {c}th
+              </button>
+            ))}
           </div>
         </div>
 
-        <aside className="space-y-8 hidden lg:block sticky top-32 h-fit">
-          <div className="glass-morphism p-6 rounded-2xl border-white/5 bg-black/20 space-y-4">
-            <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/40">Active Era</h4>
-            <div className="space-y-2">
-              <div className="flex justify-between items-center">
-                <span className="text-sm font-bold text-white flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-                  {activeYear < 1815 ? 'Mercantile Expansion' : activeYear < 1914 ? 'Pax Britannica' : 'Imperial Transition'}
-                </span>
-              </div>
-              <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-primary shadow-[0_0_10px_rgba(184,138,46,0.5)] transition-all duration-1000" 
-                  style={{ width: `${((activeYear - 1600) / 400) * 100}%` }}
-                />
-              </div>
-              <div className="flex justify-between text-[9px] font-bold text-white/20 uppercase tracking-widest">
-                <span>1600</span>
-                <span>2000</span>
-              </div>
+        <div className="grid lg:grid-cols-[1fr_300px] gap-12">
+          <div className="relative">
+            <div className="absolute left-6 md:left-8 top-0 bottom-0 w-px bg-gradient-to-b from-primary/10 via-primary/40 to-primary/10" />
+
+            <div className="space-y-32 relative">
+              {filteredEvents.length > 0 ? (
+                filteredEvents.map((event) => (
+                  <div 
+                    key={event.id} 
+                    ref={el => { eventRefs.current[event.year] = el; }}
+                    data-year={event.year}
+                  >
+                    <TimelineItem event={event} isActive={event.year === activeYear} />
+                  </div>
+                ))
+              ) : (
+                <div className="py-20 text-center space-y-4">
+                  <Box size={48} className="mx-auto text-primary/20" />
+                  <h3 className="text-2xl font-headline text-white/60">No archives found for "{searchQuery}"</h3>
+                  <Button variant="ghost" className="text-primary" onClick={() => setSearchQuery('')}>Clear search</Button>
+                </div>
+              )}
             </div>
           </div>
 
-          <div className="glass-morphism p-6 rounded-2xl border-white/5 bg-black/20 space-y-4">
-            <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/40">Jump to Century</h4>
-            <nav className="space-y-1">
-              {[17, 18, 19, 20].map((c) => (
-                <button 
-                  key={c}
-                  onClick={() => {
-                    const firstEvent = timelineEvents.find(e => Math.floor(e.year / 100) + 1 === c);
-                    if (firstEvent) scrollToYear(firstEvent.year);
-                  }}
-                  className={cn(
-                    "w-full text-left px-4 py-3 rounded-lg text-xs font-bold tracking-widest uppercase transition-all flex justify-between items-center",
-                    currentCentury === c ? "bg-primary/20 text-primary border border-primary/20" : "text-white/40 hover:text-white hover:bg-white/5"
-                  )}
-                >
-                  {c}th Century
-                  {currentCentury === c && <Box size={14} />}
-                </button>
-              ))}
-            </nav>
-          </div>
+          <aside className="space-y-8 hidden lg:block sticky top-32 h-fit">
+            <div className="glass-morphism p-6 rounded-2xl border-white/5 bg-black/20 space-y-4">
+              <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/40">Active Era</h4>
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-bold text-white flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                    {activeYear < 1815 ? 'Mercantile Expansion' : activeYear < 1914 ? 'Pax Britannica' : 'Imperial Transition'}
+                  </span>
+                </div>
+                <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-primary shadow-[0_0_10px_rgba(184,138,46,0.5)] transition-all duration-1000" 
+                    style={{ width: `${((activeYear - 1600) / 400) * 100}%` }}
+                  />
+                </div>
+                <div className="flex justify-between text-[9px] font-bold text-white/20 uppercase tracking-widest">
+                  <span>1600</span>
+                  <span>2000</span>
+                </div>
+              </div>
+            </div>
 
-          <div className="glass-morphism p-6 rounded-2xl border-white/5 bg-black/20 space-y-4">
-             <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/40">Archive Stats</h4>
-             <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                   <p className="text-xl font-bold text-white">{timelineEvents.length}</p>
-                   <p className="text-[8px] font-bold text-white/30 uppercase tracking-widest">Milestones</p>
-                </div>
-                <div className="space-y-1">
-                   <p className="text-xl font-bold text-white">{new Set(timelineEvents.map(e => e.type)).size}</p>
-                   <p className="text-[8px] font-bold text-white/30 uppercase tracking-widest">Categories</p>
-                </div>
-             </div>
-          </div>
-        </aside>
+            <div className="glass-morphism p-6 rounded-2xl border-white/5 bg-black/20 space-y-4">
+              <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/40">Jump to Century</h4>
+              <nav className="space-y-1">
+                {[17, 18, 19, 20].map((c) => (
+                  <button 
+                    key={c}
+                    onClick={() => {
+                      const firstEvent = timelineEvents.find(e => Math.floor(e.year / 100) + 1 === c);
+                      if (firstEvent) scrollToYear(firstEvent.year);
+                    }}
+                    className={cn(
+                      "w-full text-left px-4 py-3 rounded-lg text-xs font-bold tracking-widest uppercase transition-all flex justify-between items-center",
+                      currentCentury === c ? "bg-primary/20 text-primary border border-primary/20" : "text-white/40 hover:text-white hover:bg-white/5"
+                    )}
+                  >
+                    {c}th Century
+                    {currentCentury === c && <Box size={14} />}
+                  </button>
+                ))}
+              </nav>
+            </div>
+          </aside>
+        </div>
       </div>
 
       <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-50">
