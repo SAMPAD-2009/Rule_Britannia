@@ -7,6 +7,8 @@ export interface TimelineEvent {
   description: string;
   type: 'charter' | 'battle' | 'coronation' | 'innovation' | 'settlement' | 'legislation' | 'decolonization';
   imageUrl: string;
+  videoUrl?: string; // Link for video interaction
+  threeModelUrl?: string; // Link for 3D scene interaction
   imagePosition: 'left' | 'right' | 'full';
   linkText: string;
   badge?: string;
@@ -21,9 +23,11 @@ export const timelineEvents: TimelineEvent[] = [
     description: "Queen Elizabeth I grants a royal charter to 'The Governor and Company of Merchants of London Trading into the East-Indies', setting the stage for global trade dominance.",
     type: 'charter',
     imageUrl: 'https://picsum.photos/seed/eic1/800/500',
+    threeModelUrl: 'https://sketchfab.com/models/placeholder-ship', // Placeholder 3D link
     imagePosition: 'left',
     linkText: 'ENTER SCENE',
-    badge: '3D Scene'
+    badge: '3D Scene',
+    interactive: true
   },
   {
     id: 'jamestown',
@@ -32,8 +36,11 @@ export const timelineEvents: TimelineEvent[] = [
     description: 'The first permanent English settlement in the Americas is established in Virginia, marking the beginning of the British colonial presence in North America.',
     type: 'settlement',
     imageUrl: 'https://picsum.photos/seed/jamestown/800/500',
+    videoUrl: 'https://www.youtube.com/watch?v=placeholder1', // Placeholder video link
     imagePosition: 'right',
-    linkText: 'VIEW MAPS'
+    linkText: 'VIEW MAPS',
+    interactive: true,
+    badge: 'Historical Video'
   },
   {
     id: 'union',
@@ -52,8 +59,11 @@ export const timelineEvents: TimelineEvent[] = [
     description: 'Robert Clive\'s victory over the Nawab of Bengal establishes Company rule in Bengal, marking the start of British imperial dominance in India.',
     type: 'battle',
     imageUrl: 'https://picsum.photos/seed/plassey/800/500',
+    threeModelUrl: 'https://sketchfab.com/models/placeholder-battlefield',
     imagePosition: 'right',
-    linkText: 'VIEW ARTIFACTS'
+    linkText: 'VIEW ARTIFACTS',
+    interactive: true,
+    badge: '3D Artifacts'
   },
   {
     id: 'waterloo',
@@ -63,6 +73,7 @@ export const timelineEvents: TimelineEvent[] = [
     description: 'The final defeat of Napoleon Bonaparte, ending 23 years of recurrent warfare between France and the other powers of Europe. This victory ushered in the Pax Britannica.',
     type: 'battle',
     imageUrl: 'https://picsum.photos/seed/waterloo/1200/600',
+    videoUrl: 'https://www.youtube.com/watch?v=placeholder2',
     imagePosition: 'full',
     linkText: 'Explore Battlefield',
     interactive: true,
@@ -85,8 +96,11 @@ export const timelineEvents: TimelineEvent[] = [
     description: 'The coronation of Queen Victoria marks the beginning of the Victorian era, a period of unprecedented industrial, cultural, and military expansion.',
     type: 'coronation',
     imageUrl: 'https://picsum.photos/seed/victoria/800/500',
+    videoUrl: 'https://www.youtube.com/watch?v=placeholder3',
     imagePosition: 'left',
-    linkText: 'VIEW CORONATION'
+    linkText: 'VIEW CORONATION',
+    interactive: true,
+    badge: 'Ceremony Film'
   },
   {
     id: 'exhibition',
@@ -95,8 +109,11 @@ export const timelineEvents: TimelineEvent[] = [
     description: 'The first international exhibition of manufactured products, held in the Crystal Palace, showcasing the industrial might of the British Empire.',
     type: 'innovation',
     imageUrl: 'https://picsum.photos/seed/crystal/800/500',
+    threeModelUrl: 'https://sketchfab.com/models/crystal-palace',
     imagePosition: 'right',
-    linkText: 'VIEW INNOVATIONS'
+    linkText: 'VIEW INNOVATIONS',
+    interactive: true,
+    badge: '3D Crystal Palace'
   },
   {
     id: 'wwi',
@@ -125,7 +142,10 @@ export const timelineEvents: TimelineEvent[] = [
     description: 'Britain transfers sovereignty of Hong Kong to China, widely regarded as the end of the British Empire as a global territorial power.',
     type: 'decolonization',
     imageUrl: 'https://picsum.photos/seed/hk1997/800/500',
+    videoUrl: 'https://www.youtube.com/watch?v=placeholder4',
     imagePosition: 'full',
-    linkText: 'VIEW CEREMONY'
+    linkText: 'VIEW CEREMONY',
+    interactive: true,
+    badge: 'Handover Video'
   }
 ];

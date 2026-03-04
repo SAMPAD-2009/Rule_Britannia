@@ -12,7 +12,8 @@ import {
   Box,
   Search,
   Eye,
-  X
+  X,
+  Layers
 } from 'lucide-react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
@@ -20,6 +21,13 @@ import { timelineEvents, TimelineEvent } from './data';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 export default function TimelinePage() {
   const [activeYear, setActiveYear] = useState(1600);
@@ -98,11 +106,11 @@ export default function TimelinePage() {
 
       {/* Hero Header */}
       <section className="pt-40 pb-12 px-4 text-center">
-        <h1 className="text-6xl md:text-8xl font-headline font-black text-primary gold-glow mb-6 tracking-tight">
+        <h1 className="text-6xl md:text-8xl font-headline font-black text-primary gold-glow mb-6 tracking-tight text-center w-full block">
           The Sun Never Sets
         </h1>
         <p className="text-muted-foreground text-lg md:text-xl font-light max-w-2xl mx-auto leading-relaxed mb-12">
-          Traverse the centuries. Witness the rise and fall of an empire through interactive 3D dioramas.
+          Traverse the centuries. Witness the rise and fall of an empire through interactive 3D dioramas and historical archives.
         </p>
 
         {/* Global Search */}
@@ -306,9 +314,11 @@ function TimelineItem({ event, isActive }: { event: TimelineEvent, isActive: boo
                   <Image src={event.imageUrl} alt={event.title} fill className="object-cover opacity-80 group-hover/img:scale-105 transition-transform duration-[2000ms]" />
                   {event.interactive && (
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <button className="w-16 h-16 rounded-full bg-primary flex items-center justify-center text-black shadow-2xl hover:scale-110 transition-transform">
-                        <Play fill="currentColor" size={24} />
-                      </button>
+                      <InteractionModal event={event}>
+                        <button className="w-16 h-16 rounded-full bg-primary flex items-center justify-center text-black shadow-2xl hover:scale-110 transition-transform">
+                          <Play fill="currentColor" size={24} />
+                        </button>
+                      </InteractionModal>
                     </div>
                   )}
                </div>
@@ -318,9 +328,11 @@ function TimelineItem({ event, isActive }: { event: TimelineEvent, isActive: boo
                </p>
 
                <div className="flex gap-4 pt-4">
-                  <Button className="bg-primary hover:bg-primary/90 text-black font-bold h-12 px-8 rounded-lg text-xs tracking-widest uppercase flex-1 md:flex-none">
-                    {event.linkText}
-                  </Button>
+                  <InteractionModal event={event}>
+                    <Button className="bg-primary hover:bg-primary/90 text-black font-bold h-12 px-8 rounded-lg text-xs tracking-widest uppercase flex-1 md:flex-none">
+                      {event.linkText}
+                    </Button>
+                  </InteractionModal>
                </div>
             </div>
           </div>
@@ -347,14 +359,78 @@ function TimelineItem({ event, isActive }: { event: TimelineEvent, isActive: boo
                <p className="text-muted-foreground leading-relaxed font-light text-base">
                  {event.description}
                </p>
-               <button className="flex items-center gap-2 text-[10px] font-bold text-primary hover:text-primary/80 transition-colors tracking-[0.3em] uppercase group/btn">
-                 {event.linkText} 
-                 <ChevronRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
-               </button>
+               <InteractionModal event={event}>
+                 <button className="flex items-center gap-2 text-[10px] font-bold text-primary hover:text-primary/80 transition-colors tracking-[0.3em] uppercase group/btn">
+                   {event.linkText} 
+                   <ChevronRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
+                 </button>
+               </InteractionModal>
             </div>
           </div>
         )}
       </div>
     </div>
+  );
+}
+
+function InteractionModal({ event, children }: { event: TimelineEvent, children: React.ReactNode }) {
+  if (!event.interactive) return <>{children}</>;
+
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        {children}
+      </DialogTrigger>
+      <DialogContent className="max-w-4xl bg-[#0d0d14] border-white/10 p-0 overflow-hidden rounded-3xl gap-0">
+        <DialogHeader className="p-8 border-b border-white/5">
+           <div className="flex items-center gap-3 text-primary mb-2">
+             {event.videoUrl ? <Play size={16} /> : <Layers size={16} />}
+             <span className="text-[10px] font-bold uppercase tracking-[0.3em]">{event.badge || 'INTERACTIVE ARCHIVE'}</span>
+           </div>
+           <DialogTitle className="text-3xl font-headline font-black text-white">
+             {event.title}
+           </DialogTitle>
+        </DialogHeader>
+
+        <div className="aspect-video bg-black relative flex items-center justify-center overflow-hidden">
+           {event.videoUrl ? (
+             <div className="w-full h-full flex flex-col items-center justify-center text-center p-12 space-y-6">
+                <div className="w-24 h-24 rounded-full border-4 border-primary/20 flex items-center justify-center text-primary/40">
+                  <Play size={48} />
+                </div>
+                <div className="space-y-2">
+                   <h4 className="text-xl font-bold text-white">Historical Archive Video</h4>
+                   <p className="text-muted-foreground text-sm max-w-sm">Video Player Interface: Loading footage from {event.year} archives...</p>
+                </div>
+                <div className="text-[10px] font-bold text-primary/40 uppercase tracking-widest border border-primary/20 px-4 py-2 rounded">
+                  External Reference: {event.videoUrl}
+                </div>
+             </div>
+           ) : event.threeModelUrl ? (
+             <div className="w-full h-full flex flex-col items-center justify-center text-center p-12 space-y-6">
+                <div className="w-24 h-24 rounded-full border-4 border-primary/20 flex items-center justify-center text-primary/40">
+                  <Layers size={48} />
+                </div>
+                <div className="space-y-2">
+                   <h4 className="text-xl font-bold text-white">3D Diorama Archive</h4>
+                   <p className="text-muted-foreground text-sm max-w-sm">Loading 3D assets for the {event.title} simulation...</p>
+                </div>
+                <div className="text-[10px] font-bold text-primary/40 uppercase tracking-widest border border-primary/20 px-4 py-2 rounded">
+                  3D Model Source: {event.threeModelUrl}
+                </div>
+             </div>
+           ) : (
+             <div className="text-white/20 italic">No interactive data available.</div>
+           )}
+        </div>
+
+        <div className="p-8 bg-white/5">
+           <p className="text-muted-foreground text-sm leading-relaxed">
+             This interactive scene provides a detailed look into the {event.title} of {event.year}. 
+             Explore the high-fidelity reconstruction based on verified historical records.
+           </p>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }
