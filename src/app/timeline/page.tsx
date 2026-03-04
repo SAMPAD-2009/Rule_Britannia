@@ -22,6 +22,8 @@ import {
   Dialog,
   DialogContent,
   DialogTrigger,
+  DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 
 export default function TimelinePage() {
@@ -377,6 +379,10 @@ function InteractionWrapper({ event, children }: { event: TimelineEvent, childre
         {children}
       </DialogTrigger>
       <DialogContent className="max-w-5xl bg-black border-white/10 p-0 overflow-hidden rounded-3xl gap-0 aspect-video">
+        <div className="sr-only">
+          <DialogTitle>{event.title} - 3D Archive</DialogTitle>
+          <DialogDescription>Interactive 3D diorama exploration of the {event.title} historical event.</DialogDescription>
+        </div>
         <div className="w-full h-full relative flex items-center justify-center overflow-hidden">
            {event.threeModelUrl ? (
              <div className="w-full h-full flex flex-col items-center justify-center text-center p-12 space-y-6">
