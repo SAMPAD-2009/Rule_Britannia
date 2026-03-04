@@ -18,6 +18,7 @@ import { timelineEvents, TimelineEvent } from './data';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import { useInView } from '@/hooks/use-in-view';
 import {
   Dialog,
   DialogContent,
@@ -267,10 +268,11 @@ export default function TimelinePage() {
 }
 
 function TimelineItem({ event, isActive }: { event: TimelineEvent, isActive: boolean }) {
+  const [ref, isInView] = useInView({ threshold: 0.1, triggerOnce: true });
   const isFullWidth = event.imagePosition === 'full';
 
   return (
-    <div className="group relative pl-16 md:pl-24 transition-all duration-500">
+    <div ref={ref} className="group relative pl-16 md:pl-24 transition-all duration-500">
       <div className={cn(
         "absolute left-5 md:left-7 top-0 w-3 h-3 rounded-full border-2 border-[#11100b] z-10 transition-all duration-500",
         isActive ? "bg-yellow-500 scale-[2] shadow-[0_0_15px_rgba(234,179,8,0.6)]" : "bg-white/20 group-hover:bg-primary/50"
@@ -283,8 +285,9 @@ function TimelineItem({ event, isActive }: { event: TimelineEvent, isActive: boo
       </div>
 
       <div className={cn(
-        "glass-morphism rounded-3xl border border-white/5 overflow-hidden transition-all duration-700",
-        isActive ? "bg-black/40 border-primary/30 ring-1 ring-primary/20 scale-[1.02]" : "bg-black/20 hover:border-white/10"
+        "glass-morphism rounded-3xl border border-white/5 overflow-hidden transition-all duration-700 opacity-0",
+        isActive ? "bg-black/40 border-primary/30 ring-1 ring-primary/20 scale-[1.02]" : "bg-black/20 hover:border-white/10",
+        isInView && "animate-in fade-in slide-in-from-bottom-10 duration-1000 fill-mode-both opacity-100"
       )}>
         
         {isFullWidth ? (
