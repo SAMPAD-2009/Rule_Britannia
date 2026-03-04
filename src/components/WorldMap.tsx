@@ -57,11 +57,11 @@ export function WorldMap() {
             "pt-4 opacity-0",
             isInView && "animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-300 fill-mode-both opacity-100"
           )}>
-            <Link href="/colonies" passHref legacyBehavior>
-              <Button className="bg-primary hover:bg-primary/90 text-black font-bold h-14 px-10 rounded-xl text-xs tracking-[0.2em] uppercase transition-all hover:scale-105 active:scale-95 shadow-xl shadow-primary/20">
+            <Button asChild className="bg-primary hover:bg-primary/90 text-black font-bold h-14 px-10 rounded-xl text-xs tracking-[0.2em] uppercase transition-all hover:scale-105 active:scale-95 shadow-xl shadow-primary/20">
+              <Link href="/colonies">
                 ENTER MAP VIEW
-              </Button>
-            </Link>
+              </Link>
+            </Button>
           </div>
         </div>
         
