@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { Navigation } from '@/components/Navigation';
 import { 
   Play, 
@@ -9,34 +9,123 @@ import {
   ChevronRight, 
   ChevronLeft, 
   Maximize2,
-  PlayCircle,
+  Box,
+  Search,
   Eye,
-  Box
+  X
 } from 'lucide-react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { timelineEvents, TimelineEvent } from './data';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
 
 export default function TimelinePage() {
-  const [activeYear, setActiveYear] = useState(1815);
+  const [activeYear, setActiveYear] = useState(1600);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isAutoPlaying, setIsAutoPlaying] = useState(false);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const eventRefs = useRef<{ [key: number]: HTMLDivElement | null }>({});
+
+  const filteredEvents = useMemo(() => {
+    return timelineEvents.filter(event => 
+      event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      event.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      event.year.toString().includes(searchQuery)
+    );
+  }, [searchQuery]);
+
+  // Observer to track active year on scroll
+  useEffect(() => {
+    const observerOptions = {
+      root: null,
+      rootMargin: '-20% 0px -70% 0px',
+      threshold: 0
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const year = parseInt(entry.target.getAttribute('data-year') || '1600');
+          setActiveYear(year);
+        }
+      });
+    }, observerOptions);
+
+    Object.values(eventRefs.current).forEach((ref) => {
+      if (ref) observer.observe(ref);
+    });
+
+    return () => observer.disconnect();
+  }, [filteredEvents]);
+
+  const scrollToYear = (year: number) => {
+    const element = eventRefs.current[year];
+    if (element) {
+      const offset = 120; // Navigation offset
+      const bodyRect = document.body.getBoundingClientRect().top;
+      const elementRect = element.getBoundingClientRect().top;
+      const elementPosition = elementRect - bodyRect;
+      const offsetPosition = elementPosition - offset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  const navigateNext = () => {
+    const currentIndex = timelineEvents.findIndex(e => e.year === activeYear);
+    if (currentIndex < timelineEvents.length - 1) {
+      scrollToYear(timelineEvents[currentIndex + 1].year);
+    }
+  };
+
+  const navigatePrev = () => {
+    const currentIndex = timelineEvents.findIndex(e => e.year === activeYear);
+    if (currentIndex > 0) {
+      scrollToYear(timelineEvents[currentIndex - 1].year);
+    }
+  };
+
+  const currentCentury = Math.floor(activeYear / 100) + 1;
 
   return (
-    <main className="min-h-screen bg-[#11100b] text-[#e5e1d3] font-body selection:bg-primary/30">
+    <main className="min-h-screen bg-[#11100b] text-[#e5e1d3] font-body selection:bg-primary/30 pb-40">
       <Navigation />
 
       {/* Hero Header */}
-      <section className="pt-40 pb-20 px-4 text-center">
+      <section className="pt-40 pb-12 px-4 text-center">
         <h1 className="text-6xl md:text-8xl font-headline font-black text-primary gold-glow mb-6 tracking-tight">
           The Sun Never Sets
         </h1>
-        <p className="text-muted-foreground text-lg md:text-xl font-light max-w-2xl mx-auto leading-relaxed">
+        <p className="text-muted-foreground text-lg md:text-xl font-light max-w-2xl mx-auto leading-relaxed mb-12">
           Traverse the centuries. Witness the rise and fall of an empire through interactive 3D dioramas.
         </p>
+
+        {/* Global Search */}
+        <div className="max-w-xl mx-auto relative group">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-primary/40 group-focus-within:text-primary transition-colors" size={20} />
+          <Input 
+            placeholder="Search chronicles, events, or years..."
+            className="h-14 pl-12 pr-12 bg-white/5 border-white/10 rounded-2xl text-lg focus:ring-primary/20 focus:border-primary transition-all"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          {searchQuery && (
+            <button 
+              onClick={() => setSearchQuery('')}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-white/20 hover:text-white transition-colors"
+            >
+              <X size={20} />
+            </button>
+          )}
+        </div>
       </section>
 
-      <div className="container max-w-7xl mx-auto px-4 grid lg:grid-cols-[1fr_300px] gap-12 pb-40">
+      <div className="container max-w-7xl mx-auto px-4 grid lg:grid-cols-[1fr_300px] gap-12">
         
         {/* Timeline Stream */}
         <div className="relative">
@@ -44,50 +133,48 @@ export default function TimelinePage() {
           <div className="absolute left-6 md:left-8 top-0 bottom-0 w-px bg-gradient-to-b from-primary/10 via-primary/40 to-primary/10" />
 
           <div className="space-y-32 relative">
-            {timelineEvents.map((event, idx) => (
-              <TimelineItem key={event.id} event={event} isActive={event.year === activeYear} />
-            ))}
+            {filteredEvents.length > 0 ? (
+              filteredEvents.map((event) => (
+                <div 
+                  key={event.id} 
+                  ref={el => { eventRefs.current[event.year] = el; }}
+                  data-year={event.year}
+                >
+                  <TimelineItem event={event} isActive={event.year === activeYear} />
+                </div>
+              ))
+            ) : (
+              <div className="py-20 text-center space-y-4">
+                <Box size={48} className="mx-auto text-primary/20" />
+                <h3 className="text-2xl font-headline text-white/60">No archives found for "{searchQuery}"</h3>
+                <Button variant="ghost" className="text-primary" onClick={() => setSearchQuery('')}>Clear search</Button>
+              </div>
+            )}
           </div>
         </div>
 
         {/* Sidebar Widgets */}
-        <aside className="space-y-8 hidden lg:block">
+        <aside className="space-y-8 hidden lg:block sticky top-32 h-fit">
           {/* Current Era Widget */}
           <div className="glass-morphism p-6 rounded-2xl border-white/5 bg-black/20 space-y-4">
-            <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/40">Current Era</h4>
+            <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/40">Active Era</h4>
             <div className="space-y-2">
               <div className="flex justify-between items-center">
                 <span className="text-sm font-bold text-white flex items-center gap-2">
                   <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-                  Pax Britannica
+                  {activeYear < 1815 ? 'Mercantile Expansion' : activeYear < 1914 ? 'Pax Britannica' : 'Imperial Transition'}
                 </span>
               </div>
               <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
-                <div className="h-full bg-primary w-2/3 shadow-[0_0_10px_rgba(184,138,46,0.5)]" />
+                <div 
+                  className="h-full bg-primary shadow-[0_0_10px_rgba(184,138,46,0.5)] transition-all duration-1000" 
+                  style={{ width: `${((activeYear - 1600) / 400) * 100}%` }}
+                />
               </div>
               <div className="flex justify-between text-[9px] font-bold text-white/20 uppercase tracking-widest">
-                <span>1815</span>
-                <span>1914</span>
+                <span>1600</span>
+                <span>2000</span>
               </div>
-            </div>
-          </div>
-
-          {/* Empire Extent Placeholder */}
-          <div className="glass-morphism p-6 rounded-2xl border-white/5 bg-black/20 space-y-4">
-            <div className="flex justify-between items-center">
-               <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/40">Empire Extent</h4>
-               <Maximize2 size={14} className="text-white/20" />
-            </div>
-            <div className="aspect-square w-full bg-gradient-to-br from-white/5 to-white/10 rounded-xl relative overflow-hidden group">
-               <div className="absolute inset-0 flex items-center justify-center">
-                 <div className="w-24 h-24 rounded-full border border-white/10 flex items-center justify-center">
-                   <div className="w-16 h-16 rounded-full border border-white/20 animate-pulse" />
-                 </div>
-               </div>
-               <div className="absolute bottom-4 left-4 right-4 text-center">
-                  <p className="text-[9px] font-bold text-primary uppercase tracking-widest">Empire Extent</p>
-                  <p className="text-[10px] text-white/40">View Global Map</p>
-               </div>
             </div>
           </div>
 
@@ -95,39 +182,80 @@ export default function TimelinePage() {
           <div className="glass-morphism p-6 rounded-2xl border-white/5 bg-black/20 space-y-4">
             <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/40">Jump to Century</h4>
             <nav className="space-y-1">
-              {['17th Century', '18th Century', '19th Century', '20th Century'].map((century) => (
+              {[17, 18, 19, 20].map((c) => (
                 <button 
-                  key={century}
+                  key={c}
+                  onClick={() => {
+                    const firstEvent = timelineEvents.find(e => Math.floor(e.year / 100) + 1 === c);
+                    if (firstEvent) scrollToYear(firstEvent.year);
+                  }}
                   className={cn(
                     "w-full text-left px-4 py-3 rounded-lg text-xs font-bold tracking-widest uppercase transition-all flex justify-between items-center",
-                    century === '19th Century' ? "bg-primary/20 text-primary border border-primary/20" : "text-white/40 hover:text-white hover:bg-white/5"
+                    currentCentury === c ? "bg-primary/20 text-primary border border-primary/20" : "text-white/40 hover:text-white hover:bg-white/5"
                   )}
                 >
-                  {century}
-                  {century === '19th Century' && <Box size={14} />}
+                  {c}th Century
+                  {currentCentury === c && <Box size={14} />}
                 </button>
               ))}
             </nav>
+          </div>
+
+          {/* Statistics Summary */}
+          <div className="glass-morphism p-6 rounded-2xl border-white/5 bg-black/20 space-y-4">
+             <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/40">Archive Stats</h4>
+             <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                   <p className="text-xl font-bold text-white">{timelineEvents.length}</p>
+                   <p className="text-[8px] font-bold text-white/30 uppercase tracking-widest">Milestones</p>
+                </div>
+                <div className="space-y-1">
+                   <p className="text-xl font-bold text-white">{new Set(timelineEvents.map(e => e.type)).size}</p>
+                   <p className="text-[8px] font-bold text-white/30 uppercase tracking-widest">Categories</p>
+                </div>
+             </div>
           </div>
         </aside>
       </div>
 
       {/* Chronology Controller */}
       <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-50">
-        <div className="glass-morphism bg-black/40 backdrop-blur-2xl border border-white/10 px-8 py-3 rounded-full flex items-center gap-10 shadow-2xl">
+        <div className="glass-morphism bg-black/60 backdrop-blur-2xl border border-white/10 px-8 py-4 rounded-full flex items-center gap-10 shadow-2xl">
            <div className="flex items-center gap-6">
-             <button className="text-white/40 hover:text-primary transition-colors"><ChevronLeft size={20} /></button>
-             <button className="text-white/40 hover:text-primary transition-colors"><Play size={18} fill="currentColor" /></button>
-             <button className="text-white/40 hover:text-primary transition-colors"><ChevronRight size={20} /></button>
+             <button 
+              onClick={navigatePrev}
+              disabled={activeYear === timelineEvents[0].year}
+              className="text-white/40 hover:text-primary transition-colors disabled:opacity-20"
+             >
+              <ChevronLeft size={24} />
+             </button>
+             <button 
+              onClick={() => setIsAutoPlaying(!isAutoPlaying)}
+              className={cn("transition-colors", isAutoPlaying ? "text-primary" : "text-white/40 hover:text-primary")}
+             >
+              <Play size={20} fill={isAutoPlaying ? "currentColor" : "none"} />
+             </button>
+             <button 
+              onClick={navigateNext}
+              disabled={activeYear === timelineEvents[timelineEvents.length - 1].year}
+              className="text-white/40 hover:text-primary transition-colors disabled:opacity-20"
+             >
+              <ChevronRight size={24} />
+             </button>
            </div>
            <div className="h-8 w-px bg-white/10" />
-           <div className="text-center">
+           <div className="text-center min-w-[80px]">
              <p className="text-[8px] font-bold uppercase tracking-[0.3em] text-white/30 mb-0.5">Year</p>
-             <p className="text-xl font-headline font-black text-white tracking-widest">{activeYear}</p>
+             <p className="text-2xl font-headline font-black text-white tracking-widest">{activeYear}</p>
            </div>
            <div className="h-8 w-px bg-white/10" />
            <div className="flex items-center gap-6">
-             <button className="text-white/40 hover:text-primary transition-colors"><RotateCcw size={16} /></button>
+             <button 
+              onClick={() => scrollToYear(timelineEvents[0].year)}
+              className="text-white/40 hover:text-primary transition-colors"
+             >
+              <RotateCcw size={18} />
+             </button>
            </div>
         </div>
       </div>
@@ -139,7 +267,7 @@ function TimelineItem({ event, isActive }: { event: TimelineEvent, isActive: boo
   const isFullWidth = event.imagePosition === 'full';
 
   return (
-    <div className="group relative pl-16 md:pl-24">
+    <div className="group relative pl-16 md:pl-24 transition-all duration-500">
       {/* Node Marker */}
       <div className={cn(
         "absolute left-5 md:left-7 top-0 w-3 h-3 rounded-full border-2 border-[#11100b] z-10 transition-all duration-500",
@@ -164,7 +292,7 @@ function TimelineItem({ event, isActive }: { event: TimelineEvent, isActive: boo
                <div className="flex justify-between items-start">
                   <div className="space-y-1">
                     <h3 className="text-5xl font-headline font-black text-primary gold-glow leading-none">{event.year}</h3>
-                    <p className="text-[10px] font-bold text-white/40 tracking-[0.4em] uppercase">{event.subtitle}</p>
+                    <p className="text-[10px] font-bold text-white/40 tracking-[0.4em] uppercase">{event.subtitle || 'Empire Milestone'}</p>
                   </div>
                   {event.badge && (
                     <Badge variant="outline" className="border-primary/40 text-primary text-[8px] font-bold px-3 py-1 bg-primary/5 uppercase tracking-widest">
@@ -176,18 +304,13 @@ function TimelineItem({ event, isActive }: { event: TimelineEvent, isActive: boo
                
                <div className="relative aspect-video rounded-2xl overflow-hidden border border-white/10 group/img">
                   <Image src={event.imageUrl} alt={event.title} fill className="object-cover opacity-80 group-hover/img:scale-105 transition-transform duration-[2000ms]" />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <button className="w-16 h-16 rounded-full bg-primary flex items-center justify-center text-black shadow-2xl hover:scale-110 transition-transform">
-                       <Play fill="currentColor" size={24} />
-                    </button>
-                  </div>
-                  <div className="absolute bottom-6 left-6 flex items-center gap-4 bg-black/60 backdrop-blur-md border border-white/10 p-3 rounded-xl">
-                    <div className="w-1 h-8 bg-primary rounded-full" />
-                    <div className="space-y-0.5">
-                      <p className="text-[9px] font-bold text-primary uppercase tracking-widest">Napoleon's Defeat</p>
-                      <p className="text-[10px] text-white/60">Wellington & Blücher</p>
+                  {event.interactive && (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <button className="w-16 h-16 rounded-full bg-primary flex items-center justify-center text-black shadow-2xl hover:scale-110 transition-transform">
+                        <Play fill="currentColor" size={24} />
+                      </button>
                     </div>
-                  </div>
+                  )}
                </div>
 
                <p className="text-muted-foreground leading-relaxed italic text-lg font-light">
@@ -197,9 +320,6 @@ function TimelineItem({ event, isActive }: { event: TimelineEvent, isActive: boo
                <div className="flex gap-4 pt-4">
                   <Button className="bg-primary hover:bg-primary/90 text-black font-bold h-12 px-8 rounded-lg text-xs tracking-widest uppercase flex-1 md:flex-none">
                     {event.linkText}
-                  </Button>
-                  <Button variant="outline" className="border-white/10 text-white/60 hover:text-white hover:bg-white/5 h-12 px-8 rounded-lg text-xs tracking-widest uppercase flex-1 md:flex-none">
-                    Read Analysis
                   </Button>
                </div>
             </div>
@@ -229,7 +349,7 @@ function TimelineItem({ event, isActive }: { event: TimelineEvent, isActive: boo
                </p>
                <button className="flex items-center gap-2 text-[10px] font-bold text-primary hover:text-primary/80 transition-colors tracking-[0.3em] uppercase group/btn">
                  {event.linkText} 
-                 {event.type === 'battle' ? <Eye size={14} className="group-hover/btn:translate-x-1 transition-transform" /> : <ChevronRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />}
+                 <ChevronRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
                </button>
             </div>
           </div>
