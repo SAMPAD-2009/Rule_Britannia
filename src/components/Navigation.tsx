@@ -10,7 +10,7 @@ const navItems = [
   { name: 'Home', href: '/', icon: Landmark },
   { name: 'Colonies', href: '/colonies', icon: Compass },
   { name: 'Rulers', href: '/rulers', icon: Users },
-  { name: 'Timeline', href: '/#timeline', icon: Clock },
+  { name: 'Timeline', href: '/timeline', icon: Clock },
 ];
 
 export function Navigation() {
