@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useState, useMemo, useEffect, useRef } from 'react';
@@ -314,11 +313,11 @@ function TimelineItem({ event, isActive }: { event: TimelineEvent, isActive: boo
                   <Image src={event.imageUrl} alt={event.title} fill className="object-cover opacity-80 group-hover/img:scale-105 transition-transform duration-[2000ms]" />
                   {event.interactive && (
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <InteractionModal event={event}>
+                      <InteractionWrapper event={event}>
                         <button className="w-16 h-16 rounded-full bg-primary flex items-center justify-center text-black shadow-2xl hover:scale-110 transition-transform">
                           <Play fill="currentColor" size={24} />
                         </button>
-                      </InteractionModal>
+                      </InteractionWrapper>
                     </div>
                   )}
                </div>
@@ -328,11 +327,11 @@ function TimelineItem({ event, isActive }: { event: TimelineEvent, isActive: boo
                </p>
 
                <div className="flex gap-4 pt-4">
-                  <InteractionModal event={event}>
+                  <InteractionWrapper event={event}>
                     <Button className="bg-primary hover:bg-primary/90 text-black font-bold h-12 px-8 rounded-lg text-xs tracking-widest uppercase flex-1 md:flex-none">
                       {event.linkText}
                     </Button>
-                  </InteractionModal>
+                  </InteractionWrapper>
                </div>
             </div>
           </div>
@@ -359,12 +358,12 @@ function TimelineItem({ event, isActive }: { event: TimelineEvent, isActive: boo
                <p className="text-muted-foreground leading-relaxed font-light text-base">
                  {event.description}
                </p>
-               <InteractionModal event={event}>
+               <InteractionWrapper event={event}>
                  <button className="flex items-center gap-2 text-[10px] font-bold text-primary hover:text-primary/80 transition-colors tracking-[0.3em] uppercase group/btn">
                    {event.linkText} 
                    <ChevronRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
                  </button>
-               </InteractionModal>
+               </InteractionWrapper>
             </div>
           </div>
         )}
@@ -373,9 +372,30 @@ function TimelineItem({ event, isActive }: { event: TimelineEvent, isActive: boo
   );
 }
 
-function InteractionModal({ event, children }: { event: TimelineEvent, children: React.ReactNode }) {
+/**
+ * A wrapper component that handles interaction logic.
+ * If event.videoUrl is present, it redirects the user directly.
+ * Otherwise, it uses a Dialog for 3D diorama archives.
+ */
+function InteractionWrapper({ event, children }: { event: TimelineEvent, children: React.ReactNode }) {
   if (!event.interactive) return <>{children}</>;
 
+  // Direct redirection for video links
+  if (event.videoUrl) {
+    return (
+      <a 
+        href={event.videoUrl} 
+        target="_blank" 
+        rel="noopener noreferrer" 
+        className="cursor-pointer contents"
+        title="Open Video Archive"
+      >
+        {children}
+      </a>
+    );
+  }
+
+  // Use Dialog for 3D scene archives
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -384,8 +404,8 @@ function InteractionModal({ event, children }: { event: TimelineEvent, children:
       <DialogContent className="max-w-4xl bg-[#0d0d14] border-white/10 p-0 overflow-hidden rounded-3xl gap-0">
         <DialogHeader className="p-8 border-b border-white/5">
            <div className="flex items-center gap-3 text-primary mb-2">
-             {event.videoUrl ? <Play size={16} /> : <Layers size={16} />}
-             <span className="text-[10px] font-bold uppercase tracking-[0.3em]">{event.badge || 'INTERACTIVE ARCHIVE'}</span>
+             <Layers size={16} />
+             <span className="text-[10px] font-bold uppercase tracking-[0.3em]">{event.badge || '3D ARCHIVE'}</span>
            </div>
            <DialogTitle className="text-3xl font-headline font-black text-white">
              {event.title}
@@ -393,27 +413,14 @@ function InteractionModal({ event, children }: { event: TimelineEvent, children:
         </DialogHeader>
 
         <div className="aspect-video bg-black relative flex items-center justify-center overflow-hidden">
-           {event.videoUrl ? (
-             <div className="w-full h-full flex flex-col items-center justify-center text-center p-12 space-y-6">
-                <div className="w-24 h-24 rounded-full border-4 border-primary/20 flex items-center justify-center text-primary/40">
-                  <Play size={48} />
-                </div>
-                <div className="space-y-2">
-                   <h4 className="text-xl font-bold text-white">Historical Archive Video</h4>
-                   <p className="text-muted-foreground text-sm max-w-sm">Video Player Interface: Loading footage from {event.year} archives...</p>
-                </div>
-                <div className="text-[10px] font-bold text-primary/40 uppercase tracking-widest border border-primary/20 px-4 py-2 rounded">
-                  External Reference: {event.videoUrl}
-                </div>
-             </div>
-           ) : event.threeModelUrl ? (
+           {event.threeModelUrl ? (
              <div className="w-full h-full flex flex-col items-center justify-center text-center p-12 space-y-6">
                 <div className="w-24 h-24 rounded-full border-4 border-primary/20 flex items-center justify-center text-primary/40">
                   <Layers size={48} />
                 </div>
                 <div className="space-y-2">
                    <h4 className="text-xl font-bold text-white">3D Diorama Archive</h4>
-                   <p className="text-muted-foreground text-sm max-w-sm">Loading 3D assets for the {event.title} simulation...</p>
+                   <p className="text-muted-foreground text-sm max-w-sm">Loading high-fidelity 3D assets for the {event.title} simulation...</p>
                 </div>
                 <div className="text-[10px] font-bold text-primary/40 uppercase tracking-widest border border-primary/20 px-4 py-2 rounded">
                   3D Model Source: {event.threeModelUrl}
