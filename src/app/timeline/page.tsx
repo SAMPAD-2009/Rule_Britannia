@@ -7,10 +7,8 @@ import {
   RotateCcw, 
   ChevronRight, 
   ChevronLeft, 
-  Maximize2,
   Box,
   Search,
-  Eye,
   X,
   Layers
 } from 'lucide-react';
@@ -23,8 +21,6 @@ import { Input } from '@/components/ui/input';
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
 
@@ -32,7 +28,6 @@ export default function TimelinePage() {
   const [activeYear, setActiveYear] = useState(1600);
   const [searchQuery, setSearchQuery] = useState('');
   const [isAutoPlaying, setIsAutoPlaying] = useState(false);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const eventRefs = useRef<{ [key: number]: HTMLDivElement | null }>({});
 
   const filteredEvents = useMemo(() => {
@@ -43,7 +38,6 @@ export default function TimelinePage() {
     );
   }, [searchQuery]);
 
-  // Observer to track active year on scroll
   useEffect(() => {
     const observerOptions = {
       root: null,
@@ -70,7 +64,7 @@ export default function TimelinePage() {
   const scrollToYear = (year: number) => {
     const element = eventRefs.current[year];
     if (element) {
-      const offset = 120; // Navigation offset
+      const offset = 120;
       const bodyRect = document.body.getBoundingClientRect().top;
       const elementRect = element.getBoundingClientRect().top;
       const elementPosition = elementRect - bodyRect;
@@ -103,7 +97,6 @@ export default function TimelinePage() {
     <main className="min-h-screen bg-[#11100b] text-[#e5e1d3] font-body selection:bg-primary/30 pb-40">
       <Navigation />
 
-      {/* Hero Header */}
       <section className="pt-40 pb-12 px-4 text-center">
         <h1 className="text-6xl md:text-8xl font-headline font-black text-primary gold-glow mb-6 tracking-tight text-center w-full block">
           The Sun Never Sets
@@ -112,7 +105,6 @@ export default function TimelinePage() {
           Traverse the centuries. Witness the rise and fall of an empire through interactive 3D dioramas and historical archives.
         </p>
 
-        {/* Global Search */}
         <div className="max-w-xl mx-auto relative group">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-primary/40 group-focus-within:text-primary transition-colors" size={20} />
           <Input 
@@ -133,10 +125,7 @@ export default function TimelinePage() {
       </section>
 
       <div className="container max-w-7xl mx-auto px-4 grid lg:grid-cols-[1fr_300px] gap-12">
-        
-        {/* Timeline Stream */}
         <div className="relative">
-          {/* Vertical Line */}
           <div className="absolute left-6 md:left-8 top-0 bottom-0 w-px bg-gradient-to-b from-primary/10 via-primary/40 to-primary/10" />
 
           <div className="space-y-32 relative">
@@ -160,9 +149,7 @@ export default function TimelinePage() {
           </div>
         </div>
 
-        {/* Sidebar Widgets */}
         <aside className="space-y-8 hidden lg:block sticky top-32 h-fit">
-          {/* Current Era Widget */}
           <div className="glass-morphism p-6 rounded-2xl border-white/5 bg-black/20 space-y-4">
             <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/40">Active Era</h4>
             <div className="space-y-2">
@@ -185,7 +172,6 @@ export default function TimelinePage() {
             </div>
           </div>
 
-          {/* Jump to Century */}
           <div className="glass-morphism p-6 rounded-2xl border-white/5 bg-black/20 space-y-4">
             <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/40">Jump to Century</h4>
             <nav className="space-y-1">
@@ -208,7 +194,6 @@ export default function TimelinePage() {
             </nav>
           </div>
 
-          {/* Statistics Summary */}
           <div className="glass-morphism p-6 rounded-2xl border-white/5 bg-black/20 space-y-4">
              <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/40">Archive Stats</h4>
              <div className="grid grid-cols-2 gap-4">
@@ -225,7 +210,6 @@ export default function TimelinePage() {
         </aside>
       </div>
 
-      {/* Chronology Controller */}
       <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-50">
         <div className="glass-morphism bg-black/60 backdrop-blur-2xl border border-white/10 px-8 py-4 rounded-full flex items-center gap-10 shadow-2xl">
            <div className="flex items-center gap-6">
@@ -275,7 +259,6 @@ function TimelineItem({ event, isActive }: { event: TimelineEvent, isActive: boo
 
   return (
     <div className="group relative pl-16 md:pl-24 transition-all duration-500">
-      {/* Node Marker */}
       <div className={cn(
         "absolute left-5 md:left-7 top-0 w-3 h-3 rounded-full border-2 border-[#11100b] z-10 transition-all duration-500",
         isActive ? "bg-yellow-500 scale-[2] shadow-[0_0_15px_rgba(234,179,8,0.6)]" : "bg-white/20 group-hover:bg-primary/50"
@@ -287,7 +270,6 @@ function TimelineItem({ event, isActive }: { event: TimelineEvent, isActive: boo
         )}
       </div>
 
-      {/* Event Card */}
       <div className={cn(
         "glass-morphism rounded-3xl border border-white/5 overflow-hidden transition-all duration-700",
         isActive ? "bg-black/40 border-primary/30 ring-1 ring-primary/20 scale-[1.02]" : "bg-black/20 hover:border-white/10"
@@ -372,15 +354,9 @@ function TimelineItem({ event, isActive }: { event: TimelineEvent, isActive: boo
   );
 }
 
-/**
- * A wrapper component that handles interaction logic.
- * If event.videoUrl is present, it redirects the user directly.
- * Otherwise, it uses a Dialog for 3D diorama archives.
- */
 function InteractionWrapper({ event, children }: { event: TimelineEvent, children: React.ReactNode }) {
   if (!event.interactive) return <>{children}</>;
 
-  // Direct redirection for video links
   if (event.videoUrl) {
     return (
       <a 
@@ -395,24 +371,13 @@ function InteractionWrapper({ event, children }: { event: TimelineEvent, childre
     );
   }
 
-  // Use Dialog for 3D scene archives
   return (
     <Dialog>
       <DialogTrigger asChild>
         {children}
       </DialogTrigger>
-      <DialogContent className="max-w-4xl bg-[#0d0d14] border-white/10 p-0 overflow-hidden rounded-3xl gap-0">
-        <DialogHeader className="p-8 border-b border-white/5">
-           <div className="flex items-center gap-3 text-primary mb-2">
-             <Layers size={16} />
-             <span className="text-[10px] font-bold uppercase tracking-[0.3em]">{event.badge || '3D ARCHIVE'}</span>
-           </div>
-           <DialogTitle className="text-3xl font-headline font-black text-white">
-             {event.title}
-           </DialogTitle>
-        </DialogHeader>
-
-        <div className="aspect-video bg-black relative flex items-center justify-center overflow-hidden">
+      <DialogContent className="max-w-5xl bg-black border-white/10 p-0 overflow-hidden rounded-3xl gap-0 aspect-video">
+        <div className="w-full h-full relative flex items-center justify-center overflow-hidden">
            {event.threeModelUrl ? (
              <div className="w-full h-full flex flex-col items-center justify-center text-center p-12 space-y-6">
                 <div className="w-24 h-24 rounded-full border-4 border-primary/20 flex items-center justify-center text-primary/40">
@@ -429,13 +394,6 @@ function InteractionWrapper({ event, children }: { event: TimelineEvent, childre
            ) : (
              <div className="text-white/20 italic">No interactive data available.</div>
            )}
-        </div>
-
-        <div className="p-8 bg-white/5">
-           <p className="text-muted-foreground text-sm leading-relaxed">
-             This interactive scene provides a detailed look into the {event.title} of {event.year}. 
-             Explore the high-fidelity reconstruction based on verified historical records.
-           </p>
         </div>
       </DialogContent>
     </Dialog>
