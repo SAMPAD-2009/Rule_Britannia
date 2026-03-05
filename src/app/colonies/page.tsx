@@ -3,7 +3,6 @@
 
 import React, { useState, useMemo, useCallback } from 'react';
 import dynamic from 'next/dynamic';
-import Image from 'next/image';
 import { Navigation } from '@/components/Navigation';
 import { 
   X, 
@@ -105,25 +104,18 @@ export default function ColoniesPage() {
               </button>
 
               <ScrollArea className="flex-1">
-                {/* Map Snippet Header */}
-                <div className="relative h-64 w-full overflow-hidden">
-                  <Image 
-                    src={selectedColony.mapSnippet}
-                    alt={selectedColony.name}
-                    fill
-                    className="object-cover opacity-80"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0d0d14] to-transparent" />
-                  <div className="absolute bottom-8 left-8 space-y-2">
-                    <Badge variant="secondary" className="bg-primary/20 text-primary border-primary/20 text-[10px] font-bold uppercase tracking-widest px-3 py-1">
-                      {selectedColony.status}
-                    </Badge>
+                {/* Simplified Header */}
+                <div className="p-8 pt-16 space-y-4">
+                  <Badge variant="secondary" className="bg-primary/20 text-primary border-primary/20 text-[10px] font-bold uppercase tracking-widest px-3 py-1">
+                    {selectedColony.status}
+                  </Badge>
+                  <div className="space-y-1">
                     <h2 className="text-4xl font-headline font-black text-white">{selectedColony.name}</h2>
                     <p className="text-white/40 text-xs font-bold uppercase tracking-widest">{selectedColony.subtitle}</p>
                   </div>
                 </div>
 
-                <div className="p-8 space-y-10 pb-20">
+                <div className="px-8 space-y-10 pb-20">
                   {/* Stats Grid */}
                   <div className="grid grid-cols-2 gap-4">
                     <div className="p-5 bg-white/5 border border-white/5 rounded-2xl space-y-3">
