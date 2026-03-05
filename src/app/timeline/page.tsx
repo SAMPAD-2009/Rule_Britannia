@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo, useEffect, useRef } from 'react';
+import React, { useState, useMemo, useEffect, useRef, memo } from 'react';
 import { Navigation } from '@/components/Navigation';
 import { 
   Play, 
@@ -33,7 +33,7 @@ export default function TimelinePage() {
   const [activeYear, setActiveYear] = useState(1600);
   const [searchQuery, setSearchQuery] = useState('');
   const [isAutoPlaying, setIsAutoPlaying] = useState(false);
-  const eventRefs = useRef<{ [key: number]: HTMLDivElement | null }>({});
+  const eventRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
   const filteredEvents = useMemo(() => {
     return timelineEvents.filter(event => 
@@ -157,7 +157,7 @@ export default function TimelinePage() {
           <div className="relative">
             <div className="absolute left-6 md:left-8 top-0 bottom-0 w-px bg-gradient-to-b from-primary/10 via-primary/40 to-primary/10" />
 
-            <div className="space-y-16 relative">
+            <div className="space-y-12 relative">
               {filteredEvents.length > 0 ? (
                 filteredEvents.map((event) => (
                   <div 
@@ -271,12 +271,13 @@ export default function TimelinePage() {
   );
 }
 
-function TimelineItem({ event, isActive }: { event: TimelineEvent, isActive: boolean }) {
-  const [ref, isInView] = useInView({ threshold: 0.1, triggerOnce: true });
+const TimelineItem = memo(({ event, isActive }: { event: TimelineEvent, isActive: boolean }) => {
+  // Use a larger rootMargin for "pre-loading" items before they appear
+  const [ref, isInView] = useInView({ threshold: 0, rootMargin: '600px', triggerOnce: true });
   const isFullWidth = event.imagePosition === 'full';
 
   return (
-    <div ref={ref} className="group relative pl-12 md:pl-20 transition-all duration-500">
+    <div ref={ref} className="group relative pl-12 md:pl-20 transition-all duration-500 min-h-[120px]">
       <div className={cn(
         "absolute left-5 md:left-7 top-0 w-2.5 h-2.5 rounded-full border-2 border-[#11100b] z-10 transition-all duration-500",
         isActive ? "bg-yellow-500 scale-[1.8] shadow-[0_0_12px_rgba(234,179,8,0.6)]" : "bg-white/20 group-hover:bg-primary/50"
@@ -288,90 +289,99 @@ function TimelineItem({ event, isActive }: { event: TimelineEvent, isActive: boo
         )}
       </div>
 
-      <div className={cn(
-        "glass-morphism rounded-2xl border border-white/5 overflow-hidden transition-all duration-700 opacity-0",
-        isActive ? "bg-black/40 border-primary/30 ring-1 ring-primary/20 scale-[1.01]" : "bg-black/20 hover:border-white/10",
-        isInView && "animate-in fade-in slide-in-from-bottom-8 duration-1000 fill-mode-both opacity-100"
-      )}>
-        
-        {isFullWidth ? (
-          <div className="flex flex-col">
-            <div className="p-6 md:p-8 space-y-4">
-               <div className="flex justify-between items-start">
-                  <div className="space-y-0.5">
-                    <h3 className="text-3xl md:text-4xl font-headline font-black text-primary gold-glow leading-none">{event.year}</h3>
-                    <p className="text-[9px] font-bold text-white/40 tracking-[0.3em] uppercase">{event.subtitle || 'Empire Milestone'}</p>
-                  </div>
-                  {event.badge && (
-                    <Badge variant="outline" className="border-primary/40 text-primary text-[7px] font-bold px-2 py-0.5 bg-primary/5 uppercase tracking-widest">
-                      {event.badge}
-                    </Badge>
-                  )}
-               </div>
-               <h2 className="text-2xl md:text-3xl font-headline font-bold text-white">{event.title}</h2>
-               
-               <div className="relative aspect-video max-h-[300px] rounded-xl overflow-hidden border border-white/10 group/img">
-                  <Image src={event.imageUrl} alt={event.title} fill className="object-cover opacity-80 group-hover/img:scale-105 transition-transform duration-[2000ms]" />
-                  {event.interactive && (
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <InteractionWrapper event={event}>
-                        <button className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-black shadow-2xl hover:scale-110 transition-transform">
-                          <Play fill="currentColor" size={20} />
-                        </button>
-                      </InteractionWrapper>
+      {isInView ? (
+        <div className={cn(
+          "glass-morphism rounded-2xl border border-white/5 overflow-hidden transition-all duration-700",
+          isActive ? "bg-black/40 border-primary/30 ring-1 ring-primary/20 scale-[1.01]" : "bg-black/20 hover:border-white/10",
+          "animate-in fade-in slide-in-from-bottom-8 duration-1000 fill-mode-both"
+        )}>
+          
+          {isFullWidth ? (
+            <div className="flex flex-col">
+              <div className="p-6 md:p-8 space-y-4">
+                 <div className="flex justify-between items-start">
+                    <div className="space-y-0.5">
+                      <h3 className="text-3xl md:text-4xl font-headline font-black text-primary gold-glow leading-none">{event.year}</h3>
+                      <p className="text-[9px] font-bold text-white/40 tracking-[0.3em] uppercase">{event.subtitle || 'Empire Milestone'}</p>
                     </div>
-                  )}
-               </div>
+                    {event.badge && (
+                      <Badge variant="outline" className="border-primary/40 text-primary text-[7px] font-bold px-2 py-0.5 bg-primary/5 uppercase tracking-widest">
+                        {event.badge}
+                      </Badge>
+                    )}
+                 </div>
+                 <h2 className="text-2xl md:text-3xl font-headline font-bold text-white">{event.title}</h2>
+                 
+                 <div className="relative aspect-video max-h-[220px] rounded-xl overflow-hidden border border-white/10 group/img">
+                    <Image src={event.imageUrl} alt={event.title} fill className="object-cover opacity-80 group-hover/img:scale-105 transition-transform duration-[2000ms]" loading="lazy" />
+                    {event.interactive && (
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <InteractionWrapper event={event}>
+                          <button className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-black shadow-2xl hover:scale-110 transition-transform">
+                            <Play fill="currentColor" size={20} />
+                          </button>
+                        </InteractionWrapper>
+                      </div>
+                    )}
+                 </div>
 
-               <p className="text-muted-foreground leading-relaxed italic text-base font-light">
-                 {event.description}
-               </p>
+                 <p className="text-muted-foreground leading-relaxed italic text-base font-light">
+                   {event.description}
+                 </p>
 
-               <div className="flex gap-4 pt-2">
-                  <InteractionWrapper event={event}>
-                    <Button className="bg-primary hover:bg-primary/90 text-black font-bold h-10 px-6 rounded-lg text-[10px] tracking-widest uppercase flex-1 md:flex-none">
-                      {event.linkText}
-                    </Button>
-                  </InteractionWrapper>
-               </div>
+                 <div className="flex gap-4 pt-2">
+                    <InteractionWrapper event={event}>
+                      <Button className="bg-primary hover:bg-primary/90 text-black font-bold h-10 px-6 rounded-lg text-[10px] tracking-widest uppercase flex-1 md:flex-none">
+                        {event.linkText}
+                      </Button>
+                    </InteractionWrapper>
+                 </div>
+              </div>
             </div>
-          </div>
-        ) : (
-          <div className={cn(
-            "flex flex-col md:flex-row items-stretch",
-            event.imagePosition === 'right' && "md:flex-row-reverse"
-          )}>
-            <div className="relative w-full md:w-[40%] min-h-[220px] overflow-hidden group/img">
-              <Image src={event.imageUrl} alt={event.title} fill className="object-cover opacity-80 group-hover/img:scale-110 transition-transform duration-[3000ms]" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-              {event.badge && (
-                <div className="absolute bottom-4 left-4 z-10 bg-black/60 backdrop-blur-md border border-primary/20 p-1.5 rounded-lg flex items-center gap-1.5">
-                   <Box className="text-primary" size={10} />
-                   <span className="text-[8px] font-bold text-white tracking-widest uppercase">{event.badge}</span>
-                </div>
-              )}
+          ) : (
+            <div className={cn(
+              "flex flex-col md:flex-row items-stretch",
+              event.imagePosition === 'right' && "md:flex-row-reverse"
+            )}>
+              <div className="relative w-full md:w-[40%] min-h-[220px] overflow-hidden group/img">
+                <Image src={event.imageUrl} alt={event.title} fill className="object-cover opacity-80 group-hover/img:scale-110 transition-transform duration-[3000ms]" loading="lazy" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                {event.badge && (
+                  <div className="absolute bottom-4 left-4 z-10 bg-black/60 backdrop-blur-md border border-primary/20 p-1.5 rounded-lg flex items-center gap-1.5">
+                     <Box className="text-primary" size={10} />
+                     <span className="text-[8px] font-bold text-white tracking-widest uppercase">{event.badge}</span>
+                  </div>
+                )}
+              </div>
+              <div className="flex-1 p-6 md:p-8 flex flex-col justify-center space-y-4">
+                 <div className="space-y-0.5">
+                    <h3 className="text-3xl md:text-4xl font-headline font-black text-primary gold-glow leading-none">{event.year}</h3>
+                    <h2 className="text-xl md:text-2xl font-headline font-bold text-white">{event.title}</h2>
+                 </div>
+                 <p className="text-muted-foreground leading-relaxed font-light text-sm md:text-base">
+                   {event.description}
+                 </p>
+                 <InteractionWrapper event={event}>
+                   <button className="flex items-center gap-1.5 text-[9px] font-bold text-primary hover:text-primary/80 transition-colors tracking-[0.2em] uppercase group/btn">
+                     {event.linkText} 
+                     <ChevronRight size={12} className="group-hover/btn:translate-x-1 transition-transform" />
+                   </button>
+                 </InteractionWrapper>
+              </div>
             </div>
-            <div className="flex-1 p-6 md:p-8 flex flex-col justify-center space-y-4">
-               <div className="space-y-0.5">
-                  <h3 className="text-3xl md:text-4xl font-headline font-black text-primary gold-glow leading-none">{event.year}</h3>
-                  <h2 className="text-xl md:text-2xl font-headline font-bold text-white">{event.title}</h2>
-               </div>
-               <p className="text-muted-foreground leading-relaxed font-light text-sm md:text-base">
-                 {event.description}
-               </p>
-               <InteractionWrapper event={event}>
-                 <button className="flex items-center gap-1.5 text-[9px] font-bold text-primary hover:text-primary/80 transition-colors tracking-[0.2em] uppercase group/btn">
-                   {event.linkText} 
-                   <ChevronRight size={12} className="group-hover/btn:translate-x-1 transition-transform" />
-                 </button>
-               </InteractionWrapper>
-            </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      ) : (
+        /* Lightweight Placeholder to maintain scroll position and observer triggers */
+        <div className="h-[220px] w-full bg-white/[0.02] border border-white/5 rounded-2xl flex items-center justify-center">
+           <div className="text-primary/10 font-black text-6xl select-none">{event.year}</div>
+        </div>
+      )}
     </div>
   );
-}
+});
+
+TimelineItem.displayName = "TimelineItem";
 
 function InteractionWrapper({ event, children }: { event: TimelineEvent, children: React.ReactNode }) {
   if (!event.interactive) return <>{children}</>;
