@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useMemo, useEffect, useRef, memo } from 'react';
@@ -379,17 +380,20 @@ const TimelineItem = memo(({ event, isActive, isSeen }: { event: TimelineEvent, 
                  </div>
                  <h2 className="text-2xl md:text-3xl font-headline font-bold text-white">{event.title}</h2>
                  
-                 <div className="relative aspect-video max-h-[220px] rounded-xl overflow-hidden border border-white/10 group/img">
-                    <Image src={event.imageUrl} alt={event.title} fill className="object-cover opacity-80 group-hover/img:scale-105 transition-transform duration-[2000ms]" loading="lazy" />
-                    {event.interactive && (
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <InteractionWrapper event={event}>
-                          <button className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-black shadow-2xl hover:scale-110 transition-transform">
-                            <Clock fill="currentColor" size={20} />
-                          </button>
-                        </InteractionWrapper>
+                 <div className="relative aspect-[16/8] md:aspect-[21/9] w-full min-h-[300px] md:min-h-[450px] rounded-xl overflow-hidden border border-white/10 group/img shadow-2xl">
+                    <InteractionWrapper event={event}>
+                      <div className="relative w-full h-full cursor-pointer">
+                        <Image src={event.imageUrl} alt={event.title} fill className="object-cover opacity-80 group-hover/img:scale-105 transition-transform duration-[2000ms]" loading="lazy" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                        {event.interactive && (
+                          <div className="absolute bottom-6 left-6 z-20">
+                            <div className="flex items-center gap-2 text-primary text-[10px] font-bold uppercase tracking-widest bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-lg border border-primary/20">
+                              <Clock size={12} /> Interactive Archive
+                            </div>
+                          </div>
+                        )}
                       </div>
-                    )}
+                    </InteractionWrapper>
                  </div>
 
                  <p className="text-muted-foreground leading-relaxed italic text-base font-light">
@@ -411,10 +415,14 @@ const TimelineItem = memo(({ event, isActive, isSeen }: { event: TimelineEvent, 
               event.imagePosition === 'right' && "md:flex-row-reverse"
             )}>
               <div className="relative w-full md:w-[40%] min-h-[220px] overflow-hidden group/img">
-                <Image src={event.imageUrl} alt={event.title} fill className="object-cover opacity-80 group-hover/img:scale-110 transition-transform duration-[3000ms]" loading="lazy" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                <InteractionWrapper event={event}>
+                  <div className="relative w-full h-full cursor-pointer">
+                    <Image src={event.imageUrl} alt={event.title} fill className="object-cover opacity-80 group-hover/img:scale-110 transition-transform duration-[3000ms]" loading="lazy" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                  </div>
+                </InteractionWrapper>
                 {event.badge && (
-                  <div className="absolute bottom-4 left-4 z-10 bg-black/60 backdrop-blur-md border border-primary/20 p-1.5 rounded-lg flex items-center gap-1.5">
+                  <div className="absolute bottom-4 left-4 z-10 bg-black/60 backdrop-blur-md border border-primary/20 p-1.5 rounded-lg flex items-center gap-1.5 pointer-events-none">
                      <Box className="text-primary" size={10} />
                      <span className="text-[8px] font-bold text-white tracking-widest uppercase">{event.badge}</span>
                   </div>
