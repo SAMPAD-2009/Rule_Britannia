@@ -52,6 +52,12 @@ const nextConfig: NextConfig = {
         hostname: 'commons.wikimedia.org',
         port: '',
         pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'pictu-rest.vercel.app',
+        port: '',
+        pathname: '/**',
       }
     ],
   },
