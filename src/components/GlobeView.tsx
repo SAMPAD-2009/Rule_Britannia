@@ -36,16 +36,16 @@ export function GlobeView({ data, selectedColonyId, onSelectColony }: GlobeViewP
         .pointLng('lng')
         .pointColor((d: any) => d.color || '#B88A2E')
         .pointAltitude(0.01)
-        .pointRadius(1.2) // Increased marker size
+        .pointRadius(2.5) // Significantly larger for better clickability
         .pointResolution(6)
         .labelsData(data)
         .labelLat('lat')
         .labelLng('lng')
         .labelText('name')
-        .labelSize(1.5) // Increased label size
-        .labelDotRadius(0.4)
+        .labelSize(2.5) // Significantly larger for readability
+        .labelDotRadius(0.6)
         .labelColor((d: any) => d.color || '#ffffff')
-        .labelResolution(1)
+        .labelResolution(1) // Low resolution for performance
         .onPointClick((point: any) => onSelectColony(point.id))
         .onLabelClick((label: any) => onSelectColony(label.id));
 
@@ -55,43 +55,30 @@ export function GlobeView({ data, selectedColonyId, onSelectColony }: GlobeViewP
       controls.enableDamping = true;
       controls.dampingFactor = 0.1;
       controls.minDistance = 150; 
-      controls.maxDistance = 800;
+      controls.maxDistance = 1200;
       
       controls.enableRotate = true;
       controls.enableZoom = true;
       controls.enablePan = false;
 
-      let frameRequested = false;
-      controls.addEventListener('change', () => {
-        if (!frameRequested) {
-          requestAnimationFrame(() => {
-            const pov = globe.pointOfView();
-            const alt = pov.altitude;
-            // Adaptive scaling: markers stay relatively large but clean
-            const dynamicRadius = Math.max(0.6, alt * 0.4);
-            const dynamicLabelSize = Math.max(0.8, alt * 0.5);
-            
-            globe.pointRadius(dynamicRadius);
-            globe.labelSize(dynamicLabelSize);
-            frameRequested = false;
-          });
-          frameRequested = true;
-        }
-      });
+      // REMOVED: High-frequency 'change' listener for dynamic scaling to eliminate lag
+      // Base sizes are now large enough for all zoom levels.
 
       const scene = globe.scene();
-      const ambientLight = new THREE.AmbientLight(0xB88A2E, 0.6);
+      const ambientLight = new THREE.AmbientLight(0xB88A2E, 0.8);
       scene.add(ambientLight);
 
-      const pointLight = new THREE.PointLight(0xffdf8c, 1.2);
+      const pointLight = new THREE.PointLight(0xffdf8c, 1.5);
       pointLight.position.set(200, 100, 150);
       scene.add(pointLight);
 
       const renderer = globe.renderer();
+      // PERFORMANCE CRITICAL: Cap pixel ratio at 1 for low-power devices
       renderer.setPixelRatio(1);
+      renderer.antialias = false; // Disable antialiasing for raw performance
 
-      // Higher altitude makes the globe appear smaller initially
-      globe.pointOfView({ lat: 20, lng: 0, altitude: 2.8 }, 0);
+      // Higher altitude (3.2) makes the globe appear smaller initially
+      globe.pointOfView({ lat: 20, lng: 0, altitude: 3.2 }, 0);
 
       globeInstance.current = globe;
       
@@ -129,7 +116,7 @@ export function GlobeView({ data, selectedColonyId, onSelectColony }: GlobeViewP
           globeInstance.current.pointOfView({ 
             lat: colony.lat, 
             lng: colony.lng, 
-            altitude: 1.5 
+            altitude: 1.8 
           }, 800);
         }
       }
@@ -141,7 +128,7 @@ export function GlobeView({ data, selectedColonyId, onSelectColony }: GlobeViewP
     const currentPov = globeInstance.current.pointOfView();
     globeInstance.current.pointOfView({
       ...currentPov,
-      altitude: Math.max(1.1, Math.min(5.0, currentPov.altitude + delta))
+      altitude: Math.max(1.1, Math.min(6.0, currentPov.altitude + delta))
     }, 400);
   };
 
@@ -151,7 +138,7 @@ export function GlobeView({ data, selectedColonyId, onSelectColony }: GlobeViewP
 
   const resetView = () => {
     if (!globeInstance.current) return;
-    globeInstance.current.pointOfView({ lat: 20, lng: 0, altitude: 2.8 }, 1000);
+    globeInstance.current.pointOfView({ lat: 20, lng: 0, altitude: 3.2 }, 1000);
     onSelectColony('');
   };
 
@@ -171,7 +158,7 @@ export function GlobeView({ data, selectedColonyId, onSelectColony }: GlobeViewP
           <Button 
             variant="ghost" 
             size="icon" 
-            onClick={() => handleZoom(-0.6)}
+            onClick={() => handleZoom(-1.0)}
             className="w-10 h-10 text-white/60 hover:text-primary hover:bg-white/10"
             title="Zoom In"
           >
@@ -180,7 +167,7 @@ export function GlobeView({ data, selectedColonyId, onSelectColony }: GlobeViewP
           <Button 
             variant="ghost" 
             size="icon" 
-            onClick={() => handleZoom(0.6)}
+            onClick={() => handleZoom(1.0)}
             className="w-10 h-10 text-white/60 hover:text-primary hover:bg-white/10"
             title="Zoom Out"
           >
