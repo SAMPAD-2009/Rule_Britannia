@@ -111,7 +111,7 @@ export default function TimelinePage() {
   ];
 
   return (
-    <main className="min-h-screen bg-[#11100b] text-[#e5e1d3] font-body selection:bg-primary/30 pb-40 relative">
+    <main className="min-h-screen bg-[#11100b] text-[#e5e1d3] font-body selection:bg-primary/30 pb-40 relative overflow-x-hidden">
       <Timeline3DBackground />
       <Navigation />
 
@@ -166,7 +166,7 @@ export default function TimelinePage() {
         </div>
 
         <div className="grid lg:grid-cols-[1fr_300px] gap-12">
-          <div className="relative">
+          <div className="relative min-w-0">
             {/* Main Glowing Sideline */}
             <div className="absolute left-6 md:left-8 top-0 bottom-0 w-px bg-white/5" />
             <div className="absolute left-6 md:left-8 top-0 bottom-0 w-px bg-gradient-to-b from-primary/0 via-primary/50 to-primary/0 shadow-[0_0_15px_rgba(184,138,46,0.4)]" />
@@ -196,7 +196,7 @@ export default function TimelinePage() {
             </div>
           </div>
 
-          <aside className="space-y-8 hidden lg:block sticky top-32 h-fit">
+          <aside className="space-y-8 hidden lg:block sticky top-32 h-fit shrink-0">
             <div className="glass-morphism p-6 rounded-2xl border-white/5 bg-black/40 space-y-6">
               <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/40">Temporal Artifact</h4>
               <EraOrb3D />
@@ -339,7 +339,7 @@ const TimelineItem = memo(({ event, isActive, isSeen }: { event: TimelineEvent, 
   const isFullWidth = event.imagePosition === 'full';
 
   return (
-    <div ref={ref} className="group relative pl-12 md:pl-20 transition-all duration-500 min-h-[120px]">
+    <div ref={ref} className="group relative pl-12 md:pl-20 transition-all duration-500 min-h-[120px] overflow-hidden">
       {/* Connector Dot */}
       <div className={cn(
         "absolute left-5 md:left-7 top-0 w-2.5 h-2.5 rounded-full border-2 border-[#11100b] z-10 transition-all duration-700",
@@ -358,57 +358,55 @@ const TimelineItem = memo(({ event, isActive, isSeen }: { event: TimelineEvent, 
 
       {isInView ? (
         <div className={cn(
-          "glass-morphism rounded-2xl border overflow-hidden transition-all duration-700",
+          "glass-morphism rounded-2xl border overflow-hidden transition-all duration-700 max-w-full",
           isActive ? "bg-black/40 border-primary/30 ring-1 ring-primary/20 scale-[1.01] shadow-[0_0_40px_rgba(184,138,46,0.1)]" : 
           "bg-black/20 border-white/5 hover:border-white/10",
           "animate-in fade-in slide-in-from-bottom-8 duration-1000 fill-mode-both"
         )}>
           
           {isFullWidth ? (
-            <div className="flex flex-col">
-              <div className="p-6 md:p-8 space-y-4">
-                 <div className="flex justify-between items-start">
-                    <div className="space-y-0.5">
-                      <h3 className="text-3xl md:text-4xl font-headline font-black text-primary gold-glow leading-none">{event.year}</h3>
-                      <p className="text-[9px] font-bold text-white/40 tracking-[0.3em] uppercase">{event.subtitle || 'Empire Milestone'}</p>
-                    </div>
-                    {event.badge && (
-                      <Badge variant="outline" className="border-primary/40 text-primary text-[7px] font-bold px-2 py-0.5 bg-primary/5 uppercase tracking-widest">
-                        {event.badge}
-                      </Badge>
-                    )}
-                 </div>
-                 <h2 className="text-2xl md:text-3xl font-headline font-bold text-white">{event.title}</h2>
-                 
-                 <div className="relative aspect-[16/8] md:aspect-[21/9] w-full min-h-[300px] md:min-h-[450px] rounded-xl overflow-hidden border border-white/10 group/img shadow-2xl">
-                    <InteractionWrapper event={event}>
-                      <div className="relative w-full h-full cursor-pointer">
-                        <Image src={event.imageUrl} alt={event.title} fill className="object-cover opacity-80 group-hover/img:scale-105 transition-transform duration-[2000ms]" loading="lazy" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                        {event.interactive && (
-                          <div className="absolute bottom-6 left-6 z-20">
-                            <div className="flex items-center gap-2 text-primary text-[10px] font-bold uppercase tracking-widest bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-lg border border-primary/20">
-                              <Clock size={12} /> Interactive Archive
-                            </div>
-                          </div>
-                        )}
+            <InteractionWrapper event={event}>
+              <div className="relative min-h-[400px] md:min-h-[550px] flex flex-col justify-end p-6 md:p-10 cursor-pointer group/card overflow-hidden">
+                {/* Background Image - Spans the entire card */}
+                <div className="absolute inset-0 z-0">
+                   <Image 
+                     src={event.imageUrl} 
+                     alt={event.title} 
+                     fill 
+                     className="object-cover opacity-60 group-hover/card:scale-105 transition-transform duration-[3000ms]" 
+                     loading="lazy" 
+                   />
+                   <div className="absolute inset-0 bg-gradient-to-t from-[#11100b] via-[#11100b]/40 to-transparent" />
+                   <div className="absolute inset-0 bg-gradient-to-r from-[#11100b]/60 to-transparent" />
+                </div>
+
+                {/* Content Overlay */}
+                <div className="relative z-10 space-y-4 max-w-2xl">
+                   <div className="flex justify-between items-start">
+                      <div className="space-y-0.5">
+                        <h3 className="text-4xl md:text-6xl font-headline font-black text-primary gold-glow leading-none">{event.year}</h3>
+                        <p className="text-[10px] font-bold text-white/40 tracking-[0.3em] uppercase">{event.subtitle || 'Imperial Landmark'}</p>
                       </div>
-                    </InteractionWrapper>
-                 </div>
+                      {event.badge && (
+                        <Badge variant="outline" className="border-primary/40 text-primary text-[8px] font-bold px-3 py-1 bg-primary/10 uppercase tracking-widest backdrop-blur-md">
+                          {event.badge}
+                        </Badge>
+                      )}
+                   </div>
+                   
+                   <h2 className="text-3xl md:text-5xl font-headline font-bold text-white tracking-tight leading-tight">{event.title}</h2>
+                   
+                   <p className="text-white/80 leading-relaxed text-sm md:text-lg font-light italic max-w-xl">
+                     {event.description}
+                   </p>
 
-                 <p className="text-muted-foreground leading-relaxed italic text-base font-light">
-                   {event.description}
-                 </p>
-
-                 <div className="flex gap-4 pt-2">
-                    <InteractionWrapper event={event}>
-                      <Button className="bg-primary hover:bg-primary/90 text-black font-bold h-10 px-6 rounded-lg text-[10px] tracking-widest uppercase flex-1 md:flex-none">
-                        {event.linkText}
-                      </Button>
-                    </InteractionWrapper>
-                 </div>
+                   <div className="flex items-center gap-3 pt-4 text-primary text-[10px] font-bold uppercase tracking-widest group/btn">
+                     <span className="w-8 h-px bg-primary/40 group-hover/btn:w-12 transition-all duration-500" />
+                     {event.linkText} <ChevronRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
+                   </div>
+                </div>
               </div>
-            </div>
+            </InteractionWrapper>
           ) : (
             <div className={cn(
               "flex flex-col md:flex-row items-stretch",
@@ -422,18 +420,18 @@ const TimelineItem = memo(({ event, isActive, isSeen }: { event: TimelineEvent, 
                   </div>
                 </InteractionWrapper>
                 {event.badge && (
-                  <div className="absolute bottom-4 left-4 z-10 bg-black/60 backdrop-blur-md border border-primary/20 p-1.5 rounded-lg flex items-center gap-1.5 pointer-events-none">
+                  <div className="absolute bottom-4 left-4 z-10 bg-black/60 backdrop-blur-md border border-primary/20 p-1.5 rounded-lg flex items-center gap-1.5">
                      <Box className="text-primary" size={10} />
                      <span className="text-[8px] font-bold text-white tracking-widest uppercase">{event.badge}</span>
                   </div>
                 )}
               </div>
-              <div className="flex-1 p-6 md:p-8 flex flex-col justify-center space-y-4">
+              <div className="flex-1 p-6 md:p-8 flex flex-col justify-center space-y-4 min-w-0">
                  <div className="space-y-0.5">
                     <h3 className="text-3xl md:text-4xl font-headline font-black text-primary gold-glow leading-none">{event.year}</h3>
-                    <h2 className="text-xl md:text-2xl font-headline font-bold text-white">{event.title}</h2>
+                    <h2 className="text-xl md:text-2xl font-headline font-bold text-white break-words">{event.title}</h2>
                  </div>
-                 <p className="text-muted-foreground leading-relaxed font-light text-sm md:text-base">
+                 <p className="text-muted-foreground leading-relaxed font-light text-sm md:text-base break-words">
                    {event.description}
                  </p>
                  <InteractionWrapper event={event}>
