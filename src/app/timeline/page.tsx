@@ -155,7 +155,9 @@ export default function TimelinePage() {
 
         <div className="grid lg:grid-cols-[1fr_300px] gap-12">
           <div className="relative">
-            <div className="absolute left-6 md:left-8 top-0 bottom-0 w-px bg-gradient-to-b from-primary/10 via-primary/40 to-primary/10" />
+            {/* Main Glowing Sideline */}
+            <div className="absolute left-6 md:left-8 top-0 bottom-0 w-px bg-white/5" />
+            <div className="absolute left-6 md:left-8 top-0 bottom-0 w-px bg-gradient-to-b from-primary/0 via-primary/50 to-primary/0 shadow-[0_0_15px_rgba(184,138,46,0.4)]" />
 
             <div className="space-y-12 relative">
               {filteredEvents.length > 0 ? (
@@ -165,7 +167,11 @@ export default function TimelinePage() {
                     ref={el => { eventRefs.current[event.year] = el; }}
                     data-year={event.year}
                   >
-                    <TimelineItem event={event} isActive={event.year === activeYear} />
+                    <TimelineItem 
+                      event={event} 
+                      isActive={event.year === activeYear} 
+                      isSeen={event.year <= activeYear}
+                    />
                   </div>
                 ))
               ) : (
@@ -185,7 +191,7 @@ export default function TimelinePage() {
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-bold text-white flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                    <div className="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_8px_rgba(184,138,46,0.6)]" />
                     {activeYear < 1815 ? 'Mercantile Expansion' : activeYear < 1914 ? 'Pax Britannica' : 'Imperial Transition'}
                   </span>
                 </div>
@@ -214,7 +220,7 @@ export default function TimelinePage() {
                     }}
                     className={cn(
                       "w-full text-left px-4 py-3 rounded-lg text-xs font-bold tracking-widest uppercase transition-all flex justify-between items-center",
-                      currentCentury === c ? "bg-primary/20 text-primary border border-primary/20" : "text-white/40 hover:text-white hover:bg-white/5"
+                      currentCentury === c ? "bg-primary/20 text-primary border border-primary/20 shadow-[inset_0_0_12px_rgba(184,138,46,0.1)]" : "text-white/40 hover:text-white hover:bg-white/5"
                     )}
                   >
                     {c}th Century
@@ -271,28 +277,33 @@ export default function TimelinePage() {
   );
 }
 
-const TimelineItem = memo(({ event, isActive }: { event: TimelineEvent, isActive: boolean }) => {
-  // Use a larger rootMargin for "pre-loading" items before they appear
+const TimelineItem = memo(({ event, isActive, isSeen }: { event: TimelineEvent, isActive: boolean, isSeen: boolean }) => {
   const [ref, isInView] = useInView({ threshold: 0, rootMargin: '600px', triggerOnce: true });
   const isFullWidth = event.imagePosition === 'full';
 
   return (
     <div ref={ref} className="group relative pl-12 md:pl-20 transition-all duration-500 min-h-[120px]">
+      {/* Connector Dot */}
       <div className={cn(
-        "absolute left-5 md:left-7 top-0 w-2.5 h-2.5 rounded-full border-2 border-[#11100b] z-10 transition-all duration-500",
-        isActive ? "bg-yellow-500 scale-[1.8] shadow-[0_0_12px_rgba(234,179,8,0.6)]" : "bg-white/20 group-hover:bg-primary/50"
+        "absolute left-5 md:left-7 top-0 w-2.5 h-2.5 rounded-full border-2 border-[#11100b] z-10 transition-all duration-700",
+        isActive ? "bg-yellow-500 scale-[1.8] shadow-[0_0_15px_rgba(234,179,8,0.8)]" : 
+        isSeen ? "bg-primary/80 scale-[1.2] shadow-[0_0_8px_rgba(184,138,46,0.4)]" : "bg-white/10 group-hover:bg-primary/30"
       )}>
-        {isActive && (
+        {(isActive || isSeen) && (
            <div className="absolute inset-0 flex items-center justify-center">
-             <div className="w-1 h-1 rounded-full bg-black/40" />
+             <div className={cn(
+               "w-1 h-1 rounded-full",
+               isActive ? "bg-black/60 animate-ping" : "bg-white/20"
+             )} />
            </div>
         )}
       </div>
 
       {isInView ? (
         <div className={cn(
-          "glass-morphism rounded-2xl border border-white/5 overflow-hidden transition-all duration-700",
-          isActive ? "bg-black/40 border-primary/30 ring-1 ring-primary/20 scale-[1.01]" : "bg-black/20 hover:border-white/10",
+          "glass-morphism rounded-2xl border overflow-hidden transition-all duration-700",
+          isActive ? "bg-black/40 border-primary/30 ring-1 ring-primary/20 scale-[1.01] shadow-[0_0_40px_rgba(184,138,46,0.1)]" : 
+          "bg-black/20 border-white/5 hover:border-white/10",
           "animate-in fade-in slide-in-from-bottom-8 duration-1000 fill-mode-both"
         )}>
           
@@ -372,7 +383,7 @@ const TimelineItem = memo(({ event, isActive }: { event: TimelineEvent, isActive
           )}
         </div>
       ) : (
-        /* Lightweight Placeholder to maintain scroll position and observer triggers */
+        /* Lightweight Placeholder */
         <div className="h-[220px] w-full bg-white/[0.02] border border-white/5 rounded-2xl flex items-center justify-center">
            <div className="text-primary/10 font-black text-6xl select-none">{event.year}</div>
         </div>
