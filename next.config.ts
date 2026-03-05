@@ -58,6 +58,12 @@ const nextConfig: NextConfig = {
         hostname: 'pictu-rest.vercel.app',
         port: '',
         pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'cdn.britannica.com',
+        port: '',
+        pathname: '/**',
       }
     ],
   },
