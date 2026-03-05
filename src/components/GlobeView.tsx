@@ -36,16 +36,16 @@ export function GlobeView({ data, selectedColonyId, onSelectColony }: GlobeViewP
         .pointLng('lng')
         .pointColor((d: any) => d.color || '#B88A2E')
         .pointAltitude(0.01)
-        .pointRadius(2.5) // Significantly larger for better clickability
+        .pointRadius(1.2) // Reduced size to fix overlap while remaining clickable
         .pointResolution(6)
         .labelsData(data)
         .labelLat('lat')
         .labelLng('lng')
         .labelText('name')
-        .labelSize(2.5) // Significantly larger for readability
-        .labelDotRadius(0.6)
+        .labelSize(1.5) // Reduced size to fix overlap while remaining readable
+        .labelDotRadius(0.5)
         .labelColor((d: any) => d.color || '#ffffff')
-        .labelResolution(1) // Low resolution for performance
+        .labelResolution(2)
         .onPointClick((point: any) => onSelectColony(point.id))
         .onLabelClick((label: any) => onSelectColony(label.id));
 
@@ -61,9 +61,6 @@ export function GlobeView({ data, selectedColonyId, onSelectColony }: GlobeViewP
       controls.enableZoom = true;
       controls.enablePan = false;
 
-      // REMOVED: High-frequency 'change' listener for dynamic scaling to eliminate lag
-      // Base sizes are now large enough for all zoom levels.
-
       const scene = globe.scene();
       const ambientLight = new THREE.AmbientLight(0xB88A2E, 0.8);
       scene.add(ambientLight);
@@ -73,12 +70,11 @@ export function GlobeView({ data, selectedColonyId, onSelectColony }: GlobeViewP
       scene.add(pointLight);
 
       const renderer = globe.renderer();
-      // PERFORMANCE CRITICAL: Cap pixel ratio at 1 for low-power devices
       renderer.setPixelRatio(1);
-      renderer.antialias = false; // Disable antialiasing for raw performance
+      renderer.antialias = false; 
 
-      // Higher altitude (3.2) makes the globe appear smaller initially
-      globe.pointOfView({ lat: 20, lng: 0, altitude: 3.2 }, 0);
+      // Set initial view to a moderate distance
+      globe.pointOfView({ lat: 20, lng: 0, altitude: 2.8 }, 0);
 
       globeInstance.current = globe;
       
@@ -138,7 +134,7 @@ export function GlobeView({ data, selectedColonyId, onSelectColony }: GlobeViewP
 
   const resetView = () => {
     if (!globeInstance.current) return;
-    globeInstance.current.pointOfView({ lat: 20, lng: 0, altitude: 3.2 }, 1000);
+    globeInstance.current.pointOfView({ lat: 20, lng: 0, altitude: 2.8 }, 1000);
     onSelectColony('');
   };
 
