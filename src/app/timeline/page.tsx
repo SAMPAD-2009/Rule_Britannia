@@ -3,7 +3,7 @@
 import React, { useState, useMemo, useEffect, useRef, memo } from 'react';
 import { Navigation } from '@/components/Navigation';
 import { 
-  Play, 
+  Clock, 
   RotateCcw, 
   ChevronRight, 
   ChevronLeft, 
@@ -26,13 +26,17 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Timeline3DBackground } from '@/components/Timeline3DBackground';
 import { EraOrb3D } from '@/components/EraOrb3D';
 
 export default function TimelinePage() {
   const [activeYear, setActiveYear] = useState(1600);
   const [searchQuery, setSearchQuery] = useState('');
-  const [isAutoPlaying, setIsAutoPlaying] = useState(false);
   const eventRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
   const filteredEvents = useMemo(() => {
@@ -97,6 +101,13 @@ export default function TimelinePage() {
   };
 
   const currentCentury = Math.floor(activeYear / 100) + 1;
+
+  const historicalEras = [
+    { name: 'Mercantile Expansion', year: 1600 },
+    { name: 'Pax Britannica', year: 1815 },
+    { name: 'Imperial Transition', year: 1914 },
+    { name: 'Decolonization Era', year: 1947 },
+  ];
 
   return (
     <main className="min-h-screen bg-[#11100b] text-[#e5e1d3] font-body selection:bg-primary/30 pb-40 relative">
@@ -243,12 +254,57 @@ export default function TimelinePage() {
              >
               <ChevronLeft size={24} />
              </button>
-             <button 
-              onClick={() => setIsAutoPlaying(!isAutoPlaying)}
-              className={cn("transition-colors", isAutoPlaying ? "text-primary" : "text-white/40 hover:text-primary")}
-             >
-              <Play size={20} fill={isAutoPlaying ? "currentColor" : "none"} />
-             </button>
+             
+             <Popover>
+               <PopoverTrigger asChild>
+                 <button className="text-white/40 hover:text-primary transition-colors p-2 rounded-full hover:bg-white/5">
+                   <Clock size={20} />
+                 </button>
+               </PopoverTrigger>
+               <PopoverContent className="w-56 bg-black/90 border-white/10 p-3 rounded-2xl backdrop-blur-2xl space-y-4">
+                 <div className="space-y-2">
+                   <h4 className="text-[9px] font-bold uppercase tracking-[0.2em] text-white/30 px-2">Century Vault</h4>
+                   <div className="grid grid-cols-2 gap-1">
+                     {[17, 18, 19, 20].map((c) => (
+                       <button
+                         key={c}
+                         onClick={() => {
+                           const firstEvent = timelineEvents.find(e => Math.floor(e.year / 100) + 1 === c);
+                           if (firstEvent) scrollToYear(firstEvent.year);
+                         }}
+                         className={cn(
+                           "text-left px-3 py-2 rounded-lg text-[10px] font-bold tracking-widest uppercase transition-all",
+                           currentCentury === c ? "bg-primary/20 text-primary" : "text-white/40 hover:text-white hover:bg-white/5"
+                         )}
+                       >
+                         {c}th
+                       </button>
+                     ))}
+                   </div>
+                 </div>
+                 
+                 <div className="h-px bg-white/5 mx-1" />
+                 
+                 <div className="space-y-2">
+                   <h4 className="text-[9px] font-bold uppercase tracking-[0.2em] text-white/30 px-2">Major Eras</h4>
+                   <div className="space-y-1">
+                     {historicalEras.map((era) => (
+                       <button
+                         key={era.name}
+                         onClick={() => scrollToYear(era.year)}
+                         className={cn(
+                           "w-full text-left px-3 py-2 rounded-lg text-[9px] font-bold tracking-widest uppercase transition-all",
+                           activeYear === era.year ? "bg-primary/20 text-primary" : "text-white/40 hover:text-white hover:bg-white/5"
+                         )}
+                       >
+                         {era.name}
+                       </button>
+                     ))}
+                   </div>
+                 </div>
+               </PopoverContent>
+             </Popover>
+
              <button 
               onClick={navigateNext}
               disabled={activeYear === timelineEvents[timelineEvents.length - 1].year}
@@ -329,7 +385,7 @@ const TimelineItem = memo(({ event, isActive, isSeen }: { event: TimelineEvent, 
                       <div className="absolute inset-0 flex items-center justify-center">
                         <InteractionWrapper event={event}>
                           <button className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-black shadow-2xl hover:scale-110 transition-transform">
-                            <Play fill="currentColor" size={20} />
+                            <Clock fill="currentColor" size={20} />
                           </button>
                         </InteractionWrapper>
                       </div>
