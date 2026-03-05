@@ -151,24 +151,24 @@ export function GlobeView({ data, selectedColonyId, onSelectColony }: GlobeViewP
         "absolute top-8 right-8 flex flex-col gap-3 z-50 transition-all duration-500",
         selectedColonyId ? "opacity-0 pointer-events-none translate-x-10" : "opacity-100 translate-x-0"
       )}>
-        <div className="bg-black/60 backdrop-blur-xl border border-white/10 p-2 rounded-2xl shadow-2xl space-y-2 flex flex-col">
+        <div className="bg-black/60 backdrop-blur-xl border border-white/10 p-2.5 rounded-2xl shadow-2xl space-y-3 flex flex-col">
           <Button 
             variant="ghost" 
             size="icon" 
-            onClick={() => handleZoom(-1.0)}
-            className="w-10 h-10 text-white/60 hover:text-primary hover:bg-white/10"
+            onClick={() => handleZoom(-1.5)}
+            className="w-12 h-12 text-white/60 hover:text-primary hover:bg-white/10"
             title="Zoom In"
           >
-            <ZoomIn size={18} />
+            <ZoomIn size={22} />
           </Button>
           <Button 
             variant="ghost" 
             size="icon" 
-            onClick={() => handleZoom(1.0)}
-            className="w-10 h-10 text-white/60 hover:text-primary hover:bg-white/10"
+            onClick={() => handleZoom(1.5)}
+            className="w-12 h-12 text-white/60 hover:text-primary hover:bg-white/10"
             title="Zoom Out"
           >
-            <ZoomOut size={18} />
+            <ZoomOut size={22} />
           </Button>
           <div className="h-px bg-white/10 mx-2" />
           <Button 
@@ -176,21 +176,21 @@ export function GlobeView({ data, selectedColonyId, onSelectColony }: GlobeViewP
             size="icon" 
             onClick={toggleLock}
             className={cn(
-              "w-10 h-10 transition-colors",
+              "w-12 h-12 transition-colors",
               isLocked ? "text-primary bg-primary/10" : "text-white/60 hover:text-primary hover:bg-white/10"
             )}
             title={isLocked ? "Unlock Rotation" : "Lock Rotation"}
           >
-            {isLocked ? <Lock size={18} /> : <Unlock size={18} />}
+            {isLocked ? <Lock size={22} /> : <Unlock size={22} />}
           </Button>
           <Button 
             variant="ghost" 
             size="icon" 
             onClick={resetView}
-            className="w-10 h-10 text-white/60 hover:text-primary hover:bg-white/10"
+            className="w-12 h-12 text-white/60 hover:text-primary hover:bg-white/10"
             title="Reset View"
           >
-            <Compass size={18} />
+            <Compass size={22} />
           </Button>
         </div>
       </div>
