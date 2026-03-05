@@ -61,8 +61,17 @@ export default function ColoniesPage() {
     setSelectedColonyId(id);
   }, []);
 
+  // Performance: Pass only necessary "lite" data to the globe to handle hundreds of markers smoothly
+  const globeData = useMemo(() => coloniesData.map(c => ({
+    id: c.id,
+    name: c.name,
+    lat: c.lat,
+    lng: c.lng,
+    color: c.color
+  })), []);
+
   const selectedColony = useMemo(() => 
-    coloniesData.find(c => c.id === selectedColonyId), 
+    selectedColonyId ? coloniesData.find(c => c.id === selectedColonyId) : null, 
     [selectedColonyId]
   );
 
@@ -74,6 +83,7 @@ export default function ColoniesPage() {
         {/* Globe Container */}
         <div className="flex-1 relative bg-[#050508] overflow-hidden">
           <GlobeView 
+            data={globeData}
             selectedColonyId={selectedColonyId} 
             onSelectColony={handleSelectColony} 
           />
