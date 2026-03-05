@@ -36,14 +36,14 @@ export function GlobeView({ data, selectedColonyId, onSelectColony }: GlobeViewP
         .pointLng('lng')
         .pointColor((d: any) => d.color || '#B88A2E')
         .pointAltitude(0.01)
-        .pointRadius(1.2) // Reduced size to fix overlap while remaining clickable
+        .pointRadius(0.5) // Further reduced to prevent overlap in dense areas
         .pointResolution(6)
         .labelsData(data)
         .labelLat('lat')
         .labelLng('lng')
         .labelText('name')
-        .labelSize(1.5) // Reduced size to fix overlap while remaining readable
-        .labelDotRadius(0.5)
+        .labelSize(0.7) // Further reduced for clarity in clusters
+        .labelDotRadius(0.2)
         .labelColor((d: any) => d.color || '#ffffff')
         .labelResolution(2)
         .onPointClick((point: any) => onSelectColony(point.id))
