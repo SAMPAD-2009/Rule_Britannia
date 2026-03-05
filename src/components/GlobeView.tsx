@@ -24,6 +24,7 @@ export function GlobeView({ selectedColonyId, onSelectColony }: GlobeViewProps) 
     
     const initGlobe = async () => {
       const GlobeConstructor = (await import('globe.gl')).default;
+      const THREE = await import('three');
       
       globe = GlobeConstructor()(containerRef.current!)
         .globeImageUrl('https://cdn.jsdelivr.net/npm/three-globe/example/img/earth-dark.jpg')
@@ -34,38 +35,45 @@ export function GlobeView({ selectedColonyId, onSelectColony }: GlobeViewProps) 
         .pointsData(coloniesData)
         .pointLat('lat')
         .pointLng('lng')
-        .pointColor((d: any) => d.color || '#B88A2E') // Custom color from data
+        .pointColor((d: any) => d.color || '#B88A2E')
         .pointAltitude(0.02)
-        .pointRadius(1.4)
+        .pointRadius(0.5) // Smaller initial radius for density
         .labelsData(coloniesData)
         .labelLat('lat')
         .labelLng('lng')
         .labelText('name')
-        .labelSize(1.8)
-        .labelDotRadius(0.5)
-        .labelColor((d: any) => d.color || '#ffffff') // Label matches point color
+        .labelSize(0.6) // Smaller labels for density
+        .labelDotRadius(0.2)
+        .labelColor((d: any) => d.color || '#ffffff')
         .labelResolution(3)
         .onPointClick((point: any) => onSelectColony(point.id))
         .onLabelClick((label: any) => onSelectColony(label.id));
 
-      // Standard archival distance settings
       const controls = globe.controls();
       controls.autoRotate = true;
       controls.autoRotateSpeed = 0.5;
       controls.enableDamping = true;
       controls.dampingFactor = 0.05;
-      controls.minDistance = 150;
-      controls.maxDistance = 600;
+      controls.minDistance = 120; // Allow getting closer for "larger" view
+      controls.maxDistance = 800;
       
-      // Explicitly enable touch interactions for mobile
       controls.enableRotate = true;
       controls.enableZoom = true;
       controls.enablePan = false;
 
-      // Add vintage yellow ochre lighting tint
+      // Dynamic Marker Scaling: Smaller as we zoom in (lower altitude)
+      controls.addEventListener('change', () => {
+        const pov = globe.pointOfView();
+        const alt = pov.altitude;
+        // As alt gets smaller (zoomed in), we decrease marker radius/size to keep view clean
+        const dynamicRadius = Math.max(0.15, alt * 0.18);
+        const dynamicLabelSize = Math.max(0.25, alt * 0.25);
+        
+        globe.pointRadius(dynamicRadius);
+        globe.labelSize(dynamicLabelSize);
+      });
+
       const scene = globe.scene();
-      const THREE = await import('three');
-      
       const ambientLight = new THREE.AmbientLight(0xB88A2E, 0.8);
       scene.add(ambientLight);
 
@@ -73,12 +81,11 @@ export function GlobeView({ selectedColonyId, onSelectColony }: GlobeViewProps) 
       pointLight.position.set(200, 100, 150);
       scene.add(pointLight);
 
-      // Set initial view
-      globe.pointOfView({ lat: 20, lng: 0, altitude: 2.5 });
+      // Initial view is closer (altitude 1.8 instead of 2.5) to make globe look larger
+      globe.pointOfView({ lat: 20, lng: 0, altitude: 1.8 });
 
       globeInstance.current = globe;
       
-      // Force initial resize for mobile layout shifts
       if (containerRef.current) {
         globe.width(containerRef.current.clientWidth);
         globe.height(containerRef.current.clientHeight);
@@ -103,7 +110,6 @@ export function GlobeView({ selectedColonyId, onSelectColony }: GlobeViewProps) 
     };
   }, [onSelectColony]);
 
-  // Handle auto-rotate and point-of-view updates
   useEffect(() => {
     if (globeInstance.current) {
       globeInstance.current.controls().autoRotate = !selectedColonyId && !isLocked;
@@ -114,7 +120,7 @@ export function GlobeView({ selectedColonyId, onSelectColony }: GlobeViewProps) 
           globeInstance.current.pointOfView({ 
             lat: colony.lat, 
             lng: colony.lng, 
-            altitude: 1.8 
+            altitude: 1.4 // Focus zoom is even closer for a "large" detailed view
           }, 1000);
         }
       }
@@ -136,7 +142,7 @@ export function GlobeView({ selectedColonyId, onSelectColony }: GlobeViewProps) 
 
   const resetView = () => {
     if (!globeInstance.current) return;
-    globeInstance.current.pointOfView({ lat: 20, lng: 0, altitude: 2.5 }, 1000);
+    globeInstance.current.pointOfView({ lat: 20, lng: 0, altitude: 1.8 }, 1000);
     onSelectColony('');
   };
 
@@ -148,7 +154,6 @@ export function GlobeView({ selectedColonyId, onSelectColony }: GlobeViewProps) 
         style={{ cursor: isLocked ? 'default' : 'grab' }}
       />
       
-      {/* Archive Control Panel */}
       <div className={cn(
         "absolute top-8 right-8 flex flex-col gap-3 z-50 transition-all duration-500",
         selectedColonyId ? "opacity-0 pointer-events-none translate-x-10" : "opacity-100 translate-x-0"
@@ -207,3 +212,4 @@ export function GlobeView({ selectedColonyId, onSelectColony }: GlobeViewProps) 
     </div>
   );
 }
+

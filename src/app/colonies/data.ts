@@ -518,5 +518,488 @@ export const coloniesData: Colony[] = [
           "description": "Gold Coast becomes Ghana under Kwame Nkrumah."
         }
       ]
-    }
-];
+    },
+    {
+      "id": "uganda",
+      "name": "Uganda",
+      "subtitle": "Uganda Protectorate (1894–1962)",
+      "status": "Protectorate",
+      "period": "1894–1962",
+      "independenceYear": "1962",
+      "governance": "Indirect Rule via Local Kingdoms",
+      "overview": "Uganda became a British protectorate in 1894. The British governed largely through traditional kingdoms such as Buganda, integrating them into colonial administration.",
+      "exports": ["Coffee", "Cotton", "Tea", "Copper"],
+      "mapSnippet": "https://commons.wikimedia.org/wiki/Special:FilePath/Uganda_on_the_globe.svg",
+      "lat": 1.3733,
+      "lng": 32.2903,
+      "color": "#556B2F",
+      "milestones": [
+        { "year": "1894", "title": "Protectorate Declared", "description": "Britain formally establishes the Uganda Protectorate." },
+        { "year": "1900", "title": "Buganda Agreement", "description": "Defines political structure between Britain and Buganda Kingdom." },
+        { "year": "1950", "title": "Nationalist Movements", "description": "Rise of independence political movements." },
+        { "year": "1962", "title": "Independence", "description": "Uganda gains sovereignty." }
+      ]
+    },
+    {
+      "id": "zambia",
+      "name": "Zambia",
+      "subtitle": "Northern Rhodesia (1924–1964)",
+      "status": "Protectorate",
+      "period": "1890–1964",
+      "independenceYear": "1964",
+      "governance": "British Colonial Administration",
+      "overview": "Originally administered by the British South Africa Company, Northern Rhodesia later became a British protectorate and major copper mining region.",
+      "exports": ["Copper", "Cobalt", "Tobacco", "Maize"],
+      "mapSnippet": "https://commons.wikimedia.org/wiki/Special:FilePath/Zambia_on_the_globe.svg",
+      "lat": -13.1339,
+      "lng": 27.8493,
+      "color": "#CD853F",
+      "milestones": [
+        { "year": "1890", "title": "Company Administration", "description": "British South Africa Company governs territory." },
+        { "year": "1924", "title": "Protectorate Rule", "description": "Administration transferred to British government." },
+        { "year": "1953", "title": "Central African Federation", "description": "Joined federation with Rhodesia and Nyasaland." },
+        { "year": "1964", "title": "Independence", "description": "Northern Rhodesia becomes Zambia." }
+      ]
+    },
+    {
+      "id": "malawi",
+      "name": "Malawi",
+      "subtitle": "Nyasaland Protectorate (1907–1964)",
+      "status": "Protectorate",
+      "period": "1891–1964",
+      "independenceYear": "1964",
+      "governance": "Colonial Governor with Local Chiefs",
+      "overview": "Nyasaland was a British protectorate in southeastern Africa and part of the Federation of Rhodesia and Nyasaland before gaining independence as Malawi.",
+      "exports": ["Tobacco", "Tea", "Sugar", "Cotton"],
+      "mapSnippet": "https://commons.wikimedia.org/wiki/Special:FilePath/Malawi_on_the_globe.svg",
+      "lat": -13.2543,
+      "lng": 34.3015,
+      "color": "#708090",
+      "milestones": [
+        { "year": "1891", "title": "Protectorate Established", "description": "Britain proclaims Central Africa Protectorate." },
+        { "year": "1907", "title": "Renamed Nyasaland", "description": "Administrative restructuring." },
+        { "year": "1953", "title": "Federation Formed", "description": "Joined Federation of Rhodesia and Nyasaland." },
+        { "year": "1964", "title": "Independence", "description": "Nyasaland becomes Malawi." }
+      ]
+    },
+    {
+      "id": "sierra leone",
+      "name": "Sierra Leone",
+      "subtitle": "Crown Colony of Sierra Leone (1808–1961)",
+      "status": "Crown Colony",
+      "period": "1808–1961",
+      "independenceYear": "1961",
+      "governance": "Colonial Governor",
+      "overview": "Founded as a settlement for freed slaves, Sierra Leone became a major British colony in West Africa and an administrative center for anti-slavery patrols.",
+      "exports": ["Diamonds", "Palm Oil", "Cocoa", "Coffee"],
+      "mapSnippet": "https://commons.wikimedia.org/wiki/Special:FilePath/Sierra_Leone_on_the_globe.svg",
+      "lat": 8.4606,
+      "lng": -11.7799,
+      "color": "#2E8B57",
+      "milestones": [
+        { "year": "1787", "title": "Freed Slave Settlement", "description": "Freetown established for freed slaves." },
+        { "year": "1808", "title": "Crown Colony", "description": "Direct British colonial rule begins." },
+        { "year": "1896", "title": "Protectorate Expanded", "description": "Interior territories added." },
+        { "year": "1961", "title": "Independence", "description": "Sierra Leone becomes sovereign." }
+      ]
+    },
+    {
+      "id": "barbados",
+      "name": "Barbados",
+      "subtitle": "Colony of Barbados (1627–1966)",
+      "status": "Crown Colony",
+      "period": "1627–1966",
+      "independenceYear": "1966",
+      "governance": "Colonial Assembly under British Crown",
+      "overview": "Barbados was one of Britain’s earliest Caribbean colonies and a major sugar plantation economy in the Atlantic world.",
+      "exports": ["Sugar", "Rum", "Molasses", "Cotton"],
+      "mapSnippet": "https://commons.wikimedia.org/wiki/Special:FilePath/Barbados_on_the_globe.svg",
+      "lat": 13.1939,
+      "lng": -59.5432,
+      "color": "#C19A6B",
+      "milestones": [
+        { "year": "1627", "title": "English Settlement", "description": "First permanent English colony established." },
+        { "year": "1650", "title": "Sugar Economy", "description": "Plantation economy expands." },
+        { "year": "1958", "title": "West Indies Federation", "description": "Joins regional federation." },
+        { "year": "1966", "title": "Independence", "description": "Barbados becomes independent." }
+      ]
+    },
+    {
+      "id": "bahamas",
+      "name": "Bahamas",
+      "subtitle": "Crown Colony of the Bahamas (1718–1973)",
+      "status": "Crown Colony",
+      "period": "1718–1973",
+      "independenceYear": "1973",
+      "governance": "Colonial Governor",
+      "overview": "The Bahamas became a crown colony in 1718 after suppression of piracy and later developed an economy based on tourism and shipping.",
+      "exports": ["Salt", "Sponges", "Fish", "Rum"],
+      "mapSnippet": "https://commons.wikimedia.org/wiki/Special:FilePath/Bahamas_on_the_globe.svg",
+      "lat": 25.0343,
+      "lng": -77.3963,
+      "color": "#00CED1",
+      "milestones": [
+        { "year": "1718", "title": "Crown Colony", "description": "British crown asserts control." },
+        { "year": "1783", "title": "British Loyalists Arrive", "description": "Settlers arrive after American Revolution." },
+        { "year": "1964", "title": "Self-Government", "description": "Internal self-rule granted." },
+        { "year": "1973", "title": "Independence", "description": "Bahamas becomes sovereign nation." }
+      ]
+    },
+  {
+    "id": "sri lanka",
+    "name": "Sri Lanka",
+    "subtitle": "Crown Colony of Ceylon (1815–1948)",
+    "status": "Crown Colony",
+    "period": "1815–1948",
+    "independenceYear": "1948",
+    "governance": "Colonial Governor under British Crown",
+    "overview": "Known as Ceylon during British rule, the island became a crown colony after the fall of the Kandyan Kingdom. It developed into a major plantation economy producing tea, rubber, and coconut.",
+    "exports": ["Tea", "Rubber", "Coconut", "Cinnamon"],
+    "mapSnippet": "https://commons.wikimedia.org/wiki/Special:FilePath/Sri_Lanka_on_the_globe.svg",
+    "lat": 7.8731,
+    "lng": 80.7718,
+    "color": "#8B0000",
+    "milestones": [
+      { "year": "1796", "title": "British Occupation", "description": "Britain takes Dutch possessions in Ceylon." },
+      { "year": "1815", "title": "Kandyan Convention", "description": "Entire island brought under British rule." },
+      { "year": "1931", "title": "Donoughmore Constitution", "description": "Universal suffrage introduced." },
+      { "year": "1948", "title": "Independence", "description": "Dominion of Ceylon established." }
+    ]
+  },
+  {
+    "id": "maldives",
+    "name": "Maldives",
+    "subtitle": "British Protectorate of Maldives (1887–1965)",
+    "status": "Protectorate",
+    "period": "1887–1965",
+    "independenceYear": "1965",
+    "governance": "Indirect Rule via Sultanate",
+    "overview": "The Maldives remained internally self-governing while Britain controlled defense and foreign affairs from Ceylon.",
+    "exports": ["Fish", "Coir Rope", "Coconuts", "Shell Products"],
+    "mapSnippet": "https://commons.wikimedia.org/wiki/Special:FilePath/Maldives_on_the_globe.svg",
+    "lat": 3.2028,
+    "lng": 73.2207,
+    "color": "#20B2AA",
+    "milestones": [
+      { "year": "1887", "title": "Protectorate Treaty", "description": "Maldives becomes British protectorate." },
+      { "year": "1932", "title": "First Constitution", "description": "Modern governance reforms begin." },
+      { "year": "1953", "title": "First Republic", "description": "Brief attempt to abolish the sultanate." },
+      { "year": "1965", "title": "Independence", "description": "Maldives becomes fully sovereign." }
+    ]
+  },
+  {
+    "id": "burma",
+    "name": "Burma",
+    "subtitle": "British Burma (1824–1948)",
+    "status": "Crown Colony",
+    "period": "1824–1948",
+    "independenceYear": "1948",
+    "governance": "Colonial Administration under Governor",
+    "overview": "Burma was gradually annexed after three Anglo-Burmese wars. Initially administered as part of British India, it later became a separate colony in 1937.",
+    "exports": ["Rice", "Teak", "Oil", "Gemstones"],
+    "mapSnippet": "https://commons.wikimedia.org/wiki/Special:FilePath/Myanmar_on_the_globe.svg",
+    "lat": 21.9162,
+    "lng": 95.9560,
+    "color": "#DAA520",
+    "milestones": [
+      { "year": "1824", "title": "First Anglo-Burmese War", "description": "Beginning of British expansion into Burma." },
+      { "year": "1885", "title": "Full Annexation", "description": "King Thibaw deposed; Burma annexed." },
+      { "year": "1937", "title": "Separate Colony", "description": "Burma separated from British India." },
+      { "year": "1948", "title": "Independence", "description": "Union of Burma established." }
+    ]
+  },
+  {
+    "id": "malta",
+    "name": "Malta",
+    "subtitle": "Crown Colony of Malta (1813–1964)",
+    "status": "Crown Colony",
+    "period": "1813–1964",
+    "independenceYear": "1964",
+    "governance": "Colonial Governor",
+    "overview": "Malta was a strategically vital naval base in the Mediterranean and played a major role during both World Wars.",
+    "exports": ["Cotton", "Ship Repairs", "Stone", "Textiles"],
+    "mapSnippet": "https://commons.wikimedia.org/wiki/Special:FilePath/Malta_on_the_globe.svg",
+    "lat": 35.9375,
+    "lng": 14.3754,
+    "color": "#B22222",
+    "milestones": [
+      { "year": "1814", "title": "British Possession", "description": "Treaty of Paris confirms British rule." },
+      { "year": "1921", "title": "Self-Government", "description": "Constitution grants local autonomy." },
+      { "year": "1942", "title": "George Cross Award", "description": "Island honored for WWII resistance." },
+      { "year": "1964", "title": "Independence", "description": "Malta becomes sovereign state." }
+    ]
+  },
+  {
+    "id": "gibraltar",
+    "name": "Gibraltar",
+    "subtitle": "British Overseas Territory of Gibraltar",
+    "status": "Crown Colony",
+    "period": "1713–present",
+    "independenceYear": "N/A",
+    "governance": "British Overseas Territory",
+    "overview": "A strategic fortress at the entrance of the Mediterranean, Gibraltar has remained under British sovereignty since 1713.",
+    "exports": ["Shipping Services", "Finance", "Tourism", "Military Logistics"],
+    "mapSnippet": "https://commons.wikimedia.org/wiki/Special:FilePath/Gibraltar_on_the_globe.svg",
+    "lat": 36.1408,
+    "lng": -5.3536,
+    "color": "#708090",
+    "milestones": [
+      { "year": "1704", "title": "British Capture", "description": "Anglo-Dutch forces capture Gibraltar." },
+      { "year": "1713", "title": "Treaty of Utrecht", "description": "Spain cedes Gibraltar to Britain." },
+      { "year": "1967", "title": "Referendum", "description": "Residents vote to remain British." },
+      { "year": "2006", "title": "New Constitution", "description": "Expanded self-government." }
+    ]
+  },
+  {
+    "id": "fiji",
+    "name": "Fiji",
+    "subtitle": "Colony of Fiji (1874–1970)",
+    "status": "Crown Colony",
+    "period": "1874–1970",
+    "independenceYear": "1970",
+    "governance": "Colonial Governor with Indigenous Administration",
+    "overview": "Fiji became a British colony after local chiefs ceded the islands. It developed a plantation economy using indentured labor from India.",
+    "exports": ["Sugar", "Coconut", "Gold", "Timber"],
+    "mapSnippet": "https://commons.wikimedia.org/wiki/Special:FilePath/Fiji_on_the_globe.svg",
+    "lat": -17.7134,
+    "lng": 178.0650,
+    "color": "#4682B4",
+    "milestones": [
+      { "year": "1874", "title": "Cession to Britain", "description": "Chiefs sign deed of cession." },
+      { "year": "1879", "title": "Indentured Labor", "description": "Indian workers brought for plantations." },
+      { "year": "1963", "title": "Political Reform", "description": "Expanded representation." },
+      { "year": "1970", "title": "Independence", "description": "Fiji becomes sovereign." }
+    ]
+  },
+  {
+    "id": "solomon islands",
+    "name": "Solomon Islands",
+    "subtitle": "British Solomon Islands Protectorate (1893–1978)",
+    "status": "Protectorate",
+    "period": "1893–1978",
+    "independenceYear": "1978",
+    "governance": "Colonial Administration",
+    "overview": "Britain declared a protectorate over the Solomon Islands to regulate trade and suppress labor recruitment abuses.",
+    "exports": ["Copra", "Timber", "Fish", "Palm Oil"],
+    "mapSnippet": "https://commons.wikimedia.org/wiki/Special:FilePath/Solomon_Islands_on_the_globe.svg",
+    "lat": -9.6457,
+    "lng": 160.1562,
+    "color": "#2E8B57",
+    "milestones": [
+      { "year": "1893", "title": "Protectorate Declared", "description": "Britain establishes authority." },
+      { "year": "1942", "title": "Battle of Guadalcanal", "description": "Major WWII campaign." },
+      { "year": "1976", "title": "Self-Government", "description": "Internal autonomy granted." },
+      { "year": "1978", "title": "Independence", "description": "Solomon Islands becomes sovereign." }
+    ]
+  },
+  {
+    "id": "gilbert and ellice islands",
+    "name": "Gilbert and Ellice Islands",
+    "subtitle": "British Colony (1916–1976)",
+    "status": "Crown Colony",
+    "period": "1892–1976",
+    "independenceYear": "1978–1979",
+    "governance": "Colonial Administration",
+    "overview": "A Pacific colony later divided into Kiribati and Tuvalu before independence.",
+    "exports": ["Copra", "Phosphate", "Fish", "Coconut Products"],
+    "mapSnippet": "https://commons.wikimedia.org/wiki/Special:FilePath/Kiribati_on_the_globe.svg",
+    "lat": 1.8709,
+    "lng": -157.3630,
+    "color": "#1E90FF",
+    "milestones": [
+      { "year": "1892", "title": "Protectorate Declared", "description": "Britain establishes authority." },
+      { "year": "1916", "title": "Crown Colony", "description": "Administrative consolidation." },
+      { "year": "1976", "title": "Separation", "description": "Ellice Islands split." },
+      { "year": "1979", "title": "Independence", "description": "Kiribati becomes sovereign." }
+    ]
+  },
+  {
+    "id": "tonga",
+    "name": "Tonga",
+    "subtitle": "British Protected State (1900–1970)",
+    "status": "Protectorate",
+    "period": "1900–1970",
+    "independenceYear": "1970",
+    "governance": "Protected Monarchy",
+    "overview": "Tonga remained a sovereign monarchy but accepted British protection over foreign affairs.",
+    "exports": ["Copra", "Bananas", "Vanilla", "Fish"],
+    "mapSnippet": "https://commons.wikimedia.org/wiki/Special:FilePath/Tonga_on_the_globe.svg",
+    "lat": -21.1789,
+    "lng": -175.1982,
+    "color": "#8B0000",
+    "milestones": [
+      { "year": "1900", "title": "Protection Treaty", "description": "Tonga becomes British protected state." },
+      { "year": "1918", "title": "Influenza Pandemic", "description": "Major population impact." },
+      { "year": "1958", "title": "Political Reforms", "description": "Modern governance evolves." },
+      { "year": "1970", "title": "Independence", "description": "Protection treaty ends." }
+    ]
+  },
+  {
+    "id": "iraq",
+    "name": "Iraq",
+    "subtitle": "British Mandate of Mesopotamia (1920–1932)",
+    "status": "Protectorate",
+    "period": "1917–1932",
+    "independenceYear": "1932",
+    "governance": "League of Nations Mandate with British Advisors",
+    "overview": "Following the collapse of the Ottoman Empire after World War I, Britain administered Mesopotamia under a League of Nations mandate and installed a Hashemite monarchy.",
+    "exports": ["Oil", "Dates", "Wool", "Grain"],
+    "mapSnippet": "https://commons.wikimedia.org/wiki/Special:FilePath/Iraq_on_the_globe.svg",
+    "lat": 33.2232,
+    "lng": 43.6793,
+    "color": "#8B4513",
+    "milestones": [
+      { "year": "1917", "title": "British Capture Baghdad", "description": "Ottoman control collapses during WWI." },
+      { "year": "1920", "title": "League of Nations Mandate", "description": "Britain formally administers Mesopotamia." },
+      { "year": "1921", "title": "King Faisal Installed", "description": "Hashemite monarchy established." },
+      { "year": "1932", "title": "Independence", "description": "Iraq joins League of Nations as sovereign state." }
+    ]
+  },
+  {
+    "id": "palestine",
+    "name": "Palestine",
+    "subtitle": "British Mandate for Palestine (1920–1948)",
+    "status": "Protectorate",
+    "period": "1917–1948",
+    "independenceYear": "1948",
+    "governance": "League of Nations Mandate Administration",
+    "overview": "Britain administered Palestine after the fall of the Ottoman Empire. The region became the center of Arab-Jewish tensions and nationalist movements.",
+    "exports": ["Citrus", "Olive Oil", "Soap", "Textiles"],
+    "mapSnippet": "https://commons.wikimedia.org/wiki/Special:FilePath/State_of_Palestine_on_the_globe.svg",
+    "lat": 31.9522,
+    "lng": 35.2332,
+    "color": "#556B2F",
+    "milestones": [
+      { "year": "1917", "title": "Balfour Declaration", "description": "Britain supports Jewish national home." },
+      { "year": "1920", "title": "Mandate Confirmed", "description": "League of Nations grants Britain control." },
+      { "year": "1936", "title": "Arab Revolt", "description": "Major uprising against British rule." },
+      { "year": "1948", "title": "End of Mandate", "description": "Britain withdraws from Palestine." }
+    ]
+  },
+  {
+    "id": "transjordan",
+    "name": "Transjordan",
+    "subtitle": "Emirate of Transjordan (1921–1946)",
+    "status": "Protectorate",
+    "period": "1921–1946",
+    "independenceYear": "1946",
+    "governance": "Hashemite Monarchy under British Supervision",
+    "overview": "Separated from the Palestine Mandate, Transjordan was ruled by Emir Abdullah with British military and financial support.",
+    "exports": ["Phosphates", "Livestock", "Grain", "Salt"],
+    "mapSnippet": "https://commons.wikimedia.org/wiki/Special:FilePath/Jordan_on_the_globe.svg",
+    "lat": 30.5852,
+    "lng": 36.2384,
+    "color": "#A0522D",
+    "milestones": [
+      { "year": "1921", "title": "Emirate Established", "description": "Abdullah becomes Emir under British protection." },
+      { "year": "1928", "title": "Constitution Granted", "description": "Political reforms introduced." },
+      { "year": "1946", "title": "Independence", "description": "Transjordan becomes Kingdom of Jordan." },
+      { "year": "1949", "title": "Name Change", "description": "Renamed Hashemite Kingdom of Jordan." }
+    ]
+  },
+  {
+    "id": "kuwait",
+    "name": "Kuwait",
+    "subtitle": "British Protectorate of Kuwait (1899–1961)",
+    "status": "Protectorate",
+    "period": "1899–1961",
+    "independenceYear": "1961",
+    "governance": "Sheikhdom under British Protection",
+    "overview": "Kuwait became a British protectorate through a treaty that placed its foreign affairs under British control while retaining internal autonomy.",
+    "exports": ["Oil", "Pearls", "Fish", "Dates"],
+    "mapSnippet": "https://commons.wikimedia.org/wiki/Special:FilePath/Kuwait_on_the_globe.svg",
+    "lat": 29.3117,
+    "lng": 47.4818,
+    "color": "#2F4F4F",
+    "milestones": [
+      { "year": "1899", "title": "Protection Treaty", "description": "Britain assumes control of foreign policy." },
+      { "year": "1938", "title": "Oil Discovery", "description": "Major petroleum reserves found." },
+      { "year": "1950", "title": "Economic Boom", "description": "Oil transforms economy." },
+      { "year": "1961", "title": "Independence", "description": "Kuwait becomes sovereign." }
+    ]
+  },
+  {
+    "id": "bahrain",
+    "name": "Bahrain",
+    "subtitle": "British Protectorate of Bahrain (1861–1971)",
+    "status": "Protectorate",
+    "period": "1861–1971",
+    "independenceYear": "1971",
+    "governance": "Al Khalifa Monarchy under British Protection",
+    "overview": "Bahrain was a key naval and trade hub in the Persian Gulf and the first Gulf state where oil was discovered.",
+    "exports": ["Oil", "Pearls", "Aluminum", "Fish"],
+    "mapSnippet": "https://commons.wikimedia.org/wiki/Special:FilePath/Bahrain_on_the_globe.svg",
+    "lat": 26.0667,
+    "lng": 50.5577,
+    "color": "#B22222",
+    "milestones": [
+      { "year": "1861", "title": "Protection Treaty", "description": "Britain establishes protectorate relationship." },
+      { "year": "1932", "title": "Oil Discovery", "description": "First oil discovery in the Gulf." },
+      { "year": "1950", "title": "Economic Modernization", "description": "Rapid development begins." },
+      { "year": "1971", "title": "Independence", "description": "Bahrain becomes sovereign state." }
+    ]
+  },
+  {
+    "id": "qatar",
+    "name": "Qatar",
+    "subtitle": "British Protectorate of Qatar (1916–1971)",
+    "status": "Protectorate",
+    "period": "1916–1971",
+    "independenceYear": "1971",
+    "governance": "Al Thani Monarchy under British Protection",
+    "overview": "Qatar came under British protection during World War I and later became a major oil and gas exporter.",
+    "exports": ["Oil", "Natural Gas", "Pearls", "Fish"],
+    "mapSnippet": "https://commons.wikimedia.org/wiki/Special:FilePath/Qatar_on_the_globe.svg",
+    "lat": 25.3548,
+    "lng": 51.1839,
+    "color": "#800080",
+    "milestones": [
+      { "year": "1916", "title": "Protection Treaty", "description": "Britain signs treaty with Al Thani rulers." },
+      { "year": "1940", "title": "Oil Discovery", "description": "Petroleum reserves discovered." },
+      { "year": "1968", "title": "British Withdrawal Plan", "description": "Britain announces Gulf withdrawal." },
+      { "year": "1971", "title": "Independence", "description": "Qatar becomes sovereign state." }
+    ]
+  },
+  {
+    "id": "trucial states",
+    "name": "Trucial States",
+    "subtitle": "British Protectorates (1820–1971)",
+    "status": "Protectorate",
+    "period": "1820–1971",
+    "independenceYear": "1971",
+    "governance": "Local Emirates under British Protection",
+    "overview": "The Trucial States consisted of several Gulf sheikhdoms that later united to form the United Arab Emirates.",
+    "exports": ["Pearls", "Fish", "Dates", "Oil"],
+    "mapSnippet": "https://commons.wikimedia.org/wiki/Special:FilePath/United_Arab_Emirates_on_the_globe.svg",
+    "lat": 23.4241,
+    "lng": 53.8478,
+    "color": "#4682B4",
+    "milestones": [
+      { "year": "1820", "title": "General Maritime Treaty", "description": "Britain establishes influence over Gulf sheikhdoms." },
+      { "year": "1892", "title": "Exclusive Agreements", "description": "States become British protectorates." },
+      { "year": "1968", "title": "British Withdrawal", "description": "Britain plans to leave Gulf." },
+      { "year": "1971", "title": "UAE Formed", "description": "United Arab Emirates established." }
+    ]
+  },
+  {
+    "id": "aden",
+    "name": "Aden",
+    "subtitle": "Colony of Aden (1839–1967)",
+    "status": "Crown Colony",
+    "period": "1839–1967",
+    "independenceYear": "1967",
+    "governance": "Colonial Governor",
+    "overview": "Aden served as a crucial refueling port for ships traveling between Europe and Asia, especially after the opening of the Suez Canal.",
+    "exports": ["Oil Products", "Coffee", "Salt", "Fish"],
+    "mapSnippet": "https://commons.wikimedia.org/wiki/Special:FilePath/Yemen_on_the_globe.svg",
+    "lat": 15.3694,
+    "lng": 44.1910,
+    "color": "#8B0000",
+    "milestones": [
+      { "year": "1839", "title": "British Occupation", "description": "Aden captured to secure trade routes." },
+      { "year": "1937", "title": "Crown Colony", "description": "Separated from British India." },
+      { "year": "1963", "title": "Aden Emergency", "description": "Insurgency against British rule." },
+      { "year": "1967", "title": "Independence", "description": "People's Republic of South Yemen established." }
+    ]
+  }
+]
