@@ -26,6 +26,8 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import { Timeline3DBackground } from '@/components/Timeline3DBackground';
+import { EraOrb3D } from '@/components/EraOrb3D';
 
 export default function TimelinePage() {
   const [activeYear, setActiveYear] = useState(1600);
@@ -97,10 +99,11 @@ export default function TimelinePage() {
   const currentCentury = Math.floor(activeYear / 100) + 1;
 
   return (
-    <main className="min-h-screen bg-[#11100b] text-[#e5e1d3] font-body selection:bg-primary/30 pb-40">
+    <main className="min-h-screen bg-[#11100b] text-[#e5e1d3] font-body selection:bg-primary/30 pb-40 relative">
+      <Timeline3DBackground />
       <Navigation />
 
-      <section className="pt-40 pb-12 px-4 text-center">
+      <section className="pt-40 pb-12 px-4 text-center relative z-10">
         <h1 className="text-5xl md:text-7xl font-headline font-black text-primary gold-glow mb-6 tracking-tight text-center w-full block">
           The Sun Never Sets
         </h1>
@@ -127,7 +130,7 @@ export default function TimelinePage() {
         </div>
       </section>
 
-      <div className="container max-w-7xl mx-auto px-4">
+      <div className="container max-w-7xl mx-auto px-4 relative z-10">
         {/* Mobile Century Selector */}
         <div className="lg:hidden mb-12 space-y-4">
           <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/40 text-center">Jump to Century</h4>
@@ -176,8 +179,9 @@ export default function TimelinePage() {
           </div>
 
           <aside className="space-y-8 hidden lg:block sticky top-32 h-fit">
-            <div className="glass-morphism p-6 rounded-2xl border-white/5 bg-black/20 space-y-4">
-              <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/40">Active Era</h4>
+            <div className="glass-morphism p-6 rounded-2xl border-white/5 bg-black/40 space-y-6">
+              <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/40">Temporal Artifact</h4>
+              <EraOrb3D />
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-bold text-white flex items-center gap-2">
