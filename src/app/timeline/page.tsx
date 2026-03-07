@@ -13,7 +13,8 @@ import {
   X,
   Layers,
   ZoomIn,
-  Maximize2
+  Maximize2,
+  Move
 } from 'lucide-react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
@@ -374,29 +375,29 @@ const TimelineItem = memo(({ event, isActive, isSeen }: { event: TimelineEvent, 
                      src={event.imageUrl} 
                      alt={event.title} 
                      fill 
-                     className="object-cover opacity-60 group-hover/card:scale-105 transition-transform duration-[3000ms]" 
+                     className="object-cover group-hover/card:scale-105 transition-transform duration-[3000ms]" 
                      loading="lazy" 
                    />
-                   <div className="absolute inset-0 bg-gradient-to-t from-[#11100b] via-[#11100b]/40 to-transparent" />
-                   <div className="absolute inset-0 bg-gradient-to-r from-[#11100b]/60 to-transparent" />
+                   {/* Minimal shadow for text readability only */}
+                   <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/60 to-transparent" />
                 </div>
 
                 <div className="relative z-10 space-y-4 max-w-2xl">
                    <div className="flex justify-between items-start">
                       <div className="space-y-0.5">
                         <h3 className="text-4xl md:text-6xl font-headline font-black text-primary gold-glow leading-none">{event.year}</h3>
-                        <p className="text-[10px] font-bold text-white/40 tracking-[0.3em] uppercase">{event.subtitle || 'Imperial Landmark'}</p>
+                        <p className="text-[10px] font-bold text-white/60 tracking-[0.3em] uppercase drop-shadow-lg">{event.subtitle || 'Imperial Landmark'}</p>
                       </div>
                       {event.badge && (
-                        <Badge variant="outline" className="border-primary/40 text-primary text-[8px] font-bold px-3 py-1 bg-primary/10 uppercase tracking-widest backdrop-blur-md">
+                        <Badge variant="outline" className="border-primary/40 text-primary text-[8px] font-bold px-3 py-1 bg-black/40 uppercase tracking-widest backdrop-blur-md">
                           {event.badge}
                         </Badge>
                       )}
                    </div>
                    
-                   <h2 className="text-3xl md:text-5xl font-headline font-bold text-white tracking-tight leading-tight">{event.title}</h2>
+                   <h2 className="text-3xl md:text-5xl font-headline font-bold text-white tracking-tight leading-tight drop-shadow-xl">{event.title}</h2>
                    
-                   <p className="text-white/80 leading-relaxed text-sm md:text-lg font-light italic max-w-xl">
+                   <p className="text-white leading-relaxed text-sm md:text-lg font-light italic max-w-xl drop-shadow-lg">
                      {event.description}
                    </p>
 
@@ -415,8 +416,7 @@ const TimelineItem = memo(({ event, isActive, isSeen }: { event: TimelineEvent, 
               <div className="relative w-full md:w-[40%] min-h-[250px] overflow-hidden group/img">
                 <InteractionWrapper event={event}>
                   <div className="relative w-full min-h-[250px] cursor-pointer">
-                    <Image src={event.imageUrl} alt={event.title} fill className="object-cover opacity-80 group-hover/img:scale-110 transition-transform duration-[3000ms]" loading="lazy" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                    <Image src={event.imageUrl} alt={event.title} fill className="object-cover group-hover/img:scale-110 transition-transform duration-[3000ms]" loading="lazy" />
                   </div>
                 </InteractionWrapper>
                 {event.badge && (
@@ -456,45 +456,118 @@ const TimelineItem = memo(({ event, isActive, isSeen }: { event: TimelineEvent, 
 TimelineItem.displayName = "TimelineItem";
 
 /**
- * Custom hook-like component to handle image zooming within the interaction dialog.
+ * Custom component to handle image zooming and panning within the interaction dialog.
  */
 function ImageArtifactViewer({ src, title }: { src: string, title: string }) {
   const [isZoomed, setIsZoomed] = useState(false);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [startPos, setStartPos] = useState({ x: 0, y: 0 });
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const handleMouseDown = (e: React.MouseEvent | React.TouchEvent) => {
+    if (!isZoomed) return;
+    
+    setIsDragging(true);
+    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+    const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
+    
+    setStartPos({ 
+      x: clientX - position.x, 
+      y: clientY - position.y 
+    });
+  };
+
+  const handleMouseMove = (e: React.MouseEvent | React.TouchEvent) => {
+    if (!isDragging || !isZoomed) return;
+    
+    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+    const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
+    
+    setPosition({
+      x: clientX - startPos.x,
+      y: clientY - startPos.y
+    });
+  };
+
+  const handleMouseUp = () => setIsDragging(false);
+
+  const toggleZoom = (e: React.MouseEvent) => {
+    if (isDragging) return;
+    if (!isZoomed) {
+      setIsZoomed(true);
+      setPosition({ x: 0, y: 0 });
+    } else {
+      setIsZoomed(false);
+      setPosition({ x: 0, y: 0 });
+    }
+  };
 
   return (
     <div 
-      className="w-full h-full relative overflow-hidden flex items-center justify-center bg-black/40 cursor-zoom-in group"
-      onClick={() => setIsZoomed(!isZoomed)}
+      ref={containerRef}
+      className="w-full h-full relative overflow-hidden flex items-center justify-center bg-black/40 touch-none"
+      onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+      onMouseLeave={handleMouseUp}
+      onTouchStart={handleMouseDown}
+      onTouchMove={handleMouseMove}
+      onTouchEnd={handleMouseUp}
     >
-      <div className={cn(
-        "relative w-full h-full transition-all duration-700 ease-in-out",
-        isZoomed ? "scale-[2] cursor-zoom-out" : "scale-100"
-      )}>
-        <Image 
-          src={src} 
-          alt={title} 
-          fill 
-          className="object-contain"
-          priority
-        />
+      <div 
+        className={cn(
+          "relative w-full h-full transition-transform duration-300 ease-out flex items-center justify-center",
+          isDragging ? "transition-none" : "transition-transform"
+        )}
+        style={{ 
+          transform: isZoomed 
+            ? `scale(2.5) translate(${position.x / 2.5}px, ${position.y / 2.5}px)` 
+            : 'scale(1) translate(0, 0)',
+          cursor: isZoomed ? (isDragging ? 'grabbing' : 'grab') : 'zoom-in'
+        }}
+        onClick={toggleZoom}
+      >
+        <div className="relative w-[90%] h-[90%]">
+          <Image 
+            src={src} 
+            alt={title} 
+            fill 
+            className="object-contain pointer-events-none"
+            priority
+          />
+        </div>
       </div>
       
-      {/* Zoom Indicator */}
+      {/* Zoom/Pan Controls */}
       <div className={cn(
-        "absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-3 px-6 py-3 bg-black/80 backdrop-blur-xl border border-primary/20 rounded-full transition-all duration-500",
-        isZoomed ? "opacity-0 translate-y-4" : "opacity-100 translate-y-0 group-hover:scale-110"
+        "absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-3 px-6 py-3 bg-black/80 backdrop-blur-xl border border-primary/20 rounded-full transition-all duration-500 shadow-2xl",
+        isDragging ? "opacity-20 scale-95" : "opacity-100 scale-100"
       )}>
-        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-          <ZoomIn size={16} />
-        </div>
-        <span className="text-[10px] font-bold text-white uppercase tracking-[0.2em]">Click to inspect details</span>
+        <button 
+          onClick={() => { setIsZoomed(!isZoomed); setPosition({x:0, y:0}); }}
+          className="flex items-center gap-3 text-[10px] font-bold text-white uppercase tracking-[0.2em]"
+        >
+          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+            {isZoomed ? <Maximize2 size={16} /> : <ZoomIn size={16} />}
+          </div>
+          {isZoomed ? 'Reset View' : 'Inspect Details'}
+        </button>
+        {isZoomed && (
+          <div className="h-4 w-px bg-white/10 mx-1" />
+        )}
+        {isZoomed && (
+          <div className="flex items-center gap-2 text-[10px] font-bold text-white/40 uppercase tracking-[0.2em]">
+            <Move size={14} /> Drag to Pan
+          </div>
+        )}
       </div>
 
-      {/* Close/Reset Indicator */}
-      {isZoomed && (
+      {/* Close/Reset Indicator for zoomed mode */}
+      {isZoomed && !isDragging && (
         <div className="absolute top-8 right-8 px-5 py-2.5 bg-primary/20 backdrop-blur-xl border border-primary/40 rounded-full text-primary animate-in fade-in zoom-in duration-300">
            <span className="text-[10px] font-bold uppercase tracking-widest flex items-center gap-2">
-             <Maximize2 size={12} /> Reset View
+             <Maximize2 size={12} /> Double Click to Reset
            </span>
         </div>
       )}
