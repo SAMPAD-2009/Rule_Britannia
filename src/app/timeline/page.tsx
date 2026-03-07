@@ -72,7 +72,6 @@ export default function TimelinePage() {
   }, [filteredEvents]);
 
   const scrollToYear = (year: number) => {
-    // Find the first event for that year
     const targetEvent = timelineEvents.find(e => e.year === year);
     if (!targetEvent) return;
 
@@ -147,7 +146,6 @@ export default function TimelinePage() {
       </section>
 
       <div className="container max-w-7xl mx-auto px-4 relative z-10">
-        {/* Mobile Century Selector */}
         <div className="lg:hidden mb-12 space-y-4">
           <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/40 text-center">Jump to Century</h4>
           <div className="flex flex-wrap justify-center gap-2">
@@ -171,7 +169,6 @@ export default function TimelinePage() {
 
         <div className="grid lg:grid-cols-[1fr_300px] gap-12">
           <div className="relative min-w-0">
-            {/* Main Glowing Sideline */}
             <div className="absolute left-6 md:left-8 top-0 bottom-0 w-px bg-white/5" />
             <div className="absolute left-6 md:left-8 top-0 bottom-0 w-px bg-gradient-to-b from-primary/0 via-primary/50 to-primary/0 shadow-[0_0_15px_rgba(184,138,46,0.4)]" />
 
@@ -343,8 +340,7 @@ const TimelineItem = memo(({ event, isActive, isSeen }: { event: TimelineEvent, 
   const isFullWidth = event.imagePosition === 'full';
 
   return (
-    <div ref={ref} className="group relative pl-12 md:pl-20 transition-all duration-500 min-h-[120px] overflow-hidden">
-      {/* Connector Dot */}
+    <div ref={ref} className="group relative pl-12 md:pl-20 transition-all duration-500 min-h-[120px]">
       <div className={cn(
         "absolute left-5 md:left-7 top-0 w-2.5 h-2.5 rounded-full border-2 border-[#11100b] z-10 transition-all duration-700",
         isActive ? "bg-yellow-500 scale-[1.8] shadow-[0_0_15px_rgba(234,179,8,0.8)]" : 
@@ -371,7 +367,6 @@ const TimelineItem = memo(({ event, isActive, isSeen }: { event: TimelineEvent, 
           {isFullWidth ? (
             <InteractionWrapper event={event}>
               <div className="relative min-h-[400px] md:min-h-[550px] flex flex-col justify-end p-6 md:p-10 cursor-pointer group/card overflow-hidden">
-                {/* Background Image - Spans the entire card */}
                 <div className="absolute inset-0 z-0">
                    <Image 
                      src={event.imageUrl} 
@@ -384,7 +379,6 @@ const TimelineItem = memo(({ event, isActive, isSeen }: { event: TimelineEvent, 
                    <div className="absolute inset-0 bg-gradient-to-r from-[#11100b]/60 to-transparent" />
                 </div>
 
-                {/* Content Overlay */}
                 <div className="relative z-10 space-y-4 max-w-2xl">
                    <div className="flex justify-between items-start">
                       <div className="space-y-0.5">
@@ -416,9 +410,9 @@ const TimelineItem = memo(({ event, isActive, isSeen }: { event: TimelineEvent, 
               "flex flex-col md:flex-row items-stretch",
               event.imagePosition === 'right' && "md:flex-row-reverse"
             )}>
-              <div className="relative w-full md:w-[40%] min-h-[220px] overflow-hidden group/img">
+              <div className="relative w-full md:w-[40%] min-h-[250px] overflow-hidden group/img">
                 <InteractionWrapper event={event}>
-                  <div className="relative w-full h-full cursor-pointer">
+                  <div className="relative w-full min-h-[250px] cursor-pointer">
                     <Image src={event.imageUrl} alt={event.title} fill className="object-cover opacity-80 group-hover/img:scale-110 transition-transform duration-[3000ms]" loading="lazy" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                   </div>
@@ -449,7 +443,6 @@ const TimelineItem = memo(({ event, isActive, isSeen }: { event: TimelineEvent, 
           )}
         </div>
       ) : (
-        /* Lightweight Placeholder */
         <div className="h-[220px] w-full bg-white/[0.02] border border-white/5 rounded-2xl flex items-center justify-center">
            <div className="text-primary/10 font-black text-6xl select-none">{event.year}</div>
         </div>
