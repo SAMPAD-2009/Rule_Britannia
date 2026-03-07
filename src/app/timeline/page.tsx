@@ -11,7 +11,9 @@ import {
   Box,
   Search,
   X,
-  Layers
+  Layers,
+  ZoomIn,
+  Maximize2
 } from 'lucide-react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
@@ -453,6 +455,53 @@ const TimelineItem = memo(({ event, isActive, isSeen }: { event: TimelineEvent, 
 
 TimelineItem.displayName = "TimelineItem";
 
+/**
+ * Custom hook-like component to handle image zooming within the interaction dialog.
+ */
+function ImageArtifactViewer({ src, title }: { src: string, title: string }) {
+  const [isZoomed, setIsZoomed] = useState(false);
+
+  return (
+    <div 
+      className="w-full h-full relative overflow-hidden flex items-center justify-center bg-black/40 cursor-zoom-in group"
+      onClick={() => setIsZoomed(!isZoomed)}
+    >
+      <div className={cn(
+        "relative w-full h-full transition-all duration-700 ease-in-out",
+        isZoomed ? "scale-[2] cursor-zoom-out" : "scale-100"
+      )}>
+        <Image 
+          src={src} 
+          alt={title} 
+          fill 
+          className="object-contain"
+          priority
+        />
+      </div>
+      
+      {/* Zoom Indicator */}
+      <div className={cn(
+        "absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-3 px-6 py-3 bg-black/80 backdrop-blur-xl border border-primary/20 rounded-full transition-all duration-500",
+        isZoomed ? "opacity-0 translate-y-4" : "opacity-100 translate-y-0 group-hover:scale-110"
+      )}>
+        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+          <ZoomIn size={16} />
+        </div>
+        <span className="text-[10px] font-bold text-white uppercase tracking-[0.2em]">Click to inspect details</span>
+      </div>
+
+      {/* Close/Reset Indicator */}
+      {isZoomed && (
+        <div className="absolute top-8 right-8 px-5 py-2.5 bg-primary/20 backdrop-blur-xl border border-primary/40 rounded-full text-primary animate-in fade-in zoom-in duration-300">
+           <span className="text-[10px] font-bold uppercase tracking-widest flex items-center gap-2">
+             <Maximize2 size={12} /> Reset View
+           </span>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function InteractionWrapper({ event, children }: { event: TimelineEvent, children: React.ReactNode }) {
   if (!event.interactive) return <>{children}</>;
 
@@ -475,28 +524,56 @@ function InteractionWrapper({ event, children }: { event: TimelineEvent, childre
       <DialogTrigger asChild>
         {children}
       </DialogTrigger>
-      <DialogContent className="max-w-5xl bg-black border-white/10 p-0 overflow-hidden rounded-3xl gap-0 aspect-video">
+      <DialogContent className="max-w-6xl w-[95vw] h-[80vh] bg-[#0d0d14] border-white/10 p-0 overflow-hidden rounded-[2rem] gap-0">
         <div className="sr-only">
-          <DialogTitle>{event.title} - 3D Archive</DialogTitle>
-          <DialogDescription>Interactive 3D diorama exploration of the {event.title} historical event.</DialogDescription>
+          <DialogTitle>{event.title} - Historical Archive</DialogTitle>
+          <DialogDescription>Interactive exploration of the {event.title} artifact from the {event.year} chronicle.</DialogDescription>
         </div>
-        <div className="w-full h-full relative flex items-center justify-center overflow-hidden">
-           {event.threeModelUrl ? (
-             <div className="w-full h-full flex flex-col items-center justify-center text-center p-12 space-y-6">
-                <div className="w-24 h-24 rounded-full border-4 border-primary/20 flex items-center justify-center text-primary/40">
-                  <Layers size={48} />
-                </div>
-                <div className="space-y-2">
-                   <h4 className="text-xl font-bold text-white">3D Diorama Archive</h4>
-                   <p className="text-muted-foreground text-sm max-w-sm">Loading high-fidelity 3D assets for the {event.title} simulation...</p>
-                </div>
-                <div className="text-[10px] font-bold text-primary/40 uppercase tracking-widest border border-primary/20 px-4 py-2 rounded">
-                  3D Model Source: {event.threeModelUrl}
-                </div>
+        
+        <div className="w-full h-full relative flex flex-col">
+           {/* Top Info Bar */}
+           <div className="p-6 border-b border-white/5 bg-black/20 flex justify-between items-center shrink-0">
+             <div className="flex items-center gap-4">
+               <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
+                 <Box size={20} />
+               </div>
+               <div>
+                 <p className="text-[9px] font-black text-primary uppercase tracking-[0.3em]">{event.year} Artifact</p>
+                 <h4 className="text-lg font-headline font-bold text-white">{event.title}</h4>
+               </div>
              </div>
-           ) : (
-             <div className="text-white/20 italic">No interactive data available.</div>
-           )}
+             
+             {event.threeModelUrl && (
+               <Badge className="bg-primary/20 text-primary border-primary/20 uppercase text-[8px] tracking-[0.2em] font-black px-4 py-1.5">
+                 3D Simulation Active
+               </Badge>
+             )}
+           </div>
+
+           {/* Content Area */}
+           <div className="flex-1 relative overflow-hidden">
+             {event.threeModelUrl ? (
+               <div className="w-full h-full flex flex-col items-center justify-center text-center p-12 space-y-6">
+                  <div className="w-24 h-24 rounded-full border-4 border-primary/20 flex items-center justify-center text-primary/40 animate-pulse">
+                    <Layers size={48} />
+                  </div>
+                  <div className="space-y-2">
+                     <h4 className="text-xl font-bold text-white">3D Diorama Archive</h4>
+                     <p className="text-muted-foreground text-sm max-w-sm font-light">Loading high-fidelity 3D assets for the {event.title} simulation...</p>
+                  </div>
+                  <div className="text-[10px] font-bold text-primary/40 uppercase tracking-widest border border-primary/20 px-4 py-2 rounded bg-primary/5">
+                    Source: {event.threeModelUrl}
+                  </div>
+               </div>
+             ) : (
+               <ImageArtifactViewer src={event.imageUrl} title={event.title} />
+             )}
+           </div>
+
+           {/* Bottom Details (Optional) */}
+           <div className="p-6 bg-black/40 border-t border-white/5 text-center shrink-0">
+              <p className="text-[10px] font-bold text-white/30 uppercase tracking-[0.4em]">Historical Digital Records • British Greatness Project</p>
+           </div>
         </div>
       </DialogContent>
     </Dialog>
