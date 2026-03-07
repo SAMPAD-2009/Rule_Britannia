@@ -72,7 +72,11 @@ export default function TimelinePage() {
   }, [filteredEvents]);
 
   const scrollToYear = (year: number) => {
-    const element = eventRefs.current[year];
+    // Find the first event for that year
+    const targetEvent = timelineEvents.find(e => e.year === year);
+    if (!targetEvent) return;
+
+    const element = eventRefs.current[targetEvent.id];
     if (element) {
       const offset = 120;
       const bodyRect = document.body.getBoundingClientRect().top;
@@ -176,7 +180,7 @@ export default function TimelinePage() {
                 filteredEvents.map((event) => (
                   <div 
                     key={event.id} 
-                    ref={el => { eventRefs.current[event.year] = el; }}
+                    ref={el => { eventRefs.current[event.id] = el; }}
                     data-year={event.year}
                   >
                     <TimelineItem 
