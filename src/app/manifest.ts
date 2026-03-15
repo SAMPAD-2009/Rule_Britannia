@@ -12,12 +12,12 @@ export default function manifest(): MetadataRoute.Manifest {
     orientation: 'portrait',
     icons: [
       {
-        src: 'https://placehold.co/192x192/B88A2E/FFF?text=B',
+        src: '/icon-192.png',
         sizes: '192x192',
         type: 'image/png',
       },
       {
-        src: 'https://placehold.co/512x512/B88A2E/FFF?text=Britannia',
+        src: '/icon-512.png',
         sizes: '512x512',
         type: 'image/png',
       },

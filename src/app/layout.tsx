@@ -33,7 +33,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Alegreya:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet" />
-        <link rel="apple-touch-icon" href="https://placehold.co/180x180/B88A2E/FFF?text=B" />
+        <link rel="apple-touch-icon" href="/apple-icon.png" />
       </head>
       <body className="font-body antialiased bg-background text-foreground overflow-x-hidden">
         {children}
